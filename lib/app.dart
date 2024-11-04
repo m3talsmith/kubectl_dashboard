@@ -4,9 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kubectl_dashboard/app/config.dart';
 import 'package:kubectl_dashboard/app/config/add_config.dart';
-// import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-// part 'app.g.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -18,28 +15,7 @@ class App extends StatelessWidget {
 }
 
 final currentConfigIndexProvider = StateProvider((ref) => 0);
-final configsProvider = StateProvider((ref) => []);
-
-// class AppState extends _$AppState {
-//   int currentConfigIndex = 0;
-//   List<Config> configs = [];
-//
-//   @override
-//   AppState build() => this;
-//
-//   Config? get currentConfig =>
-//       (configs.isNotEmpty && currentConfigIndex < configs.length)
-//           ? configs[currentConfigIndex]
-//           : null;
-//
-//   set currentConfig(Config? config) {
-//     if (config == null) return;
-//     if (!configs.contains(config)) {
-//       configs.add(config);
-//     }
-//     currentConfigIndex = configs.indexOf(config);
-//   }
-// }
+final configsProvider = StateProvider<List<Config>?>((ref) => null);
 
 class AppConsumer extends ConsumerWidget {
   const AppConsumer({super.key});
@@ -47,9 +23,7 @@ class AppConsumer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final configs = ref.watch(configsProvider);
-    final currentConfigIndex = ref.watch(currentConfigIndexProvider);
-
-    log('currentConfigIndex: $currentConfigIndex');
+    ref.watch(configsProvider.notifier).addListener(saveConfigs);
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -68,10 +42,11 @@ class AppConsumer extends ConsumerWidget {
             endDrawer: Drawer(
               child: ListView(
                 children: [
-                  ...configs.map(
-                    (e) => ListTile(
-                      title: Text(e.currentContext ?? 'unknown'),
-                    ),
+                  if (configs != null)
+                    ...configs.map(
+                      (e) => ListTile(
+                        title: Text(e.currentContext ?? 'unknown'),
+                      ),
                   ),
                   ElevatedButton.icon(
                     onPressed: () async {
@@ -79,8 +54,13 @@ class AppConsumer extends ConsumerWidget {
                           MaterialPageRoute(
                             builder: (context) => const AddConfigForm(),
                           ));
-                      ref.read(currentConfigIndexProvider.notifier).state += 1;
-                      ref.read(configsProvider.notifier).state.add(config);
+                      ref.watch(currentConfigIndexProvider.notifier).state += 1;
+                      if (config != null) {
+                        final c = (configs == null) ? [config] : configs;
+                        ref
+                            .watch(configsProvider.notifier)
+                            .state = c;
+                      }
                     },
                     icon: const Icon(Icons.add),
                     label: const Text('Add Cluster'),
