@@ -27,7 +27,7 @@ saveConfigs(List<Config>? state) async {
 
   final configs = Configs(configs: state);
   final yaml = YamlWriter().write(configs);
-  File(configsPath).writeAsStringSync(yaml);
+  var _ = File(configsPath).writeAsStringSync(yaml);
 }
 
 Future<List<Config>?> loadConfigs() async {
