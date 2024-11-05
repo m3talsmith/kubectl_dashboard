@@ -44,10 +44,16 @@ class AppConsumer extends ConsumerWidget {
               children: [
                 if (configs != null)
                   ...configs.map((e) {
+                    final index = configs.indexOf(e);
+                    onTap() {
+                      ref.watch(currentConfigIndexProvider.notifier).state = index;
+                    }
+
                     if (e == currentConfig!) {
                       return Padding(
                         padding: const EdgeInsets.only(right: 8.0),
                         child: ListTile(
+                          onTap: onTap,
                           title: Text(e.currentContext ?? 'unknown'),
                           shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.only(
@@ -62,6 +68,7 @@ class AppConsumer extends ConsumerWidget {
                       );
                     }
                     return ListTile(
+                      onTap: onTap,
                         title: Text(e.currentContext ?? 'unknown'),
                     );
                   }),
