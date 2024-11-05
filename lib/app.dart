@@ -4,6 +4,8 @@ import 'package:kubectl_dashboard/app/config.dart';
 import 'package:kubectl_dashboard/app/config/add_config.dart';
 import 'package:kubectl_dashboard/app/config/config_tile_item.dart';
 
+import 'app/config/providers.dart';
+
 class App extends StatelessWidget {
   const App({super.key});
 
@@ -12,12 +14,6 @@ class App extends StatelessWidget {
     return const AppConsumer();
   }
 }
-
-final configsProvider = StateProvider<List<Config>?>((ref) => null);
-final currentConfigIndexProvider = StateProvider((ref) {
-  final configs = ref.watch(configsProvider);
-  return configs?.indexOf(configs.last) ?? 0;
-});
 
 class AppConsumer extends ConsumerWidget {
   const AppConsumer({super.key});
