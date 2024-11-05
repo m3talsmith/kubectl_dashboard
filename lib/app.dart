@@ -23,6 +23,9 @@ class AppConsumer extends ConsumerWidget {
     final configs = ref.watch(configsProvider);
     ref.watch(configsProvider.notifier).addListener(saveConfigs);
 
+    final currentConfigIndex = ref.watch(currentConfigIndexProvider);
+    final Config? currentConfig = configs?[currentConfigIndex];
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Kubectl Dashboard',
@@ -40,27 +43,48 @@ class AppConsumer extends ConsumerWidget {
             child: ListView(
               children: [
                 if (configs != null)
-                  ...configs.map(
-                    (e) => ListTile(
-                      title: Text(e.currentContext ?? 'unknown'),
-                    ),
-                  ),
-                ElevatedButton.icon(
-                  onPressed: () async {
-                    final Config? config =
-                        await Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const AddConfigForm(),
-                    ));
-                    if (config != null) {
-                      final c = (configs == null) ? [config] : configs
-                        ..add(config);
-                      ref.watch(currentConfigIndexProvider.notifier).state += 1;
-                      ref.watch(configsProvider.notifier).state = c;
-                      ref.invalidate(configsProvider);
+                  ...configs.map((e) {
+                    if (e == currentConfig!) {
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: ListTile(
+                          title: Text(e.currentContext ?? 'unknown'),
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(16),
+                              bottomRight: Radius.circular(16),
+                            ),
+                          ),
+                          tileColor: Colors.deepPurple,
+                          textColor: Colors.white,
+                          trailing: const Icon(Icons.star_rounded, color: Colors.white,),
+                        ),
+                      );
                     }
-                  },
-                  icon: const Icon(Icons.add),
-                  label: const Text('Add Cluster'),
+                    return ListTile(
+                        title: Text(e.currentContext ?? 'unknown'),
+                    );
+                  }),
+                const Divider(),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton.icon(
+                    onPressed: () async {
+                      final Config? config =
+                          await Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const AddConfigForm(),
+                      ));
+                      if (config != null) {
+                        final c = (configs == null) ? [config] : configs
+                          ..add(config);
+                        ref.watch(currentConfigIndexProvider.notifier).state += 1;
+                        ref.watch(configsProvider.notifier).state = c;
+                        ref.invalidate(configsProvider);
+                      }
+                    },
+                    icon: const Icon(Icons.add),
+                    label: const Text('Add Cluster'),
+                  ),
                 ),
               ],
             ),
