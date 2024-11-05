@@ -1,10 +1,34 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:kubeconfig/kubeconfig.dart';
 import 'package:yaml/yaml.dart';
 import 'package:yaml_writer/yaml_writer.dart';
+import 'package:yaml/yaml.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+
+dynamic _convertNode(dynamic v) {
+  if (v is YamlMap) {
+    return _fromYamlMap(v);
+  }
+  else if (v is YamlList) {
+    var list = <dynamic>[];
+    for (var e in v) { list.add(_convertNode(e)); }
+    return list;
+  }
+  else {
+    return v;
+  }
+}
+
+Map<String, dynamic> _fromYamlMap(YamlMap nodes) {
+  var map = <String, dynamic>{};
+  nodes.forEach((k, v) {
+    map[k] = _convertNode(v);
+  });
+  return map;
+}
 
 bool valid(String data) {
   if (data.isNotEmpty) {
@@ -31,11 +55,16 @@ saveConfigs(List<Config>? state) async {
 }
 
 Future<List<Config>?> loadConfigs() async {
-  final rootPath = await getApplicationSupportDirectory();
-  final configsPath = join(rootPath.path, "configs.yaml");
-  final buff = File(configsPath).readAsStringSync();
-  final configs = Configs.fromYaml(buff).toList();
-  return configs.isNotEmpty ? configs : null;
+  try {
+    final rootPath = await getApplicationSupportDirectory();
+    final configsPath = join(rootPath.path, "configs.yaml");
+    final buff = File(configsPath).readAsStringSync();
+    final configs = Configs.fromYaml(buff).toList();
+    return configs.isNotEmpty ? configs : null;
+  } catch (_) {
+    return null;
+  }
+
 }
 
 class Configs {
@@ -110,7 +139,8 @@ class Config {
   static Config? fromYaml(String data) {
     if (data.isEmpty) return null;
     if (!valid(data)) return null;
-    return Config.fromMap(loadYaml(data));
+    final configMapping = _fromYamlMap(loadYaml(data));
+    return Config.fromMap(configMapping);
   }
 
   Map<String, dynamic> asMap() => {

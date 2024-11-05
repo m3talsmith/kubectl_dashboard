@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kubectl_dashboard/app/config.dart';
@@ -22,6 +24,11 @@ class AppConsumer extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final configs = ref.watch(configsProvider);
     ref.watch(configsProvider.notifier).addListener(saveConfigs);
+    ref.watch(configsProvider.notifier).addListener(
+      (state) {
+        log('configs: $configs');
+      },
+    );
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -30,45 +37,43 @@ class AppConsumer extends ConsumerWidget {
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: Builder(
-        builder: (context) {
-          return Scaffold(
-            appBar: AppBar(
-              title: const Text('Kubectl Dashboard'),
-            ),
-            body: const Text('home'),
-            endDrawer: Drawer(
-              child: ListView(
-                children: [
-                  if (configs != null)
-                    ...configs.map(
-                      (e) => ListTile(
-                        title: Text(e.currentContext ?? 'unknown'),
-                      ),
+      home: Builder(builder: (context) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Kubectl Dashboard'),
+          ),
+          body: const Text('home'),
+          endDrawer: Drawer(
+            child: ListView(
+              children: [
+                if (configs != null)
+                  ...configs.map(
+                    (e) => ListTile(
+                      title: Text(e.currentContext ?? 'unknown'),
+                    ),
                   ),
-                  ElevatedButton.icon(
-                    onPressed: () async {
-                      final Config? config = await Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const AddConfigForm(),
-                          ));
+                ElevatedButton.icon(
+                  onPressed: () async {
+                    final Config? config =
+                        await Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const AddConfigForm(),
+                    ));
+                    if (config != null) {
+                      final c = (configs == null) ? [config] : configs
+                        ..add(config);
                       ref.watch(currentConfigIndexProvider.notifier).state += 1;
-                      if (config != null) {
-                        final c = (configs == null) ? [config] : configs;
-                        ref
-                            .watch(configsProvider.notifier)
-                            .state = c;
-                      }
-                    },
-                    icon: const Icon(Icons.add),
-                    label: const Text('Add Cluster'),
-                  ),
-                ],
-              ),
+                      ref.watch(configsProvider.notifier).state = c;
+                      ref.invalidate(configsProvider);
+                    }
+                  },
+                  icon: const Icon(Icons.add),
+                  label: const Text('Add Cluster'),
+                ),
+              ],
             ),
-          );
-        }
-      ),
+          ),
+        );
+      }),
     );
   }
 }

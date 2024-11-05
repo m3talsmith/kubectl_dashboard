@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:kubeconfig/kubeconfig.dart';
 import 'package:kubectl_dashboard/app/config.dart';
@@ -14,8 +16,9 @@ class _AddConfigFormState extends State<AddConfigForm> {
 
   bool valid() {
     try {
-      return Kubeconfig.fromYaml(data).validate().code == ValidationCode.valid;
-    } catch (_) {
+      final code = Kubeconfig.fromYaml(data).validate().code;
+      return code == ValidationCode.valid;
+    } catch (e) {
       return false;
     }
   }
@@ -23,7 +26,7 @@ class _AddConfigFormState extends State<AddConfigForm> {
   submit(BuildContext context) {
     if (valid()) {
       final config = Config.fromYaml(data);
-      Navigator.pop(context, config);
+      Navigator.of(context).pop(config);
     }
   }
 
