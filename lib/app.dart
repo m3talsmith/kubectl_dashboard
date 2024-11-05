@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kubectl_dashboard/app/config.dart';
 import 'package:kubectl_dashboard/app/config/add_config.dart';
+import 'package:kubectl_dashboard/app/config/config_tile_item.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -12,8 +13,11 @@ class App extends StatelessWidget {
   }
 }
 
-final currentConfigIndexProvider = StateProvider((ref) => 0);
 final configsProvider = StateProvider<List<Config>?>((ref) => null);
+final currentConfigIndexProvider = StateProvider((ref) {
+  final configs = ref.watch(configsProvider);
+  return configs?.indexOf(configs.last) ?? 0;
+});
 
 class AppConsumer extends ConsumerWidget {
   const AppConsumer({super.key});
@@ -45,31 +49,17 @@ class AppConsumer extends ConsumerWidget {
                 if (configs != null)
                   ...configs.map((e) {
                     final index = configs.indexOf(e);
+
                     onTap() {
-                      ref.watch(currentConfigIndexProvider.notifier).state = index;
+                      ref.watch(currentConfigIndexProvider.notifier).state =
+                          index;
+                      Navigator.of(context).pop();
                     }
 
-                    if (e == currentConfig!) {
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: ListTile(
-                          onTap: onTap,
-                          title: Text(e.currentContext ?? 'unknown'),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(16),
-                              bottomRight: Radius.circular(16),
-                            ),
-                          ),
-                          tileColor: Colors.deepPurple,
-                          textColor: Colors.white,
-                          trailing: const Icon(Icons.star_rounded, color: Colors.white,),
-                        ),
-                      );
-                    }
-                    return ListTile(
+                    return ConfigListTile(
+                      config: e,
+                      selected: currentConfig,
                       onTap: onTap,
-                        title: Text(e.currentContext ?? 'unknown'),
                     );
                   }),
                 const Divider(),
@@ -84,7 +74,9 @@ class AppConsumer extends ConsumerWidget {
                       if (config != null) {
                         final c = (configs == null) ? [config] : configs
                           ..add(config);
-                        ref.watch(currentConfigIndexProvider.notifier).state += 1;
+                        final index = c.length - 1;
+                        ref.watch(currentConfigIndexProvider.notifier).state =
+                            index;
                         ref.watch(configsProvider.notifier).state = c;
                         ref.invalidate(configsProvider);
                       }
