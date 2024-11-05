@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:kubeconfig/kubeconfig.dart';
 import 'package:kubectl_dashboard/app/config.dart';
@@ -55,9 +53,11 @@ class _AddConfigFormState extends State<AddConfigForm> {
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: ElevatedButton(onPressed: () {
-                submit(context);
-              }, child: const Text('Add Config')),
+              child: ElevatedButton(
+                  onPressed: () {
+                    submit(context);
+                  },
+                  child: const Text('Add Config')),
             )
           ],
         ),

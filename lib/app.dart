@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kubectl_dashboard/app/config.dart';
@@ -24,11 +22,6 @@ class AppConsumer extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final configs = ref.watch(configsProvider);
     ref.watch(configsProvider.notifier).addListener(saveConfigs);
-    ref.watch(configsProvider.notifier).addListener(
-      (state) {
-        log('configs: $configs');
-      },
-    );
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,

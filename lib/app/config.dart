@@ -1,23 +1,21 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:kubeconfig/kubeconfig.dart';
 import 'package:yaml/yaml.dart';
 import 'package:yaml_writer/yaml_writer.dart';
-import 'package:yaml/yaml.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 dynamic _convertNode(dynamic v) {
   if (v is YamlMap) {
     return _fromYamlMap(v);
-  }
-  else if (v is YamlList) {
+  } else if (v is YamlList) {
     var list = <dynamic>[];
-    for (var e in v) { list.add(_convertNode(e)); }
+    for (var e in v) {
+      list.add(_convertNode(e));
+    }
     return list;
-  }
-  else {
+  } else {
     return v;
   }
 }
@@ -64,11 +62,10 @@ Future<List<Config>?> loadConfigs() async {
   } catch (_) {
     return null;
   }
-
 }
 
 class Configs {
-  Configs({List<Config> configs=const []}) : _configs = configs;
+  Configs({List<Config> configs = const []}) : _configs = configs;
 
   final List<Config> _configs;
 
@@ -145,21 +142,27 @@ class Config {
 
   Map<String, dynamic> asMap() => {
         "apiVersion": apiVersion,
-        "clusters": clusters.map(
-          (e) => e.asMap(),
-        ).toList(),
-        "contexts": contexts.map(
-          (e) => e.asMap(),
-        ).toList(),
+        "clusters": clusters
+            .map(
+              (e) => e.asMap(),
+            )
+            .toList(),
+        "contexts": contexts
+            .map(
+              (e) => e.asMap(),
+            )
+            .toList(),
         "current-context":
             (currentContext != null && currentContext!.isNotEmpty)
                 ? currentContext
                 : contexts.first.name,
         "kind": kind,
         "preferences": preferences,
-        "users": users.map(
-          (e) => e.asMap(),
-        ).toList(),
+        "users": users
+            .map(
+              (e) => e.asMap(),
+            )
+            .toList(),
       };
 }
 
