@@ -6,17 +6,8 @@ import 'package:kubectl_dashboard/app/config/config_tile_item.dart';
 
 import 'app/config/providers.dart';
 
-class App extends StatelessWidget {
+class App extends ConsumerWidget {
   const App({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const AppConsumer();
-  }
-}
-
-class AppConsumer extends ConsumerWidget {
-  const AppConsumer({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
