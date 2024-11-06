@@ -53,7 +53,7 @@ class AppDrawer extends ConsumerWidget {
                 onPressed: () async {
                   final Config? config =
                   await Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const AddConfigForm(),
+                    builder: (context) => const AddConfig(),
                   ));
                   if (config != null) {
                     final c = (configs == null) ? [config] : configs;
