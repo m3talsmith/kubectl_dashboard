@@ -15,53 +15,64 @@ class AppDrawer extends ConsumerWidget {
     ref.watch(configsProvider.notifier).addListener(saveConfigs);
 
     final currentConfigIndex = ref.watch(currentConfigIndexProvider);
-    final Config? currentConfig = configs?[currentConfigIndex];
+    final Config? currentConfig = (configs != null && configs.isNotEmpty) ? configs[currentConfigIndex] : null;
 
     return Drawer(
-      child: ListView(
+      child: Column(
         children: [
-          if (configs != null)
-            ...configs.map((e) {
-              final index = configs.indexOf(e);
-
-              onTap() {
-                ref.watch(currentConfigIndexProvider.notifier).state =
-                    index;
-                Navigator.of(context).pop();
-              }
-
-              return ConfigListTile(
-                config: e,
-                selected: currentConfig,
-                onTap: onTap,
-              );
-            }),
-          const Divider(),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton.icon(
-              onPressed: () async {
-                final Config? config =
-                await Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const AddConfigForm(),
-                ));
-                if (config != null) {
-                  final c = (configs == null) ? [config] : configs
-                    ..add(config);
-                  final index = c.length - 1;
-                  ref.watch(currentConfigIndexProvider.notifier).state =
-                      index;
-                  ref.watch(configsProvider.notifier).state = c;
-                  ref.invalidate(configsProvider);
-                }
-              },
-              icon: const Icon(Icons.add),
-              label: const Text('Add Cluster'),
+          const DrawerHeader(child: Text('Current Clusters')),
+          Expanded(
+            child: ListView(
+              children: [
+                if (configs != null)
+                  ...configs.map((e) {
+                    final index = configs.indexOf(e);
+            
+                    onTap() {
+                      ref.watch(currentConfigIndexProvider.notifier).state =
+                          index;
+                      Navigator.of(context).pop();
+                    }
+            
+                    return ConfigListTile(
+                      config: e,
+                      selected: currentConfig,
+                      onTap: onTap,
+                    );
+                  }),
+                
+              ],
+            ),
+          ),
+          Container(
+            color: Theme.of(context).primaryColor,
+            width: MediaQuery.of(context).size.width,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: FilledButton.icon(
+                onPressed: () async {
+                  final Config? config =
+                  await Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const AddConfigForm(),
+                  ));
+                  if (config != null) {
+                    final c = (configs == null) ? [config] : configs;
+                    if (!c.contains(config)) {
+                      c.add(config);
+                    }
+                    final index = c.length - 1;
+                    ref.watch(currentConfigIndexProvider.notifier).state =
+                        index;
+                    ref.watch(configsProvider.notifier).state = c;
+                  }
+                },
+                icon: const Icon(Icons.add),
+                label: const Text('Add Cluster'),
+              ),
             ),
           ),
         ],
       ),
     );
   }
-
 }

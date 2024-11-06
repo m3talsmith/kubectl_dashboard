@@ -16,8 +16,11 @@ void main() async {
     isFullscreen = await DesktopWindow.getFullScreen();
     if (!isFullscreen) {
       final view = WidgetsBinding.instance.platformDispatcher.views.first;
-      await DesktopWindow.setWindowSize(
-        Size(view.physicalSize.width / 2.5, view.physicalSize.height / 2.5),
+      await DesktopWindow.setMaxWindowSize(
+        Size(view.physicalSize.width, view.physicalSize.height),
+      );
+      await DesktopWindow.setMinWindowSize(
+        Size(view.physicalSize.width / 2, view.physicalSize.height / 2),
       );
     }
   }
