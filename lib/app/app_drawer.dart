@@ -20,7 +20,7 @@ class AppDrawer extends ConsumerWidget {
     return Drawer(
       child: Column(
         children: [
-          const DrawerHeader(child: Text('Current Clusters')),
+          const Padding(padding: EdgeInsets.all(8)),
           Expanded(
             child: ListView(
               children: [
