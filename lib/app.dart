@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kubectl_dashboard/app/app_drawer.dart';
 import 'package:kubectl_dashboard/app/preferences.dart';
-import 'package:kubectl_dashboard/window_providers.dart';
+import 'package:kubectl_dashboard/window.dart';
 import 'package:window_manager/window_manager.dart';
 
 class App extends ConsumerWidget {
