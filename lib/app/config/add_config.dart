@@ -31,6 +31,10 @@ class _AddConfigFormState extends State<AddConfigForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Add Kubeconf'),
+        centerTitle: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(8),
         child: Column(

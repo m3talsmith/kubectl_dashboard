@@ -23,6 +23,7 @@ class App extends ConsumerWidget {
 
         return Scaffold(
           appBar: AppBar(
+            centerTitle: true,
             title: const Text('Kubectl Dashboard'),
             actions: [
               if (Platform.isLinux || Platform.isMacOS || Platform.isWindows)
