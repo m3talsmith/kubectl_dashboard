@@ -42,7 +42,8 @@ dependencies:
   path_provider: ^2.1.5
   yaml: ^3.1.2
   yaml_writer: ^2.0.1
-  desktop_window: ^0.4.2
+  shared_preferences: ^2.3.2
+  window_manager: ^0.4.3
 
 dev_dependencies:
   flutter_test:

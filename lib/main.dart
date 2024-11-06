@@ -1,28 +1,33 @@
 import 'dart:io';
 
-import 'package:desktop_window/desktop_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kubectl_dashboard/app.dart';
 import 'package:kubectl_dashboard/app/config.dart';
 import 'package:kubectl_dashboard/app/config/providers.dart';
+import 'package:kubectl_dashboard/app/preferences.dart';
 import 'package:kubectl_dashboard/window_providers.dart';
+import 'package:window_manager/window_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  var isFullscreen = false;
+
+  final preferences = await loadPreferences();
+  final isFullscreen = preferences.fullscreen;
 
   if (Platform.isLinux || Platform.isMacOS || Platform.isWindows) {
-    isFullscreen = await DesktopWindow.getFullScreen();
-    if (!isFullscreen) {
-      final view = WidgetsBinding.instance.platformDispatcher.views.first;
-      await DesktopWindow.setMaxWindowSize(
-        Size(view.physicalSize.width, view.physicalSize.height),
-      );
-      await DesktopWindow.setMinWindowSize(
-        Size(view.physicalSize.width / 3, view.physicalSize.height / 3),
-      );
-    }
+    await windowManager.ensureInitialized();
+    final windowSize = preferences.windowSize;
+
+    var windowOptions = WindowOptions(
+        center: true,
+        fullScreen: isFullscreen,
+        size: windowSize);
+
+    windowManager.waitUntilReadyToShow(windowOptions, () async {
+      await windowManager.show();
+      await windowManager.focus();
+    });
   }
 
   final loadedConfigs = await loadConfigs();
@@ -30,12 +35,9 @@ void main() async {
   runApp(
     ProviderScope(
       overrides: [
-        fullscreenProvider.overrideWith(
-          (ref) => isFullscreen,
-        ),
-        configsProvider.overrideWith(
-          (ref) => loadedConfigs,
-        ),
+        fullscreenProvider.overrideWith((ref) => isFullscreen),
+        preferencesProvider.overrideWith((ref) => preferences),
+        configsProvider.overrideWith((ref) => loadedConfigs),
       ],
       child: const App(),
     ),
