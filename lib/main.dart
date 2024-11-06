@@ -20,7 +20,7 @@ void main() async {
         Size(view.physicalSize.width, view.physicalSize.height),
       );
       await DesktopWindow.setMinWindowSize(
-        Size(view.physicalSize.width / 2, view.physicalSize.height / 2),
+        Size(view.physicalSize.width / 3, view.physicalSize.height / 3),
       );
     }
   }
