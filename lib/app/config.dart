@@ -41,7 +41,7 @@ bool valid(String data) {
   return false;
 }
 
-saveConfigs(List<Config>? state) async {
+Future<void> saveConfigs(List<Config>? state) async {
   if (state == null) return;
 
   final rootPath = await getApplicationSupportDirectory();

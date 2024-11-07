@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kubectl_dashboard/app/config/edit_config.dart';
 import 'package:kubectl_dashboard/app/config/providers.dart';
 
 import '../config.dart';
 
 class ConfigListTile extends ConsumerWidget {
-  const ConfigListTile(
-      {required this.index, this.selected, this.onTap, super.key});
+  const ConfigListTile({
+    required this.index,
+    this.selected,
+    this.onTap,
+    this.onEdit,
+    this.onDelete,
+    super.key,
+  });
 
   final int index;
   final int? selected;
   final Function()? onTap;
+  final Function()? onEdit;
+  final Function()? onDelete;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -33,6 +40,8 @@ class ConfigListTile extends ConsumerWidget {
           iconColor: Theme.of(context).canvasColor,
           leading: ConfigListTileMenu(
             config: config,
+            onEdit: onEdit,
+            onDelete: onDelete,
           ),
           trailing: const Icon(
             Icons.star_rounded,
@@ -47,6 +56,8 @@ class ConfigListTile extends ConsumerWidget {
         title: Text(config.currentContext ?? 'unknown'),
         leading: ConfigListTileMenu(
           config: config,
+          onEdit: onEdit,
+          onDelete: onDelete,
         ),
       ),
     );
@@ -54,9 +65,16 @@ class ConfigListTile extends ConsumerWidget {
 }
 
 class ConfigListTileMenu extends ConsumerWidget {
-  const ConfigListTileMenu({required this.config, super.key});
+  const ConfigListTileMenu({
+    required this.config,
+    this.onEdit,
+    this.onDelete,
+    super.key,
+  });
 
   final Config config;
+  final Function()? onEdit;
+  final Function()? onDelete;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -64,24 +82,7 @@ class ConfigListTileMenu extends ConsumerWidget {
       itemBuilder: (context) {
         return [
           PopupMenuItem(
-            onTap: () async {
-              final index = ref.watch(configsProvider)!.indexOf(config);
-              final navigator = Navigator.of(context);
-              final Config? editedConfig = await navigator.push(
-                MaterialPageRoute(
-                  builder: (context) => EditConfig(index: index),
-                ),
-              );
-              if (editedConfig != null) {
-                ref.watch(configsProvider.notifier).addListener(saveConfigs);
-                final configs = ref.watch(configsProvider);
-                configs![index] = editedConfig;
-                ref
-                    .watch(configsProvider.notifier)
-                    .state = configs;
-              }
-              navigator.pop();
-            },
+            onTap: onEdit,
             child: const ListTile(
               leading: Icon(
                 Icons.edit_rounded,
@@ -90,17 +91,7 @@ class ConfigListTileMenu extends ConsumerWidget {
             ),
           ),
           PopupMenuItem(
-            onTap: () {
-              ref.watch(configsProvider.notifier).addListener(saveConfigs);
-              final index = ref.watch(configsProvider)!.indexOf(config);
-              ref.watch(configsProvider.notifier).state!.removeAt(index);
-              final configs = ref.watch(configsProvider);
-              ref.watch(currentConfigIndexProvider.notifier).state =
-                  (configs != null && configs.isNotEmpty)
-                      ? configs.indexOf(configs.last)
-                      : -1;
-              ref.invalidate(configsProvider);
-            },
+            onTap: onDelete,
             child: const ListTile(
               leading: Icon(Icons.delete_rounded),
               title: Text('Delete'),
