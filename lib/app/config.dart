@@ -164,6 +164,12 @@ class Config {
             )
             .toList(),
       };
+
+      @override
+      String toString() {
+        final yaml = YamlWriter().write(asMap());
+        return yaml.toString();
+      }
 }
 
 class Cluster {

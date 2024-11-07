@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'config.dart';
 import 'config/add_config.dart';
-import 'config/config_tile_item.dart';
+import 'config/config_list_tile.dart';
 import 'config/providers.dart';
 
 class AppDrawer extends ConsumerWidget {

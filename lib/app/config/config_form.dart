@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:kubeconfig/kubeconfig.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../config.dart';
+
+final dataProvider = StateProvider<String?>((ref) => null);
 
 class ConfigForm extends StatefulWidget {
   const ConfigForm({this.data, super.key});
@@ -13,40 +15,33 @@ class ConfigForm extends StatefulWidget {
 }
 
 class _ConfigFormState extends State<ConfigForm> {
-  late String data;
-
-  bool valid() {
-    try {
-      final code = Kubeconfig.fromYaml(data).validate().code;
-      return code == ValidationCode.valid;
-    } catch (e) {
-      return false;
-    }
-  }
+  String? data;
 
   submit(BuildContext context) {
-    if (valid()) {
-      final config = Config.fromYaml(data);
+    if (data != null && data!.isNotEmpty) {
+      final config = Config.fromYaml(data!);
       Navigator.of(context).pop(config);
     }
   }
 
   @override
-  @override
   void initState() {
     super.initState();
-    data = widget.data ?? '';
+    data = widget.data;
   }
 
   @override
   Widget build(BuildContext context) {
+    final undoController = UndoHistoryController();
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Column(
         children: [
           Expanded(
-            child: TextField(
+            child: TextFormField(
+              undoController: undoController,
               autofocus: true,
+              initialValue: data,
               keyboardType: TextInputType.multiline,
               maxLines: null,
               expands: true,
@@ -54,9 +49,6 @@ class _ConfigFormState extends State<ConfigForm> {
                 setState(() {
                   data = value;
                 });
-              },
-              onSubmitted: (_) {
-                submit(context);
               },
             ),
           ),
@@ -66,10 +58,11 @@ class _ConfigFormState extends State<ConfigForm> {
                 onPressed: () {
                   submit(context);
                 },
-                child: const Text('Add Config')),
+                child: const Text('Save Config')),
           )
         ],
       ),
     );
   }
+
 }

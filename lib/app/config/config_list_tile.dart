@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kubectl_dashboard/app/config/edit_config.dart';
 import 'package:kubectl_dashboard/app/config/providers.dart';
 
 import '../config.dart';
@@ -62,7 +63,24 @@ class ConfigListTileMenu extends ConsumerWidget {
       itemBuilder: (context) {
         return [
           PopupMenuItem(
-            onTap: () {},
+            onTap: () async {
+              final index = ref.watch(configsProvider)!.indexOf(config);
+              final navigator = Navigator.of(context);
+              final Config? editedConfig = await navigator.push(
+                MaterialPageRoute(
+                  builder: (context) => EditConfig(index: index),
+                ),
+              );
+              if (editedConfig != null) {
+                ref.watch(configsProvider.notifier).addListener(saveConfigs);
+                final configs = ref.watch(configsProvider);
+                configs![index] = editedConfig;
+                ref
+                    .watch(configsProvider.notifier)
+                    .state = configs;
+              }
+              navigator.pop();
+            },
             child: const ListTile(
               leading: Icon(
                 Icons.edit_rounded,
@@ -76,9 +94,9 @@ class ConfigListTileMenu extends ConsumerWidget {
               ref.watch(configsProvider.notifier).state!.removeAt(index);
               final configs = ref.watch(configsProvider);
               ref.watch(currentConfigIndexProvider.notifier).state =
-              (configs != null && configs.isNotEmpty)
-                  ? configs.indexOf(configs.last)
-                  : -1 ;
+                  (configs != null && configs.isNotEmpty)
+                      ? configs.indexOf(configs.last)
+                      : -1;
             },
             child: const ListTile(
               leading: Icon(Icons.delete_rounded),
