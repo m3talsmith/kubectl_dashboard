@@ -16,7 +16,7 @@ class EditConfig extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Kubeconf'),
+        title: Text('Edit ${config.currentContext}'),
         centerTitle: true,
       ),
       body: ConfigForm(data: data,),
