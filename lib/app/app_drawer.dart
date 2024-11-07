@@ -12,8 +12,6 @@ class AppDrawer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final configs = ref.watch(configsProvider);
-    ref.watch(configsProvider.notifier).addListener(saveConfigs);
-
     final currentConfigIndex = ref.watch(currentConfigIndexProvider);
     final Config? currentConfig = (configs != null && configs.isNotEmpty) ? configs[currentConfigIndex] : null;
 
@@ -27,7 +25,7 @@ class AppDrawer extends ConsumerWidget {
                 if (configs != null)
                   ...configs.map((e) {
                     final index = configs.indexOf(e);
-            
+                    final selected = (currentConfig != null) ? configs.indexOf(currentConfig) : index;
                     onTap() {
                       ref.watch(currentConfigIndexProvider.notifier).state =
                           index;
@@ -35,8 +33,8 @@ class AppDrawer extends ConsumerWidget {
                     }
             
                     return ConfigListTile(
-                      config: e,
-                      selected: currentConfig,
+                      index: index,
+                      selected: selected,
                       onTap: onTap,
                     );
                   }),
@@ -51,6 +49,7 @@ class AppDrawer extends ConsumerWidget {
               padding: const EdgeInsets.all(8.0),
               child: FilledButton.icon(
                 onPressed: () async {
+                  ref.watch(configsProvider.notifier).addListener(saveConfigs);
                   final Config? config =
                   await Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => const AddConfig(),

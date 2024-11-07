@@ -5,17 +5,18 @@ import 'package:kubectl_dashboard/app/config/providers.dart';
 
 import '../config.dart';
 
-class ConfigListTile extends StatelessWidget {
+class ConfigListTile extends ConsumerWidget {
   const ConfigListTile(
-      {required this.config, this.selected, this.onTap, super.key});
+      {required this.index, this.selected, this.onTap, super.key});
 
-  final Config config;
-  final Config? selected;
+  final int index;
+  final int? selected;
   final Function()? onTap;
 
   @override
-  Widget build(BuildContext context) {
-    if (selected != null && config == selected!) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final config = ref.watch(configsProvider)![index];
+    if (selected != null && index == selected!) {
       return Padding(
         padding: const EdgeInsets.only(right: 16.0),
         child: ListTile(
@@ -90,6 +91,7 @@ class ConfigListTileMenu extends ConsumerWidget {
           ),
           PopupMenuItem(
             onTap: () {
+              ref.watch(configsProvider.notifier).addListener(saveConfigs);
               final index = ref.watch(configsProvider)!.indexOf(config);
               ref.watch(configsProvider.notifier).state!.removeAt(index);
               final configs = ref.watch(configsProvider);
@@ -97,6 +99,7 @@ class ConfigListTileMenu extends ConsumerWidget {
                   (configs != null && configs.isNotEmpty)
                       ? configs.indexOf(configs.last)
                       : -1;
+              ref.invalidate(configsProvider);
             },
             child: const ListTile(
               leading: Icon(Icons.delete_rounded),
