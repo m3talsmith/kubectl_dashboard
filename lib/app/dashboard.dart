@@ -1,9 +1,13 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kubectl_dashboard/app/auth.dart';
 import 'package:kubectl_dashboard/app/config.dart';
 import 'package:kubectl_dashboard/app/config/providers.dart';
 import 'package:kubectl_dashboard/app/dashboard/dashboard_list_tile.dart';
+
+import 'dashboard/resources/pods.dart';
 
 class DashboardView extends ConsumerStatefulWidget {
   const DashboardView({required this.config, super.key});
@@ -16,30 +20,43 @@ class DashboardView extends ConsumerStatefulWidget {
 }
 
 class _DashboardViewState extends ConsumerState<DashboardView> {
+  late int _index;
 
-  int _index = 0;
-
-  final List<Map<String, dynamic>> _tabs = [
-    {
-      'title': 'Deployments',
-      'onTap': () {}
-    },
-    {
-      'title': 'Pods',
-      'onTap': () {}
-    },
-    {
-      'title': 'Ingresses',
-      'onTap': () {}
-    },
-    {
-      'title': 'Certificates',
-      'onTap': () {}
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _index = 0;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final List<Map<String, dynamic>> tabs = [
+      {
+        'title': 'Pods',
+        'onTap': () async {
+          final pods = await Pod.list(ref);
+        }
+      },
+      {
+        'title': 'Services',
+        'onTap': () {}
+      },
+      {
+        'title': 'Deployments',
+        'onTap': () {}
+      },
+      {
+        'title': 'Ingresses',
+        'onTap': () {}
+      },
+      {
+        'title': 'Certificates',
+        'onTap': () {}
+      },
+    ];
+
     final config = ref.watch(currentConfigProvider);
     final authentication = ref.watch(authenticationProvider);
     final size = MediaQuery.of(context).size;
@@ -52,10 +69,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
           width: 200,
           child: ListView(
             shrinkWrap: true,
-            children: _tabs.map((e) {
-              final i = _tabs.indexOf(e);
+            children: tabs.map((e) {
+              final i = tabs.indexOf(e);
               final selected = i == _index;
-              return DashboardListTile(
+              final tile = DashboardListTile(
                 title: Text(e['title']),
                 selected: selected,
                 onTap: () {
@@ -67,6 +84,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                   }
                 },
               );
+              if (selected) {
+                tile.onTap!();
+              }
+              return tile;
             },).toList(),
           ),
         ),

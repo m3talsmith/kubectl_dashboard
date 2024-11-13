@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:kubectl_dashboard/app/preferences.dart' as pref;
@@ -11,9 +12,9 @@ class Window {
 
   late pref.Preferences _preferences;
 
-  get preferences => _preferences;
-  get fullscreen => _preferences.fullscreen;
-  get size => _preferences.windowSize;
+  pref.Preferences get preferences => _preferences;
+  bool get fullscreen => _preferences.fullscreen;
+  Size? get size => _preferences.windowSize;
 
   ensureInitialized() async {
     _preferences = await pref.loadPreferences();
