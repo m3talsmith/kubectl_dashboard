@@ -10,18 +10,15 @@ import 'package:kubectl_dashboard/window.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'app/config.dart';
+import 'app/config/add_config.dart';
 
 class App extends ConsumerWidget {
   const App({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final configIndex = ref.watch(currentConfigIndexProvider);
+    final config = ref.watch(currentConfigProvider);
     final configs = ref.watch(configsProvider);
-    Config? currentConfig = null;
-    if (configIndex > -1 && configs != null && configs.isNotEmpty) {
-      currentConfig = configs[configIndex];
-    }
 
     return NotificationListener<SizeChangedLayoutNotification>(
       onNotification: (notification) {
@@ -30,10 +27,7 @@ class App extends ConsumerWidget {
         ref.watch(preferencesProvider.notifier).state?.fullscreen = fullscreen;
 
         if (!fullscreen) {
-          ref
-              .watch(preferencesProvider.notifier)
-              .state
-              ?.windowSize = size;
+          ref.watch(preferencesProvider.notifier).state?.windowSize = size;
         }
 
         return true;
@@ -48,19 +42,23 @@ class App extends ConsumerWidget {
           ),
           home: Builder(builder: (context) {
             final fullscreen = ref.watch(fullscreenProvider);
+            final size = MediaQuery.of(context).size;
 
             return Scaffold(
               appBar: AppBar(
                 centerTitle: true,
                 title: const Text('Kubectl Dashboard'),
                 actions: [
-                  if (Platform.isLinux || Platform.isMacOS || Platform.isWindows)
+                  if (Platform.isLinux ||
+                      Platform.isMacOS ||
+                      Platform.isWindows)
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: IconButton(
                           onPressed: () {
                             windowManager.setFullScreen(!fullscreen);
-                            ref.watch(fullscreenProvider.notifier).state = !fullscreen;
+                            ref.watch(fullscreenProvider.notifier).state =
+                                !fullscreen;
                           },
                           icon: Icon(fullscreen
                               ? Icons.fullscreen_exit_rounded
@@ -68,11 +66,60 @@ class App extends ConsumerWidget {
                     )
                 ],
               ),
-              body: (currentConfig != null)
-                  ? DashboardView(config: currentConfig)
-                  : const Center(
-                child: Text('Please select a config from the drawer or add a new one.'),
-              ),
+              body: (config != null)
+                  ? DashboardView(config: config)
+                  : Center(
+                      child: Card(
+                        child: SizedBox(
+                          height: size.height / 3,
+                          width: size.width / 3,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              children: [
+                                const Expanded(
+                                  child: Text(
+                                      'Please select a config from the drawer or add a new one.'),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: FilledButton.icon(
+                                    onPressed: () async {
+                                      ref
+                                          .watch(configsProvider.notifier)
+                                          .addListener(saveConfigs);
+                                      final Config? config =
+                                          await Navigator.of(context)
+                                              .push(MaterialPageRoute(
+                                        builder: (context) => const AddConfig(),
+                                      ));
+                                      if (config != null) {
+                                        final c = (configs == null)
+                                            ? [config]
+                                            : configs;
+                                        if (!c.contains(config)) {
+                                          c.add(config);
+                                        }
+                                        final index = c.length - 1;
+                                        ref
+                                            .watch(currentConfigIndexProvider
+                                                .notifier)
+                                            .state = index;
+                                        ref
+                                            .watch(configsProvider.notifier)
+                                            .state = c;
+                                      }
+                                    },
+                                    icon: const Icon(Icons.add),
+                                    label: const Text('Add Cluster'),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
               drawer: const AppDrawer(),
             );
           }),

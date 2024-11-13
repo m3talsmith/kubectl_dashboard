@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kubectl_dashboard/app/auth.dart';
 import 'package:kubectl_dashboard/app/config.dart';
+import 'package:kubectl_dashboard/app/config/providers.dart';
 import 'package:kubectl_dashboard/app/dashboard/dashboard_list_tile.dart';
 
 class DashboardView extends ConsumerStatefulWidget {
@@ -38,11 +40,14 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
 
   @override
   Widget build(BuildContext context) {
+    final config = ref.watch(currentConfigProvider);
+    final authentication = ref.watch(authenticationProvider);
     final size = MediaQuery.of(context).size;
-    return Row(
+    return (config == null || authentication == null)
+      ? const Center(child: Text('Authenticating...'),)
+      : Row(
       children: [
-        Container(
-          // color: Theme.of(context).primaryColor,
+        SizedBox(
           height: size.height,
           width: 200,
           child: ListView(
@@ -65,7 +70,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             },).toList(),
           ),
         ),
-        Container(
+        SizedBox(
           height: size.height,
           width: size.width-200,
           child: ListView(
