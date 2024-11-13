@@ -17,6 +17,25 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
 
   int _index = 0;
 
+  final List<Map<String, dynamic>> _tabs = [
+    {
+      'title': 'Deployments',
+      'onTap': () {}
+    },
+    {
+      'title': 'Pods',
+      'onTap': () {}
+    },
+    {
+      'title': 'Ingresses',
+      'onTap': () {}
+    },
+    {
+      'title': 'Certificates',
+      'onTap': () {}
+    },
+  ];
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -28,44 +47,22 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
           width: 200,
           child: ListView(
             shrinkWrap: true,
-            children: [
-              DashboardListTile(
-                title: Text('Pods'),
-                selected: _index == 0,
+            children: _tabs.map((e) {
+              final i = _tabs.indexOf(e);
+              final selected = i == _index;
+              return DashboardListTile(
+                title: Text(e['title']),
+                selected: selected,
                 onTap: () {
-                  setState(() {
-                    _index = 0;
-                  });
+                  e['onTap']();
+                  if (!selected) {
+                    setState(() {
+                      _index = i;
+                    });
+                  }
                 },
-              ),
-              DashboardListTile(
-                title: Text('Deployments'),
-                selected: _index == 1,
-                onTap: () {
-                  setState(() {
-                    _index = 1;
-                  });
-                },
-              ),
-              DashboardListTile(
-                title: Text('Ingress'),
-                selected: _index == 2,
-                onTap: () {
-                  setState(() {
-                    _index = 2;
-                  });
-                },
-              ),
-              DashboardListTile(
-                title: Text('Certificates'),
-                selected: _index == 3,
-                onTap: () {
-                  setState(() {
-                    _index = 3;
-                  });
-                },
-              ),
-            ],
+              );
+            },).toList(),
           ),
         ),
         Container(
@@ -73,7 +70,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
           width: size.width-200,
           child: ListView(
             shrinkWrap: true,
-            children: [],
+            // children: [],
           ),
         ),
       ],
