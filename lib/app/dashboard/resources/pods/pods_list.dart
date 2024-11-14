@@ -16,10 +16,13 @@ class PodsList extends ConsumerWidget {
               width: 120,
               height: 120,
               child: Center(
-                child: Column(
-                  children: [
-                    Text(e.name??'unknown')
-                  ],
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Text(e.name??'unknown')
+                    ],
+                  ),
                 ),
               ),
             ),

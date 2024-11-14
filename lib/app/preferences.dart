@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kubectl_dashboard/window.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final preferencesProvider = StateProvider<Preferences?>((ref) => null);
@@ -14,6 +15,7 @@ Future<Preferences> loadPreferences() async {
 enum PreferenceKey {
   fullscreen,
   windowSize,
+  windowPosition,
   currentConfigIndex,
 }
 
@@ -26,6 +28,7 @@ class Preferences {
   final SharedPreferences _sharedPreferences;
   bool _fullscreen = false;
   Size? _windowSize;
+  WindowPosition? _windowPosition;
   int _currentConfigIndex = -1;
 
   refresh() {
@@ -35,6 +38,18 @@ class Preferences {
     if (size != null && size.isNotEmpty) {
       final sizeMap = jsonDecode(size);
       _windowSize = Size(sizeMap['width'], sizeMap['height']);
+    }
+    final position =
+        _sharedPreferences.getString(PreferenceKey.windowPosition.name);
+    if (position != null && position.isNotEmpty) {
+      final positionMap = jsonDecode(position);
+      _windowPosition = WindowPosition(
+        right: positionMap['right'],
+        left: positionMap['left'],
+        top: positionMap['top'],
+        bottom: positionMap['bottom'],
+        center: positionMap['center'],
+      );
     }
     _currentConfigIndex =
         _sharedPreferences.getInt(PreferenceKey.currentConfigIndex.name) ?? -1;
@@ -56,6 +71,23 @@ class Preferences {
       jsonEncode({
         'width': value.width,
         'height': value.height,
+      }),
+    );
+  }
+
+  WindowPosition? get windowPosition => _windowPosition;
+  set windowPosition(WindowPosition? value) {
+    if (value == null) return;
+
+    _windowPosition = value;
+    _sharedPreferences.setString(
+      PreferenceKey.windowPosition.name,
+      jsonEncode({
+        'left': value.left,
+        'right': value.right,
+        'top': value.top,
+        'bottom': value.bottom,
+        'center': value.center,
       }),
     );
   }
