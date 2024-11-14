@@ -122,7 +122,7 @@ class AuthClient extends BaseClient {
   Future<StreamedResponse> send(BaseRequest request) {
     request.headers['user-agent'] = _userAgent;
     var context = SecurityContext()
-      ..allowLegacyUnsafeRenegotiation=false
+      ..allowLegacyUnsafeRenegotiation=true
       ..setClientAuthoritiesBytes(clientCertificateAuthority ?? [])
       ..useCertificateChainBytes(clientCertificateData ?? [])
       ..usePrivateKeyBytes(clientKeyData ?? []);

@@ -24,23 +24,26 @@ class Pod implements Resource {
     if (auth == null) return [];
     if (auth.cluster == null) return [];
 
+    final pods = <Pod>[];
+
     final uri = Uri.parse('${auth.cluster!.server!}${PodApiEndpoint.list.path}');
-    log('[DEBUG] server: $uri');
 
     final response = await auth.get(uri);
     if (response.statusCode > 299) {
-      log('[PODS] list: status: ${response.statusCode} error: ${response.body}');
+      log('[ERROR] list: status: ${response.statusCode} error: ${response.body}');
       return [];
     }
-    log('[DEBUG] data: ${response.body}');
     final dataMap = json.decode(response.body);
-    log('[DEBUG] dataMap: $dataMap');
-    return [];
+
+    for (var item in dataMap['items']) {
+      final pod = Pod.fromMap(item);
+      pods.add(pod);
+    }
+    return pods;
   }
 
-  Pod.fromJson(String data) {
+  Pod.fromMap(Map<String, dynamic> data) {
     if (data.isEmpty) return;
-    final json = jsonDecode(data);
-    name = json['name'];
+    name = data['metadata']['name'];
   }
 }

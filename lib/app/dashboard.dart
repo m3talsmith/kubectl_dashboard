@@ -6,6 +6,8 @@ import 'package:kubectl_dashboard/app/auth.dart';
 import 'package:kubectl_dashboard/app/config.dart';
 import 'package:kubectl_dashboard/app/config/providers.dart';
 import 'package:kubectl_dashboard/app/dashboard/dashboard_list_tile.dart';
+import 'package:kubectl_dashboard/app/dashboard/resources/pods/pods_list.dart';
+import 'package:kubectl_dashboard/app/dashboard/resources/pods/providers.dart';
 
 import 'dashboard/resources/pods.dart';
 
@@ -37,23 +39,29 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
         'title': 'Pods',
         'onTap': () async {
           final pods = await Pod.list(ref);
-        }
+          ref.watch(podsProvider.notifier).state = pods as List<Pod>;
+        },
+        'widget': PodsList(),
       },
       {
         'title': 'Services',
-        'onTap': () {}
+        'onTap': () {},
+        'widget': const Center(child: Text('Services'),),
       },
       {
         'title': 'Deployments',
-        'onTap': () {}
+        'onTap': () {},
+        'widget': const Center(child: Text('Deployments'),),
       },
       {
         'title': 'Ingresses',
-        'onTap': () {}
+        'onTap': () {},
+        'widget': const Center(child: Text('Ingresses'),),
       },
       {
         'title': 'Certificates',
-        'onTap': () {}
+        'onTap': () {},
+        'widget': const Center(child: Text('Certificates'),),
       },
     ];
 
@@ -94,10 +102,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
         SizedBox(
           height: size.height,
           width: size.width-200,
-          child: ListView(
-            shrinkWrap: true,
-            // children: [],
-          ),
+          child: tabs[_index]['widget'],
         ),
       ],
     );
