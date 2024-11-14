@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -127,7 +126,8 @@ class AuthClient extends BaseClient {
       ..setClientAuthoritiesBytes(clientCertificateAuthority ?? [])
       ..useCertificateChainBytes(clientCertificateData ?? [])
       ..usePrivateKeyBytes(clientKeyData ?? []);
-    var client = HttpClient(context: context);
+    var client = HttpClient(context: context)
+      ..badCertificateCallback=(_, __, ___) => true;
     return IOClient(client).send(request);
   }
 }
