@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kubectl_dashboard/app/dashboard/resources/pods/providers.dart';
 
 class PodsList extends ConsumerWidget {
+  const PodsList({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final pods = ref.watch(podsProvider);

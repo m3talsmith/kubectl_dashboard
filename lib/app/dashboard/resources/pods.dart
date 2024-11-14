@@ -3,7 +3,6 @@ import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kubectl_dashboard/app/auth.dart';
-import 'package:kubectl_dashboard/app/config/providers.dart';
 import 'package:kubectl_dashboard/app/dashboard/resources.dart';
 
 enum PodApiEndpoint {
@@ -18,7 +17,6 @@ class Pod implements Resource {
   @override
   String? name;
 
-  @override
   static Future<List<Resource>> list(WidgetRef ref) async {
     final auth = ref.watch(authenticationProvider);
     if (auth == null) return [];

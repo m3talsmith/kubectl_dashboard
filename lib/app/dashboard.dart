@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kubectl_dashboard/app/auth.dart';
@@ -41,7 +39,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
           final pods = await Pod.list(ref);
           ref.watch(podsProvider.notifier).state = pods as List<Pod>;
         },
-        'widget': PodsList(),
+        'widget': const PodsList(),
       },
       {
         'title': 'Services',
