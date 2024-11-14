@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kubectl_dashboard/app/dashboard/resources/pods/providers.dart';
 
@@ -15,11 +16,13 @@ class PodsList extends ConsumerWidget {
             (e) => SizedBox(
               width: 120,
               height: 120,
-              child: Center(
+              child: Card(
+                margin: const EdgeInsets.all(8.0),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     children: [
+                      const Expanded(child: Icon(Icons.data_usage_rounded)),
                       Text(e.name??'unknown')
                     ],
                   ),

@@ -4,12 +4,13 @@ import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kubectl_dashboard/app/auth.dart';
 import 'package:kubectl_dashboard/app/dashboard/resources.dart';
+import 'package:kubectl_dashboard/app/errors.dart';
 
 enum PodApiEndpoint {
   list(path: '/api/v1/pods');
-  
+
   const PodApiEndpoint({this.path});
-  
+
   final String? path;
 }
 
@@ -24,11 +25,16 @@ class Pod implements Resource {
 
     final pods = <Pod>[];
 
-    final uri = Uri.parse('${auth.cluster!.server!}${PodApiEndpoint.list.path}');
+    final uri =
+        Uri.parse('${auth.cluster!.server!}${PodApiEndpoint.list.path}');
 
     final response = await auth.get(uri);
     if (response.statusCode > 299) {
       log('[ERROR] list: status: ${response.statusCode} error: ${response.body}');
+      ref
+          .watch(errorsProvider.notifier)
+          .state
+          .add(Error(message: response.body, statusCode: response.statusCode));
       return [];
     }
     final dataMap = json.decode(response.body);

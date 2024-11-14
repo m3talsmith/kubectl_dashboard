@@ -7,9 +7,9 @@ final currentConfigIndexProvider = StateProvider((ref) {
   final configs = ref.watch(configsProvider);
   return configs?.indexOf(configs.last) ?? -1;
 });
-final currentConfigProvider = Provider<Config?>((ref) {
-  var configs = ref.watch(configsProvider);
-  var index = ref.watch(currentConfigIndexProvider);
+final currentConfigProvider = StateProvider<Config?>((ref) {
+  final configs = ref.watch(configsProvider);
+  final index = ref.watch(currentConfigIndexProvider);
   if (configs != null && configs.isNotEmpty && index >= 0) {
     return configs[index];
   }

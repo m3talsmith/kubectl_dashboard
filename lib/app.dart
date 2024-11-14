@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kubectl_dashboard/app/app_drawer.dart';
 import 'package:kubectl_dashboard/app/config/providers.dart';
 import 'package:kubectl_dashboard/app/dashboard.dart';
+import 'package:kubectl_dashboard/app/errors.dart';
 import 'package:kubectl_dashboard/app/preferences.dart';
 import 'package:kubectl_dashboard/window.dart';
 import 'package:window_manager/window_manager.dart';
@@ -18,8 +19,8 @@ class App extends ConsumerStatefulWidget {
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _AppState();
 }
+
 class _AppState extends ConsumerState<App> with WindowListener {
-  
   @override
   void initState() {
     super.initState();
@@ -31,7 +32,7 @@ class _AppState extends ConsumerState<App> with WindowListener {
     windowManager.removeListener(this);
     super.dispose();
   }
-  
+
   @override
   onWindowMove() async {
     super.onWindowMove();
@@ -48,7 +49,8 @@ class _AppState extends ConsumerState<App> with WindowListener {
         (currentPosition.top != offset.dx ||
             currentPosition.left != offset.dy)) {
       if (!fullscreen) {
-        ref.watch(preferencesProvider.notifier).state?.windowPosition = position;
+        ref.watch(preferencesProvider.notifier).state?.windowPosition =
+            position;
       }
     } else {
       ref.watch(preferencesProvider.notifier).state?.windowPosition = position;
@@ -72,7 +74,7 @@ class _AppState extends ConsumerState<App> with WindowListener {
   @override
   Widget build(BuildContext context) {
     final config = ref.watch(currentConfigProvider);
-    final configs = ref.watch(configsProvider);
+    final errors = ref.watch(errorsProvider);
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -84,15 +86,19 @@ class _AppState extends ConsumerState<App> with WindowListener {
       home: Builder(builder: (context) {
         final fullscreen = ref.watch(fullscreenProvider);
         final size = MediaQuery.of(context).size;
+        for (var err in errors) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: ErrorView(
+                  error: Error(
+                      message: err.message, statusCode: err.statusCode))));
+        }
 
         return Scaffold(
           appBar: AppBar(
             centerTitle: true,
             title: const Text('Kubectl Dashboard'),
             actions: [
-              if (Platform.isLinux ||
-                  Platform.isMacOS ||
-                  Platform.isWindows)
+              if (Platform.isLinux || Platform.isMacOS || Platform.isWindows)
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: IconButton(
@@ -126,30 +132,9 @@ class _AppState extends ConsumerState<App> with WindowListener {
                               padding: const EdgeInsets.all(8.0),
                               child: FilledButton.icon(
                                 onPressed: () async {
-                                  ref
-                                      .watch(configsProvider.notifier)
-                                      .addListener(saveConfigs);
-                                  final Config? config =
-                                      await Navigator.of(context)
-                                          .push(MaterialPageRoute(
+                                  Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) => const AddConfig(),
                                   ));
-                                  if (config != null) {
-                                    final c = (configs == null)
-                                        ? [config]
-                                        : configs;
-                                    if (!c.contains(config)) {
-                                      c.add(config);
-                                    }
-                                    final index = c.length - 1;
-                                    ref
-                                        .watch(currentConfigIndexProvider
-                                            .notifier)
-                                        .state = index;
-                                    ref
-                                        .watch(configsProvider.notifier)
-                                        .state = c;
-                                  }
                                 },
                                 icon: const Icon(Icons.add),
                                 label: const Text('Add Cluster'),

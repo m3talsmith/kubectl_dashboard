@@ -13,10 +13,7 @@ class AppDrawer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final configs = ref.watch(configsProvider);
-    final currentConfigIndex = ref.watch(currentConfigIndexProvider);
-    final Config? currentConfig = (configs != null && configs.isNotEmpty)
-        ? configs[currentConfigIndex]
-        : null;
+    final currentConfig = ref.watch(currentConfigProvider);
 
     return Drawer(
       child: Column(
@@ -41,19 +38,11 @@ class AppDrawer extends ConsumerWidget {
                     onEdit() async {
                       final index = ref.watch(configsProvider)!.indexOf(e);
                       final navigator = Navigator.of(context);
-                      final Config? editedConfig = await navigator.push(
+                      await navigator.push(
                         MaterialPageRoute(
                           builder: (context) => EditConfig(index: index),
                         ),
                       );
-                      if (editedConfig != null) {
-                        ref
-                            .watch(configsProvider.notifier)
-                            .addListener(saveConfigs);
-                        final configs = ref.watch(configsProvider);
-                        configs![index] = editedConfig;
-                        ref.watch(configsProvider.notifier).state = configs;
-                      }
                       navigator.pop();
                     }
 
@@ -67,10 +56,15 @@ class AppDrawer extends ConsumerWidget {
                           .state!
                           .removeAt(index);
                       final configs = ref.watch(configsProvider);
-                      ref.watch(currentConfigIndexProvider.notifier).state =
-                          (configs != null && configs.isNotEmpty)
-                              ? configs.indexOf(configs.last)
-                              : -1;
+                      final configIndex = (configs != null && configs.isNotEmpty)
+                          ? configs.indexOf(configs.last)
+                          : -1;
+
+                      ref.watch(currentConfigIndexProvider.notifier).state = index;
+
+                      Config? config = (configIndex >= 0) ? configs![configIndex] : null;
+                      ref.watch(currentConfigProvider.notifier).state = config;
+
                       ref.invalidate(configsProvider);
                     }
 
@@ -91,22 +85,10 @@ class AppDrawer extends ConsumerWidget {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: FilledButton.icon(
-                onPressed: () async {
-                  ref.watch(configsProvider.notifier).addListener(saveConfigs);
-                  final Config? config =
-                      await Navigator.of(context).push(MaterialPageRoute(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => const AddConfig(),
                   ));
-                  if (config != null) {
-                    final c = (configs == null) ? [config] : configs;
-                    if (!c.contains(config)) {
-                      c.add(config);
-                    }
-                    final index = c.length - 1;
-                    ref.watch(currentConfigIndexProvider.notifier).state =
-                        index;
-                    ref.watch(configsProvider.notifier).state = c;
-                  }
                 },
                 icon: const Icon(Icons.add),
                 label: const Text('Add Cluster'),
