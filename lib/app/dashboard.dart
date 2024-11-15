@@ -100,7 +100,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
         SizedBox(
           height: size.height,
           width: size.width-200,
-          child: tabs[_index]['widget'],
+          child: tabs[(_index >= 0) ? _index : 0]['widget'],
         ),
       ],
     );

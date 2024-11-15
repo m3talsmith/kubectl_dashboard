@@ -14,22 +14,21 @@ void main() async {
   await window.ensureInitialized();
 
   final loadedConfigs = await loadConfigs();
-  int currentConfigIndex = window.preferences.currentConfigIndex;
-  if (currentConfigIndex < 0 && loadedConfigs != null) {
-    currentConfigIndex = 0;
-  }
+  var currentConfigIndex = window.preferences.currentConfigIndex;
+  var currentConfig =
+      loadedConfigs?[(currentConfigIndex < 0) ? 0 : currentConfigIndex];
 
   runApp(
     ProviderScope(
       overrides: [
         fullscreenProvider.overrideWith((ref) => window.fullscreen),
         preferencesProvider.overrideWith((ref) => window.preferences),
-        configsProvider.overrideWith((ref) => loadedConfigs),
+        configsProvider.overrideWith((ref) => loadedConfigs ?? []),
         currentConfigIndexProvider.overrideWith((ref) => currentConfigIndex),
+        currentConfigProvider.overrideWith((ref) => currentConfig),
         authenticationProvider.overrideWith((ref) {
-          final config = loadedConfigs?[currentConfigIndex];
-          if (config != null) {
-            return Auth.fromConfig(config);
+          if (currentConfig != null) {
+            return Auth.fromConfig(currentConfig);
           }
           return null;
         }),
