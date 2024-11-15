@@ -22,7 +22,7 @@ class ConfigListTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final config = ref.watch(configsProvider)![index];
+    final config = ref.watch(configsProvider)[index];
     if (selected != null && index == selected!) {
       return Padding(
         padding: const EdgeInsets.only(right: 16.0),

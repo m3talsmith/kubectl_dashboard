@@ -10,7 +10,6 @@ import 'package:kubectl_dashboard/app/preferences.dart';
 import 'package:kubectl_dashboard/window.dart';
 import 'package:window_manager/window_manager.dart';
 
-import 'app/config.dart';
 import 'app/config/add_config.dart';
 
 class App extends ConsumerStatefulWidget {

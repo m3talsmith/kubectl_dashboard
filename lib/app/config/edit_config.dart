@@ -12,7 +12,7 @@ class EditConfig extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final Config config = ref.watch(configsProvider)![index];
+    final Config config = ref.watch(configsProvider)[index];
     final data = config.toString();
 
     return Scaffold(

@@ -21,7 +21,6 @@ class _ConfigFormState extends ConsumerState<ConfigForm> {
 
   submit(BuildContext context) async {
     var configs = ref.watch(configsProvider);
-    configs ??= [];
     final nav = Navigator.of(context);
 
     if (data != null && data!.isNotEmpty) {
