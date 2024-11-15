@@ -7,9 +7,10 @@ import '../config.dart';
 final dataProvider = StateProvider<String?>((ref) => null);
 
 class ConfigForm extends ConsumerStatefulWidget {
-  const ConfigForm({this.data, super.key});
+  const ConfigForm({this.data, this.config, super.key});
 
   final String? data;
+  final Config? config;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ConfigFormState();
@@ -17,7 +18,6 @@ class ConfigForm extends ConsumerStatefulWidget {
 
 class _ConfigFormState extends ConsumerState<ConfigForm> {
   String? data;
-  Config? widgetConfig;
 
   submit(BuildContext context) async {
     var configs = ref.watch(configsProvider);
@@ -30,18 +30,20 @@ class _ConfigFormState extends ConsumerState<ConfigForm> {
 
       var index = configs.length-1;
 
-      if (widgetConfig != null) {
-        if (configs.contains(widgetConfig!)) {
-          index = configs.indexOf(widgetConfig!);
+      if (widget.config != null) {
+        if (configs.contains(widget.config!)) {
+          index = configs.indexOf(widget.config!);
           configs[index] = config;
         }
       } else {
         configs.add(config);
       }
+
       ref.watch(currentConfigIndexProvider.notifier).state = index;
       ref.watch(configsProvider.notifier).state = configs;
       ref.watch(currentConfigProvider.notifier).state = config;
       await saveConfigs(configs);
+
       nav.pop();
     }
   }
@@ -49,12 +51,7 @@ class _ConfigFormState extends ConsumerState<ConfigForm> {
   @override
   void initState() {
     super.initState();
-
     data = widget.data;
-    if (data != null && data!.isNotEmpty) {;
-      final config = Config.fromYaml(data!);
-      if (config != null) widgetConfig = config;
-    }
   }
 
   @override

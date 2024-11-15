@@ -5,9 +5,10 @@ import 'package:kubectl_dashboard/app/config/config_form.dart';
 import 'package:kubectl_dashboard/app/config/providers.dart';
 
 class EditConfig extends ConsumerWidget {
-  const EditConfig({required this.index, super.key});
+  const EditConfig({required this.index, this.config, super.key});
 
   final int index;
+  final Config? config;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -19,7 +20,7 @@ class EditConfig extends ConsumerWidget {
         title: Text('Edit ${config.currentContext}'),
         centerTitle: true,
       ),
-      body: ConfigForm(data: data,),
+      body: ConfigForm(data: data, config: config,),
     );
   }
 }

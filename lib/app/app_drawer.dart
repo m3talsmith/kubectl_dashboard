@@ -36,11 +36,12 @@ class AppDrawer extends ConsumerWidget {
                     }
 
                     onEdit() async {
-                      final index = ref.watch(configsProvider)!.indexOf(e);
+                      final configs = ref.watch(configsProvider);
+                      final index = (configs != null) ? configs.indexOf(e) : 0;
                       final navigator = Navigator.of(context);
                       await navigator.push(
                         MaterialPageRoute(
-                          builder: (context) => EditConfig(index: index),
+                          builder: (context) => EditConfig(index: index, config: configs![index],),
                         ),
                       );
                       navigator.pop();
