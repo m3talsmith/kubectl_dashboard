@@ -98,6 +98,7 @@ class Config {
   String? kind;
   Map<String, dynamic> preferences = {};
   List<User> users = [];
+  String? displayName;
 
   static Config? fromMap(Map<String, dynamic> buff) {
     if (buff.isEmpty) return null;
@@ -130,6 +131,7 @@ class Config {
       );
       config.users.add(user);
     }
+    config.displayName = buff['display-name'];
     return config;
   }
 
@@ -163,6 +165,7 @@ class Config {
               (e) => e.asMap(),
             )
             .toList(),
+        "display-name": displayName,
       };
 
       @override

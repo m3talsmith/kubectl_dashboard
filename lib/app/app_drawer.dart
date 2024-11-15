@@ -22,7 +22,7 @@ class AppDrawer extends ConsumerWidget {
           Expanded(
             child: ListView(
               children: [
-                if (configs != null)
+                if (configs.isNotEmpty)
                   ...configs.map((e) {
                     final index = configs.indexOf(e);
                     final selected = (currentConfig != null)
@@ -37,11 +37,11 @@ class AppDrawer extends ConsumerWidget {
 
                     onEdit() async {
                       final configs = ref.watch(configsProvider);
-                      final index = (configs != null) ? configs.indexOf(e) : 0;
+                      final index = (configs.isNotEmpty) ? configs.indexOf(e) : 0;
                       final navigator = Navigator.of(context);
                       await navigator.push(
                         MaterialPageRoute(
-                          builder: (context) => EditConfig(index: index, config: configs![index],),
+                          builder: (context) => EditConfig(index: index, config: configs[index],),
                         ),
                       );
                       navigator.pop();
@@ -51,19 +51,19 @@ class AppDrawer extends ConsumerWidget {
                       ref
                           .watch(configsProvider.notifier)
                           .addListener(saveConfigs);
-                      final index = ref.watch(configsProvider)!.indexOf(e);
+                      final index = ref.watch(configsProvider).indexOf(e);
                       ref
                           .watch(configsProvider.notifier)
-                          .state!
+                          .state
                           .removeAt(index);
                       final configs = ref.watch(configsProvider);
-                      final configIndex = (configs != null && configs.isNotEmpty)
+                      final configIndex = (configs.isNotEmpty)
                           ? configs.indexOf(configs.last)
                           : -1;
 
                       ref.watch(currentConfigIndexProvider.notifier).state = index;
 
-                      Config? config = (configIndex >= 0) ? configs![configIndex] : null;
+                      Config? config = (configIndex >= 0) ? configs[configIndex] : null;
                       ref.watch(currentConfigProvider.notifier).state = config;
 
                       ref.invalidate(configsProvider);

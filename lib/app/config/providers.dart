@@ -5,7 +5,7 @@ import '../config.dart';
 final configsProvider = StateProvider<List<Config>>((ref) => []);
 final currentConfigIndexProvider = StateProvider((ref) {
   final configs = ref.watch(configsProvider);
-  return configs.indexOf(configs.last);
+  return configs.length-1;
 });
 final currentConfigProvider = StateProvider<Config?>((ref) {
   final configs = ref.watch(configsProvider);
@@ -15,4 +15,22 @@ final currentConfigProvider = StateProvider<Config?>((ref) {
   }
   return null;
 },);
-final contextsProvider = StateProvider<List<Context>>((ref) => [],);
+
+final contextsProvider = StateProvider<List<Context>>((ref) {
+  final contexts = <Context>[];
+  final config = ref.watch(currentConfigProvider);
+  if (config == null) return contexts;
+
+  contexts.addAll(config.contexts);
+  return contexts;
+},);
+final currentContextIndexProvider = StateProvider<int>((ref) {
+  final contexts = ref.watch(contextsProvider);
+  return contexts.length-1;
+},);
+final currentContextProvider = StateProvider<Context?>((ref) {
+  final contexts = ref.watch(contextsProvider);
+  final index = ref.watch(currentContextIndexProvider);
+  if (index < 0) return null;
+  return contexts[index];
+},);

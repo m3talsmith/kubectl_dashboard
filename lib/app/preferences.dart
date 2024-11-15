@@ -17,6 +17,7 @@ enum PreferenceKey {
   windowSize,
   windowPosition,
   currentConfigIndex,
+  currentContextIndex,
 }
 
 class Preferences {
@@ -30,6 +31,7 @@ class Preferences {
   Size? _windowSize;
   WindowPosition? _windowPosition;
   int _currentConfigIndex = -1;
+  int _currentContextIndex = -1;
 
   refresh() {
     _fullscreen =
@@ -53,6 +55,8 @@ class Preferences {
     }
     _currentConfigIndex =
         _sharedPreferences.getInt(PreferenceKey.currentConfigIndex.name) ?? -1;
+    _currentContextIndex =
+        _sharedPreferences.getInt(PreferenceKey.currentContextIndex.name) ?? -1;
   }
 
   bool get fullscreen => _fullscreen;
@@ -96,5 +100,11 @@ class Preferences {
   set currentConfigIndex(int value) {
     _currentConfigIndex = value;
     _sharedPreferences.setInt(PreferenceKey.currentConfigIndex.name, value);
+  }
+
+  int get currentContextIndex => _currentContextIndex;
+  set currentContextIndex(int value) {
+    _currentContextIndex = value;
+    _sharedPreferences.setInt(PreferenceKey.currentContextIndex.name, value);
   }
 }

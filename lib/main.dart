@@ -18,21 +18,31 @@ void main() async {
   var currentConfig =
       loadedConfigs?[(currentConfigIndex < 0) ? 0 : currentConfigIndex];
 
+  final loadedContexts = currentConfig?.contexts;
+  final currentContextIndex = window.preferences.currentContextIndex;
+  final currentContext =
+      loadedContexts?[(currentContextIndex < 0) ? 0 : currentContextIndex];
+
+  final overrides = [
+    fullscreenProvider.overrideWith((ref) => window.fullscreen),
+    preferencesProvider.overrideWith((ref) => window.preferences),
+    configsProvider.overrideWith((ref) => loadedConfigs ?? []),
+    currentConfigIndexProvider.overrideWith((ref) => currentConfigIndex),
+    currentConfigProvider.overrideWith((ref) => currentConfig),
+    contextsProvider.overrideWith((ref) => loadedContexts ?? []),
+    currentContextIndexProvider.overrideWith((ref) => currentContextIndex),
+    currentContextProvider.overrideWith((ref) => currentContext),
+    authenticationProvider.overrideWith((ref) {
+      if (currentConfig != null) {
+        return Auth.fromConfig(currentConfig);
+      }
+      return null;
+    }),
+  ];
+
   runApp(
     ProviderScope(
-      overrides: [
-        fullscreenProvider.overrideWith((ref) => window.fullscreen),
-        preferencesProvider.overrideWith((ref) => window.preferences),
-        configsProvider.overrideWith((ref) => loadedConfigs ?? []),
-        currentConfigIndexProvider.overrideWith((ref) => currentConfigIndex),
-        currentConfigProvider.overrideWith((ref) => currentConfig),
-        authenticationProvider.overrideWith((ref) {
-          if (currentConfig != null) {
-            return Auth.fromConfig(currentConfig);
-          }
-          return null;
-        }),
-      ],
+      overrides: overrides,
       child: const App(),
     ),
   );
