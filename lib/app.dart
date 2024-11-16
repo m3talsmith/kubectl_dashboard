@@ -73,6 +73,7 @@ class _AppState extends ConsumerState<App> with WindowListener {
   @override
   Widget build(BuildContext context) {
     final config = ref.watch(currentConfigProvider);
+    final currentContextIndex = ref.watch(currentContextIndexProvider);
     final errors = ref.watch(errorsProvider);
 
     return MaterialApp(
@@ -113,7 +114,7 @@ class _AppState extends ConsumerState<App> with WindowListener {
             ],
           ),
           body: (config != null)
-              ? DashboardView(config: config)
+              ? DashboardView(contextIndex: currentContextIndex)
               : Center(
                   child: Card(
                     child: SizedBox(

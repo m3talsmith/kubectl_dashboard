@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -35,12 +36,23 @@ class Auth {
   AuthClient? client;
 
   Auth.fromConfig(Config config) {
-    _cluster ??= config.clusters.first;
-    _user ??= config.users.first;
-    _clientCertificateAuthority =
-        base64Decode(_cluster?.certificateAuthorityData ?? '');
-    _clientCertificateData = base64Decode(_user?.clientCertificateData ?? '');
-    _clientKeyData = base64Decode(_user?.clientKeyData ?? '');
+    final context =
+        config.contexts.firstWhere((e) => e.name == config.currentContext);
+    final cluster =
+        config.clusters.firstWhere((e) => e.name == context.cluster);
+    final user = config.users.firstWhere((e) => e.name == context.user);
+
+    log('[DEBUG] context: ${context.name}, cluster: ${cluster.name}, user: ${user.name}');
+
+    final ca = base64Decode(cluster.certificateAuthorityData ?? '');
+    final cert = base64Decode(user.clientCertificateData ?? '');
+    final key = base64Decode(user.clientKeyData ?? '');
+
+    _cluster ??= cluster;
+    _user ??= user;
+    _clientCertificateAuthority = ca;
+    _clientCertificateData = cert;
+    _clientKeyData = key;
     client = _authClient();
   }
 
@@ -122,12 +134,12 @@ class AuthClient extends BaseClient {
   Future<StreamedResponse> send(BaseRequest request) {
     request.headers['user-agent'] = _userAgent;
     var context = SecurityContext()
-      ..allowLegacyUnsafeRenegotiation=true
+      ..allowLegacyUnsafeRenegotiation = true
       ..setClientAuthoritiesBytes(clientCertificateAuthority ?? [])
       ..useCertificateChainBytes(clientCertificateData ?? [])
       ..usePrivateKeyBytes(clientKeyData ?? []);
     var client = HttpClient(context: context)
-      ..badCertificateCallback=(_, __, ___) => true;
+      ..badCertificateCallback = (_, __, ___) => true;
     return IOClient(client).send(request);
   }
 }
