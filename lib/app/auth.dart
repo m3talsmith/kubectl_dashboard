@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -41,8 +40,6 @@ class Auth {
     final cluster =
         config.clusters.firstWhere((e) => e.name == context.cluster);
     final user = config.users.firstWhere((e) => e.name == context.user);
-
-    log('[DEBUG] context: ${context.name}, cluster: ${cluster.name}, user: ${user.name}');
 
     final ca = base64Decode(cluster.certificateAuthorityData ?? '');
     final cert = base64Decode(user.clientCertificateData ?? '');
