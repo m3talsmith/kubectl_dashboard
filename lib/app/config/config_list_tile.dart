@@ -28,7 +28,7 @@ class ConfigListTile extends ConsumerWidget {
         padding: const EdgeInsets.only(right: 16.0),
         child: ListTile(
           onTap: onTap,
-          title: Text(config.currentContext ?? 'unknown'),
+          title: Text(config.displayName ?? config.currentContext ?? 'unknown'),
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
               topRight: Radius.circular(16),
