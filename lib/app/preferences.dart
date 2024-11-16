@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -106,7 +105,6 @@ class Preferences {
   int get currentContextIndex => _currentContextIndex;
   set currentContextIndex(int value) {
     _currentContextIndex = value;
-    log('[DEBUG] currentContextIndex: $value');
     _sharedPreferences.setInt(PreferenceKey.currentContextIndex.name, value);
   }
 }

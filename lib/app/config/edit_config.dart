@@ -13,16 +13,17 @@ class EditConfig extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final Config config = ref.watch(configsProvider)[index];
-    final data = config.toString();
+    final data = config.toYaml();
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit ${config.currentContext}'),
         centerTitle: true,
       ),
-      body: ConfigForm(data: data, config: config,),
+      body: ConfigForm(
+        data: data,
+        config: config,
+      ),
     );
   }
 }
-
-

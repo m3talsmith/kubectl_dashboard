@@ -1,10 +1,12 @@
+import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
+import 'package:json2yaml/json2yaml.dart';
 import 'package:kubeconfig/kubeconfig.dart';
-import 'package:yaml/yaml.dart';
-import 'package:yaml_writer/yaml_writer.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:yaml/yaml.dart';
 
 dynamic _convertNode(dynamic v) {
   if (v is YamlMap) {
@@ -45,22 +47,31 @@ Future<void> saveConfigs(List<Config>? state) async {
   if (state == null) return;
 
   final rootPath = await getApplicationSupportDirectory();
-  final configsPath = join(rootPath.path, "configs.yaml");
+  final configsPath = join(rootPath.path, "configs.json");
+  log('configsPath: $configsPath');
 
   final configs = Configs(configs: state);
-  final yaml = YamlWriter().write(configs);
-  var _ = File(configsPath).writeAsStringSync(yaml);
+  final json = jsonEncode(configs);
+  File(configsPath).writeAsStringSync(json);
 }
 
-Future<List<Config>?> loadConfigs() async {
+Future<List<Config>> loadConfigs() async {
+  final rootPath = await getApplicationSupportDirectory();
+  final configsPath = join(rootPath.path, "configs.json");
+
   try {
-    final rootPath = await getApplicationSupportDirectory();
-    final configsPath = join(rootPath.path, "configs.yaml");
-    final buff = File(configsPath).readAsStringSync();
-    final configs = Configs.fromYaml(buff).toList();
-    return configs.isNotEmpty ? configs : null;
-  } catch (_) {
-    return null;
+    final file = File(configsPath);
+    final buff = file.readAsStringSync();
+    final json = jsonDecode(buff);
+    final configs = Configs.fromJson(json['configs']).toList();
+    return configs;
+  } on PathNotFoundException {
+    await File(configsPath).create();
+    await saveConfigs([]);
+    return loadConfigs();
+  } catch (exception, stackTrace) {
+    log('[ERROR] loadConfigs: $exception\n$stackTrace');
+    return [];
   }
 }
 
@@ -69,12 +80,13 @@ class Configs {
 
   final List<Config> _configs;
 
-  Configs.fromYaml(String data) : _configs = [] {
-    final buff = loadYaml(data);
-    for (YamlMap yamlMap in buff['configs']) {
-      final config = Config.fromMap(yamlMap.cast());
-      if (config != null) _configs.add(config);
+  static Configs fromJson(List<dynamic> data) {
+    final List<Config> configs = [];
+    for (var c in data) {
+      final config = Config.fromMap(c);
+      if (config != null) configs.add(config);
     }
+    return Configs(configs: configs);
   }
 
   Map<String, dynamic> toJson() {
@@ -127,6 +139,7 @@ class Config {
       User user = User(
         clientCertificateData: u['user']['client-certificate-data'],
         clientKeyData: u['user']['client-key-data'],
+        exec: Exec.fromMap(u['user']['exec']),
         name: u['name'],
       );
       config.users.add(user);
@@ -168,11 +181,9 @@ class Config {
         "display-name": displayName,
       };
 
-      @override
-      String toString() {
-        final yaml = YamlWriter().write(asMap());
-        return yaml.toString();
-      }
+  String toYaml() {
+    return json2yaml(asMap());
+  }
 }
 
 class Cluster {
@@ -208,19 +219,110 @@ class Context {
 }
 
 class User {
-  User({this.name, this.clientCertificateData, this.clientKeyData});
+  User({this.name, this.clientCertificateData, this.clientKeyData, this.exec});
 
-  String? name;
-  String? clientCertificateData;
-  String? clientKeyData;
+  final String? name;
+  final String? clientCertificateData;
+  final String? clientKeyData;
+  final Exec? exec;
 
   Map<String, dynamic> asMap() => {
         "user": {
           "client-certificate-data": clientCertificateData,
           "client-key-data": clientKeyData,
+          "exec": exec?.asMap(),
         },
         "name": name,
       };
+}
+
+class Exec {
+  Exec({
+    this.command = 'doctl',
+    this.arguments,
+    this.apiVersion = 'client.authentication.k8s.io/v1beta1',
+    this.env,
+    this.interactiveMode = 'IfAvailable',
+    this.provideClusterInfo = false,
+  });
+
+  String? command;
+  List<String>? arguments;
+  String? apiVersion;
+  String? env;
+  String? interactiveMode;
+  bool? provideClusterInfo;
+
+  Exec.fromMap(Map<String, dynamic> data) {
+    command = data['command'] ?? 'doctl';
+
+    arguments = [];
+    for (var arg in data['args']) {
+      arguments!.add(arg);
+    }
+
+    apiVersion = data['apiVersion'] ?? 'client.authentication.k8s.io/v1beta1';
+    env = data['env'];
+    interactiveMode = data['interactiveMode'] ?? 'IfAvailable';
+    provideClusterInfo = data['provideClusterInfo'] ?? false;
+  }
+
+  Map<String, dynamic> asMap() => {
+        "apiVersion": apiVersion,
+        "args": arguments,
+        "command": command,
+        "env": env,
+        "interactiveMode": interactiveMode,
+        "provideClusterInfo": provideClusterInfo,
+      };
+}
+
+class ExecResult {
+  ExecResult({
+    required this.kind,
+    required this.apiVersion,
+    required this.spec,
+    required this.status,
+  });
+
+  late final String kind;
+  late final String apiVersion;
+  late final ExecSpec spec;
+  late final ExecStatus status;
+
+  ExecResult.fromMap(Map<String, dynamic> data) {
+    kind = data['kind'];
+    apiVersion = data['apiVersion'];
+    spec = ExecSpec.fromMap(data['spec']);
+    status = ExecStatus.fromMap(data['status']);
+  }
+}
+
+class ExecSpec {
+  ExecSpec({
+    this.interactive = false,
+  });
+
+  late final bool interactive;
+
+  ExecSpec.fromMap(Map<String, dynamic> data) {
+    interactive = data['interactive'];
+  }
+}
+
+class ExecStatus {
+  ExecStatus({
+    this.expirationTimestamp,
+    this.token,
+  });
+
+  late final DateTime? expirationTimestamp;
+  late final String? token;
+
+  ExecStatus.fromMap(Map<String, dynamic> data) {
+    expirationTimestamp = DateTime.tryParse(data['expirationTimestamp']);
+    token = data['token'];
+  }
 }
 
 class Preference {

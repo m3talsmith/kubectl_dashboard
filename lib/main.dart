@@ -14,9 +14,14 @@ void main() async {
   await window.ensureInitialized();
 
   final loadedConfigs = await loadConfigs();
-  var currentConfigIndex = window.preferences.currentConfigIndex;
-  var currentConfig =
-      loadedConfigs?[(currentConfigIndex < 0) ? 0 : currentConfigIndex];
+  final currentConfigIndex =
+      (loadedConfigs.isNotEmpty) ? window.preferences.currentConfigIndex : -1;
+  final currentConfig = (loadedConfigs.isNotEmpty)
+      ? loadedConfigs[(currentConfigIndex < 0) ? 0 : currentConfigIndex]
+      : null;
+
+  final auth = (currentConfig != null) ? Auth.fromConfig(currentConfig) : null;
+  if (auth != null) await auth.ensureInitialization();
 
   final loadedContexts = currentConfig?.contexts;
   final currentContextIndex = window.preferences.currentContextIndex;
@@ -26,18 +31,13 @@ void main() async {
   final overrides = [
     fullscreenProvider.overrideWith((ref) => window.fullscreen),
     preferencesProvider.overrideWith((ref) => window.preferences),
-    configsProvider.overrideWith((ref) => loadedConfigs ?? []),
+    configsProvider.overrideWith((ref) => loadedConfigs),
     currentConfigIndexProvider.overrideWith((ref) => currentConfigIndex),
     currentConfigProvider.overrideWith((ref) => currentConfig),
     contextsProvider.overrideWith((ref) => loadedContexts ?? []),
     currentContextIndexProvider.overrideWith((ref) => currentContextIndex),
     currentContextProvider.overrideWith((ref) => currentContext),
-    authenticationProvider.overrideWith((ref) {
-      if (currentConfig != null) {
-        return Auth.fromConfig(currentConfig);
-      }
-      return null;
-    }),
+    authenticationProvider.overrideWith((ref) => auth),
   ];
 
   runApp(
