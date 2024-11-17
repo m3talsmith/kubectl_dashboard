@@ -3,11 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kubectl_dashboard/app/auth.dart';
 import 'package:kubectl_dashboard/app/config/providers.dart';
 import 'package:kubectl_dashboard/app/dashboard/dashboard_list_tile.dart';
-import 'package:kubectl_dashboard/app/dashboard/resources/pods/pods_list.dart';
-import 'package:kubectl_dashboard/app/dashboard/resources/pods/providers.dart';
+import 'package:kubectl_dashboard/app/dashboard/resources.dart';
+import 'package:kubectl_dashboard/app/dashboard/resources/providers.dart';
+import 'package:kubectl_dashboard/app/dashboard/resources/resource-list.dart';
 import 'package:kubectl_dashboard/app/preferences.dart';
-
-import 'dashboard/resources/pods.dart';
+import 'package:pluralize/pluralize.dart';
 
 class DashboardView extends ConsumerStatefulWidget {
   const DashboardView({this.contextIndex, super.key});
@@ -60,43 +60,12 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             .toList() ??
         [];
 
-    final List<Map<String, dynamic>> subTabs = [
-      {
-        'title': 'Pods',
-        'onTap': () async {
-          final pods = await Pod.list(ref);
-          ref.watch(podsProvider.notifier).state = pods as List<Pod>;
-        },
-        'widget': const PodsList(),
-      },
-      {
-        'title': 'Services',
-        'onTap': () {},
-        'widget': const Center(
-          child: Text('Services'),
-        ),
-      },
-      {
-        'title': 'Deployments',
-        'onTap': () {},
-        'widget': const Center(
-          child: Text('Deployments'),
-        ),
-      },
-      {
-        'title': 'Ingresses',
-        'onTap': () {},
-        'widget': const Center(
-          child: Text('Ingresses'),
-        ),
-      },
-      {
-        'title': 'Certificates',
-        'onTap': () {},
-        'widget': const Center(
-          child: Text('Certificates'),
-        ),
-      },
+    final List<dynamic> subTabs = [
+      'Pods',
+      'Services',
+      'Deployments',
+      'Ingresses',
+      'Certificates',
     ];
 
     return (config == null || authentication == null || currentContext == null)
@@ -137,37 +106,91 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                 width: subTabsWidth,
                 child: ListView(
                   shrinkWrap: true,
-                  children: subTabs.map(
-                    (e) {
-                      final i = subTabs.indexOf(e);
-                      final selected = i == _subTabIndex;
-                      final tile = DashboardListTile(
-                        title: Text(e['title']),
-                        selected: selected,
-                        onTap: () {
-                          e['onTap']();
-                          if (!selected) {
-                            setState(() {
-                              _subTabIndex = i;
-                            });
-                          }
-                        },
-                      );
-                      if (selected) {
-                        tile.onTap!();
-                      }
-                      return tile;
-                    },
-                  ).toList(),
+                  children: [
+                    _SubTab(
+                      title: 'Pods',
+                      selected: subTabs.indexOf('Pods') == _subTabIndex,
+                      onSelected: () {
+                        final i = subTabs.indexOf('Pods');
+                        if (i != _subTabIndex) {
+                          setState(() {
+                            _subTabIndex = i;
+                          });
+                        }
+                      },
+                    ),
+                    _SubTab(
+                      title: 'Services',
+                      selected: subTabs.indexOf('Services') == _subTabIndex,
+                      onSelected: () {
+                        final i = subTabs.indexOf('Services');
+                        if (i != _subTabIndex) {
+                          setState(() {
+                            _subTabIndex = i;
+                          });
+                        }
+                      },
+                    ),
+                    _SubTab(
+                      title: 'Deployments',
+                      resource: 'DeploymentList',
+                      downcase: false,
+                      pluralize: false,
+                      selected: subTabs.indexOf('Deployments') == _subTabIndex,
+                      onSelected: () {
+                        final i = subTabs.indexOf('Deployments');
+                        if (i != _subTabIndex) {
+                          setState(() {
+                            _subTabIndex = i;
+                          });
+                        }
+                      },
+                    )
+                  ],
                 ),
               ),
               SizedBox(
                 height: size.height,
                 width: contentWidth,
-                child: subTabs[(_subTabIndex >= 0) ? _subTabIndex : 0]
-                    ['widget'],
+                child: const ResourcesList(),
               ),
             ],
           );
+  }
+}
+
+class _SubTab extends ConsumerWidget {
+  const _SubTab({
+    required this.title,
+    this.resource,
+    this.pluralize = true,
+    this.downcase = true,
+    this.selected = false,
+    this.onSelected,
+  });
+
+  final String title;
+  final String? resource;
+  final bool pluralize;
+  final bool downcase;
+  final bool selected;
+  final Function()? onSelected;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    String resourceName = (resource == null) ? title : resource!;
+    if (pluralize) resourceName = Pluralize().pluralize(resourceName, 3, false);
+    if (downcase) resourceName = resourceName.toLowerCase();
+    return DashboardListTile(
+        title: Text(title),
+        selected: selected,
+        onTap: () async {
+          final resources = await Resource.list(
+            ref: ref,
+            resource: resourceName,
+          );
+          ref.watch(resourcesProvider.notifier).state = resources;
+          if (!selected && onSelected != null) onSelected!();
+        });
   }
 }

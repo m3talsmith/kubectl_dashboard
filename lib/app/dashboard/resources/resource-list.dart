@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kubectl_dashboard/app/dashboard/resources/pods/providers.dart';
+import 'package:kubectl_dashboard/app/dashboard/resources/providers.dart';
 
-class PodsList extends ConsumerWidget {
-  const PodsList({super.key});
+class ResourcesList extends ConsumerWidget {
+  const ResourcesList({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final pods = ref.watch(podsProvider);
+    final resources = ref.watch(resourcesProvider);
     return GridView.count(
       crossAxisCount: 3,
-      children: pods
+      children: resources
           .map(
             (e) => SizedBox(
               width: 120,
@@ -22,7 +22,7 @@ class PodsList extends ConsumerWidget {
                   child: Column(
                     children: [
                       const Expanded(child: Icon(Icons.data_usage_rounded)),
-                      Text(e.name??'unknown')
+                      Text(e.name ?? 'unknown')
                     ],
                   ),
                 ),

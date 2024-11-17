@@ -17,7 +17,7 @@ class DashboardListTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ListTile(
+    final tile = ListTile(
       selectedColor: Theme.of(context).canvasColor,
       selectedTileColor: Theme.of(context).primaryColor,
       iconColor: Theme.of(context).canvasColor,
@@ -34,5 +34,7 @@ class DashboardListTile extends ConsumerWidget {
       title: title,
       trailing: selected ? const Icon(Icons.star_rounded) : null,
     );
+    if (tile.selected && tile.onTap != null) tile.onTap!();
+    return tile;
   }
 }
