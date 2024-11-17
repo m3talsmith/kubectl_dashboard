@@ -133,9 +133,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                     ),
                     _SubTab(
                       title: 'Deployments',
-                      resource: 'DeploymentList',
-                      downcase: false,
-                      pluralize: false,
+                      api: '/apis/apps/v1',
                       selected: subTabs.indexOf('Deployments') == _subTabIndex,
                       onSelected: () {
                         final i = subTabs.indexOf('Deployments');
@@ -167,6 +165,7 @@ class _SubTab extends ConsumerWidget {
     this.downcase = true,
     this.selected = false,
     this.onSelected,
+    this.api,
   });
 
   final String title;
@@ -175,6 +174,7 @@ class _SubTab extends ConsumerWidget {
   final bool downcase;
   final bool selected;
   final Function()? onSelected;
+  final String? api;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -188,6 +188,7 @@ class _SubTab extends ConsumerWidget {
           final resources = await Resource.list(
             ref: ref,
             resource: resourceName,
+            api: api,
           );
           ref.watch(resourcesProvider.notifier).state = resources;
           if (!selected && onSelected != null) onSelected!();

@@ -15,9 +15,19 @@ class DashboardListTile extends ConsumerWidget {
   final ShapeBorder? shape;
   final Function()? onTap;
 
+  tapSelected() {
+    Future.delayed(
+      const Duration(milliseconds: 300),
+      () {
+        if (selected && onTap != null) onTap!();
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tile = ListTile(
+    tapSelected();
+    return ListTile(
       selectedColor: Theme.of(context).canvasColor,
       selectedTileColor: Theme.of(context).primaryColor,
       iconColor: Theme.of(context).canvasColor,
@@ -34,7 +44,5 @@ class DashboardListTile extends ConsumerWidget {
       title: title,
       trailing: selected ? const Icon(Icons.star_rounded) : null,
     );
-    if (tile.selected && tile.onTap != null) tile.onTap!();
-    return tile;
   }
 }

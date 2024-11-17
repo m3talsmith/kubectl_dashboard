@@ -13,7 +13,10 @@ class Resource {
     required WidgetRef ref,
     required String resource,
     String? namespace,
+    String? api,
   }) async {
+    api ??= '/api/v1';
+
     final auth = ref.watch(authenticationProvider);
     if (auth == null) return [];
     if (auth.cluster == null) return [];
@@ -22,8 +25,8 @@ class Resource {
     final resources = <Resource>[];
 
     final resourcePath = (namespace != null)
-        ? '/api/v1/$namespace/$resource'
-        : '/api/v1/$resource';
+        ? '$api/namespaces/$namespace/$resource'
+        : '$api/$resource';
     log('[DEBUG] resourcePath: $resourcePath');
     final uri = Uri.parse('${auth.cluster!.server!}$resourcePath');
 
