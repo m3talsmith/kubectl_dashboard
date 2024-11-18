@@ -369,22 +369,77 @@ class Toleration {
 }
 
 class Status {
-  late String phase;
+  late String? phase;
   late List<Condition> conditions;
-  late String hostIP;
+  late String? hostIP;
   late List<Map<String, String>> hostIPs;
-  late String podIP;
+  late String? podIP;
   late List<Map<String, String>> podIPs;
-  late DateTime startTime;
+  late DateTime? startTime;
   late List<ContainerStatus> containerStatuses;
-  late String qosClass;
+  late String? qosClass;
+
+  Status.fromMap(Map<String, dynamic> data) {
+    phase = data['phase'];
+
+    conditions = [];
+    if (data.containsKey('conditions')) {
+      for (Map<String, dynamic> e in data['conditions']) {
+        conditions.add(Condition.fromMap(e));
+      }
+    }
+
+    hostIP = data['hostIP'];
+    hostIPs = [];
+    if (data.containsKey('hostIPs')) {
+      for (Map<String, dynamic> e in (data['hostIPs'] as List<dynamic>)) {
+        final Map<String, String> h = {};
+        e.forEach((key, value) => h[key] = value);
+        hostIPs.add(h);
+      }
+    }
+
+    podIP = data['podIP'];
+    podIPs = [];
+    if (data.containsKey('podIPs')) {
+      for (Map<String, dynamic> e in (data['podIPs'] as List<dynamic>)) {
+        final Map<String, String> p = {};
+        e.forEach((key, value) => p[key] = value);
+        podIPs.add(p);
+      }
+    }
+
+    if (data.containsKey('startTime')) {
+      startTime = DateTime.parse(data['startTime']);
+    }
+
+    containerStatuses = [];
+    if (data.containsKey('containerStatuses')) {
+      for (Map<String, dynamic> e in data['containerStatuses']) {
+        containerStatuses.add(ContainerStatus.fromMap(e));
+      }
+    }
+
+    qosClass = data['qosClass'];
+  }
 }
 
 class Condition {
   late String type;
   late String status;
-  late DateTime lastProbeTime;
-  late DateTime lastTransitionTime;
+  late DateTime? lastProbeTime;
+  late DateTime? lastTransitionTime;
+
+  Condition.fromMap(Map<String, dynamic> data) {
+    type = data['type'];
+    status = data['status'];
+    lastProbeTime =
+        (data.containsKey('lastProbeTime') && data['lastProbeTime'] != null)
+            ? DateTime.parse(data['lastProbeTime'])
+            : null;
+    if (data.containsKey('lastTransitionTime'))
+      lastTransitionTime = DateTime.parse(data['lastTransitionTime']);
+  }
 }
 
 class ContainerStatus {
@@ -397,8 +452,23 @@ class ContainerStatus {
   late String imageID;
   late String containerID;
   late bool started;
+
+  ContainerStatus.fromMap(Map<String, dynamic> data) {
+    name = data['name'];
+
+    state = (data['state'] as Map<String, dynamic>)
+        .entries
+        .fold(<String, State>{}, (previousValue, element) {
+      previousValue[element.key] = State.fromMap(element.value);
+      return previousValue;
+    });
+  }
 }
 
 class State {
   late DateTime startedAt;
+
+  State.fromMap(Map<String, dynamic> data) {
+    startedAt = DateTime.parse(data['startedAt']);
+  }
 }

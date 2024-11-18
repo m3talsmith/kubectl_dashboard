@@ -10,8 +10,7 @@ import 'resources/properties.dart';
 class Resource {
   Metadata metadata = Metadata();
   Spec spec = Spec();
-
-  // late Status status;
+  Status? status;
 
   static Future<List<Resource>> list({
     required WidgetRef ref,
@@ -54,5 +53,6 @@ class Resource {
     if (data.isEmpty) return;
     metadata = Metadata.fromMap(data['metadata']);
     spec = Spec.fromMap(data['spec']);
+    status = Status.fromMap(data['status']);
   }
 }

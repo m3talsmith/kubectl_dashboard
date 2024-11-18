@@ -24,10 +24,16 @@ class ResourcesList extends ConsumerWidget {
                       Text(e.metadata.namespace),
                       Expanded(
                         child: Center(
-                          child: (e.metadata.ownerReferences != null &&
-                                  e.metadata.ownerReferences!.isNotEmpty)
-                              ? Text(
-                                  'Kind: ${e.metadata.ownerReferences!.first.kind}')
+                          child: (e.status?.phase != null)
+                              ? Container(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .inversePrimary,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Text(e.status!.phase!),
+                                  ),
+                                )
                               : null,
                         ),
                       ),
