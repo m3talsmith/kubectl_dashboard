@@ -82,7 +82,7 @@ class Spec {
   late String? serviceAccountName;
   late String? serviceAccount;
   late String? nodeName;
-  late SecurityContext securityContext;
+  late SecurityContext? securityContext;
   late String? schedulerName;
   late List<Toleration> tolerations;
   late int? priority;
