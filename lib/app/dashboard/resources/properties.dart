@@ -93,7 +93,7 @@ class Spec {
     volumes = [];
     if (data.containsKey('volumes')) {
       for (Map<String, dynamic> e in data['volumes']) {
-        volumes.add(Volume.fromMap(data));
+        volumes.add(Volume.fromMap(e));
       }
     }
 
