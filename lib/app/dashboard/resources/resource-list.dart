@@ -22,7 +22,7 @@ class ResourcesList extends ConsumerWidget {
                   child: Column(
                     children: [
                       const Expanded(child: Icon(Icons.data_usage_rounded)),
-                      Text(e.name ?? 'unknown')
+                      Text(e.metadata.name ?? 'unknown')
                     ],
                   ),
                 ),
