@@ -136,10 +136,13 @@ class Config {
     config.currentContext = buff['current-context'];
     config.kind = buff['kind'];
     for (var u in buff['users']) {
+      final exec = (u['user'].containsKey('exec') && u['user']['exec'] != null)
+        ? u['user']['exec']
+        : null;
       User user = User(
         clientCertificateData: u['user']['client-certificate-data'],
         clientKeyData: u['user']['client-key-data'],
-        exec: Exec.fromMap(u['user']['exec']),
+        exec: exec,
         name: u['name'],
       );
       config.users.add(user);
