@@ -21,8 +21,17 @@ class ResourcesList extends ConsumerWidget {
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     children: [
-                      const Expanded(child: Icon(Icons.data_usage_rounded)),
-                      Text(e.metadata.name ?? 'unknown')
+                      Text(e.metadata.namespace),
+                      Expanded(
+                        child: Center(
+                          child: (e.metadata.ownerReferences != null &&
+                                  e.metadata.ownerReferences!.isNotEmpty)
+                              ? Text(
+                                  'Kind: ${e.metadata.ownerReferences!.first.kind}')
+                              : null,
+                        ),
+                      ),
+                      Text(e.metadata.name),
                     ],
                   ),
                 ),
