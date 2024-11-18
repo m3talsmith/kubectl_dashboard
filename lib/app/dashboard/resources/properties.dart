@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 class Metadata {
   Metadata();
 
@@ -110,10 +108,8 @@ class Spec {
 
     nodeSelector = {};
     if (data.containsKey('nodeSelector')) {
-      log('[DEBUG] nodeSelector: ${data['nodeSelector']}');
-      // for (Map<String, String> e in data['nodeSelector']) {
-      //   e.forEach((key, value) => nodeSelector[key] = value);
-      // }
+      (data['nodeSelector'] as Map<String, dynamic>)
+          .forEach((key, value) => nodeSelector[key] = value);
     }
 
     serviceAccountName = data['serviceAccountName'];
@@ -125,10 +121,9 @@ class Spec {
 
     tolerations = [];
     if (data.containsKey('tolerations')) {
-      log('[DEBUG] tolerations: ${data['tolerations']}');
-      // for (Map<String, dynamic> e in data['tolerations']) {
-      //   tolerations.add(Toleration.fromMap(e));
-      // }
+      for (Map<String, dynamic> e in data['tolerations']) {
+        tolerations.add(Toleration.fromMap(e));
+      }
     }
 
     priority = data['priority'];
@@ -143,8 +138,9 @@ class Volume {
 
   Volume.fromMap(Map<String, dynamic> data) {
     name = data['name'];
-    if (data.containsKey('projected'))
+    if (data.containsKey('projected')) {
       projected = Projected.fromMap(data['projected']);
+    }
   }
 }
 
@@ -280,10 +276,8 @@ class Container {
 
     resources = {};
     if (data.containsKey('resources')) {
-      log('[DEBUG] resources: ${data['resources']}');
-      // for (Map<String, dynamic> e in data['resources']) {
-      //   e.forEach((key, value) => resources[key] = value);
-      // }
+      (data['resources'] as Map<String, dynamic>)
+          .forEach((key, value) => resources[key] = value);
     }
 
     volumeMounts = [];
@@ -296,8 +290,9 @@ class Container {
     terminationMessagePath = data['terminationMessagePath'];
     terminationMessagePolicy = data['terminationMessagePolicy'];
     imagePullPolicy = data['imagePullPolicy'];
-    if (data.containsKey('securityContext'))
+    if (data.containsKey('securityContext')) {
       securityContext = SecurityContext.fromMap(data['securityContext']);
+    }
   }
 }
 
@@ -319,8 +314,9 @@ class Env {
 
   Env.fromMap(Map<String, dynamic> data) {
     name = data['name'];
-    if (data.containsKey('valueFrom'))
+    if (data.containsKey('valueFrom')) {
       valueFrom = FieldRef.fromMap(data['valueFrom']);
+    }
   }
 }
 
@@ -345,19 +341,15 @@ class SecurityContext {
   SecurityContext.fromMap(Map<String, dynamic> data) {
     capabilities = {};
     if (data.containsKey('capabilities')) {
-      log('[DEBUG] capabilities: ${data['capabilities']}');
-      // for (Map<String, dynamic> e in data['capabilities']) {
-      //   e.forEach((key, value) => capabilities[key] = value);
-      // }
+      (data['capabilities'] as Map<String, dynamic>)
+          .forEach((key, value) => capabilities[key] = value);
     }
     allowPrivilegeEscalation = data['allowPrivilegeEscalation'];
     runAsNonRoot = data['runAsNonRoot'];
     seccompProfile = {};
     if (data.containsKey('seccompProfile')) {
-      log('[DEBUG] seccompProfile: ${data['seccompProfile']}');
-      // for (Map<String, String> e in data['seccompProfile']) {
-      //   e.forEach((key, value) => seccompProfile[key] = value);
-      // }
+      (data['seccompProfile'] as Map<String, dynamic>)
+          .forEach((key, value) => seccompProfile[key] = value);
     }
   }
 }
