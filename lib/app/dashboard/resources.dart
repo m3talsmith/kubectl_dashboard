@@ -9,8 +9,8 @@ import 'resources/properties.dart';
 
 class Resource {
   Metadata metadata = Metadata();
+  Spec spec = Spec();
 
-  // late Spec spec;
   // late Status status;
 
   static Future<List<Resource>> list({
@@ -53,5 +53,6 @@ class Resource {
   Resource.fromMap(Map<String, dynamic> data) {
     if (data.isEmpty) return;
     metadata = Metadata.fromMap(data['metadata']);
+    spec = Spec.fromMap(data['spec']);
   }
 }

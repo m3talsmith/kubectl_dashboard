@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 class Metadata {
   Metadata();
 
@@ -69,31 +71,104 @@ class ManagedField {
 }
 
 class Spec {
+  Spec();
+
   late List<Volume> volumes;
   late List<Container> containers;
-  late String restartPolicy;
-  late int terminationGracePeriodSeconds;
-  late String dnsPolicy;
+  late String? restartPolicy;
+  late int? terminationGracePeriodSeconds;
+  late String? dnsPolicy;
   late Map<String, String> nodeSelector;
-  late String serviceAccountName;
-  late String serviceAccount;
-  late String nodeName;
+  late String? serviceAccountName;
+  late String? serviceAccount;
+  late String? nodeName;
   late SecurityContext securityContext;
-  late String schedulerName;
+  late String? schedulerName;
   late List<Toleration> tolerations;
-  late int priority;
-  late bool enableServiceLinks;
-  late String preemptionPolicy;
+  late int? priority;
+  late bool? enableServiceLinks;
+  late String? preemptionPolicy;
+
+  Spec.fromMap(Map<String, dynamic> data) {
+    volumes = [];
+    if (data.containsKey('volumes')) {
+      for (Map<String, dynamic> e in data['volumes']) {
+        volumes.add(Volume.fromMap(data));
+      }
+    }
+
+    containers = [];
+    if (data.containsKey('containers')) {
+      for (Map<String, dynamic> e in data['containers']) {
+        containers.add(Container.fromMap(e));
+      }
+    }
+
+    restartPolicy = data['restartPolicy'];
+    terminationGracePeriodSeconds = data['terminationGracePeriodSeconds'];
+    dnsPolicy = data['dnsPolicy'];
+
+    nodeSelector = {};
+    if (data.containsKey('nodeSelector')) {
+      log('[DEBUG] nodeSelector: ${data['nodeSelector']}');
+      // for (Map<String, String> e in data['nodeSelector']) {
+      //   e.forEach((key, value) => nodeSelector[key] = value);
+      // }
+    }
+
+    serviceAccountName = data['serviceAccountName'];
+    serviceAccount = data['serviceAccount'];
+    nodeName = data['nodeName'];
+    if (data.containsKey('securityContext'))
+      securityContext = SecurityContext.fromMap(data['securityContext']);
+    schedulerName = data['schedulerName'];
+
+    tolerations = [];
+    if (data.containsKey('tolerations')) {
+      log('[DEBUG] tolerations: ${data['tolerations']}');
+      // for (Map<String, dynamic> e in data['tolerations']) {
+      //   tolerations.add(Toleration.fromMap(e));
+      // }
+    }
+
+    priority = data['priority'];
+    enableServiceLinks = data['enableServiceLinks'];
+    preemptionPolicy = data['preemptionPolicy'];
+  }
 }
 
 class Volume {
-  late String name;
-  late Projected projected;
+  late String? name;
+  late Projected? projected;
+
+  Volume.fromMap(Map<String, dynamic> data) {
+    name = data['name'];
+    if (data.containsKey('projected'))
+      projected = Projected.fromMap(data['projected']);
+  }
 }
 
 class Projected {
   late List<Source> sources;
   late int defaultMode;
+
+  Projected.fromMap(Map<String, dynamic> data) {
+    if (data.containsKey('sources')) {
+      sources = [];
+      for (Map<String, dynamic> e in data['sources']) {
+        final key = e.keys.first;
+        final value = e.values.first;
+        switch (key) {
+          case ('serviceAccountToken'):
+            sources.add(ServiceAccountToken.fromMap(value));
+          case ('configMap'):
+            sources.add(ConfigMap.fromMap(value));
+          case ('downwardAPI'):
+            sources.add(DownwardAPI.fromMap(value));
+        }
+      }
+    }
+  }
 }
 
 abstract class Source {}
@@ -101,30 +176,69 @@ abstract class Source {}
 class ServiceAccountToken implements Source {
   late int expirationSeconds;
   late String path;
+
+  ServiceAccountToken.fromMap(Map<String, dynamic> data) {
+    expirationSeconds = data['expirationSeconds'];
+    path = data['path'];
+  }
 }
 
 class ConfigMap implements Source {
   late String name;
   late List<ConfigMapItem> items;
+
+  ConfigMap.fromMap(Map<String, dynamic> data) {
+    name = data['name'];
+    items = [];
+    if (data.containsKey('items')) {
+      for (Map<String, dynamic> e in data['items']) {
+        items.add(ConfigMapItem.fromMap(e));
+      }
+    }
+  }
 }
 
 class ConfigMapItem {
   late String key;
   late String path;
+
+  ConfigMapItem.fromMap(Map<String, dynamic> data) {
+    key = data['key'];
+    path = data['path'];
+  }
 }
 
 class DownwardAPI implements Source {
   late List<DownwardAPIItem> items;
+
+  DownwardAPI.fromMap(Map<String, dynamic> data) {
+    items = [];
+    if (data.containsKey('items')) {
+      for (Map<String, dynamic> e in data['items']) {
+        items.add(DownwardAPIItem.fromMap(e));
+      }
+    }
+  }
 }
 
 class DownwardAPIItem {
   late String path;
   late FieldRef fieldRef;
+
+  DownwardAPIItem.fromMap(Map<String, dynamic> data) {
+    path = data['path'];
+    fieldRef = FieldRef.fromMap(data['fieldRef']);
+  }
 }
 
 class FieldRef {
-  late String apiVersion;
-  late String fieldPath;
+  late String? apiVersion;
+  late String? fieldPath;
+
+  FieldRef.fromMap(Map<String, dynamic> data) {
+    apiVersion = data['apiVersion'];
+    fieldPath = data['fieldPath'];
+  }
 }
 
 class Container {
@@ -139,37 +253,127 @@ class Container {
   late String terminationMessagePolicy;
   late String imagePullPolicy;
   late SecurityContext securityContext;
+
+  Container.fromMap(Map<String, dynamic> data) {
+    name = data['name'];
+    image = data['image'];
+    args = [];
+    if (data.containsKey('args')) {
+      for (String e in data['args']) {
+        args.add(e);
+      }
+    }
+
+    ports = [];
+    if (data.containsKey('ports')) {
+      for (Map<String, dynamic> e in data['ports']) {
+        ports.add(Port.fromMap(e));
+      }
+    }
+
+    env = [];
+    if (data.containsKey('env')) {
+      for (Map<String, dynamic> e in data['env']) {
+        env.add(Env.fromMap(e));
+      }
+    }
+
+    resources = {};
+    if (data.containsKey('resources')) {
+      log('[DEBUG] resources: ${data['resources']}');
+      // for (Map<String, dynamic> e in data['resources']) {
+      //   e.forEach((key, value) => resources[key] = value);
+      // }
+    }
+
+    volumeMounts = [];
+    if (data.containsKey('volumeMounts')) {
+      for (Map<String, dynamic> e in data['volumeMounts']) {
+        volumeMounts.add(VolumeMount.fromMap(e));
+      }
+    }
+
+    terminationMessagePath = data['terminationMessagePath'];
+    terminationMessagePolicy = data['terminationMessagePolicy'];
+    imagePullPolicy = data['imagePullPolicy'];
+    if (data.containsKey('securityContext'))
+      securityContext = SecurityContext.fromMap(data['securityContext']);
+  }
 }
 
 class Port {
   late String name;
   late int containerPort;
   late String protocol;
+
+  Port.fromMap(Map<String, dynamic> data) {
+    name = data['name'];
+    containerPort = data['containerPort'];
+    protocol = data['protocol'];
+  }
 }
 
 class Env {
   late String name;
-  late FieldRef valueFrom;
+  late FieldRef? valueFrom;
+
+  Env.fromMap(Map<String, dynamic> data) {
+    name = data['name'];
+    if (data.containsKey('valueFrom'))
+      valueFrom = FieldRef.fromMap(data['valueFrom']);
+  }
 }
 
 class VolumeMount {
-  late String name;
-  late bool readOnly;
-  late String mountPath;
+  late String? name;
+  late bool? readOnly;
+  late String? mountPath;
+
+  VolumeMount.fromMap(Map<String, dynamic> data) {
+    name = data['name'];
+    readOnly = data['readOnly'];
+    mountPath = data['mountPath'];
+  }
 }
 
 class SecurityContext {
   late Map<String, dynamic> capabilities;
-  late bool allowPrivilegeEscalation;
-  late bool runAsNonRoot;
+  late bool? allowPrivilegeEscalation;
+  late bool? runAsNonRoot;
   late Map<String, String> seccompProfile;
+
+  SecurityContext.fromMap(Map<String, dynamic> data) {
+    capabilities = {};
+    if (data.containsKey('capabilities')) {
+      log('[DEBUG] capabilities: ${data['capabilities']}');
+      // for (Map<String, dynamic> e in data['capabilities']) {
+      //   e.forEach((key, value) => capabilities[key] = value);
+      // }
+    }
+    allowPrivilegeEscalation = data['allowPrivilegeEscalation'];
+    runAsNonRoot = data['runAsNonRoot'];
+    seccompProfile = {};
+    if (data.containsKey('seccompProfile')) {
+      log('[DEBUG] seccompProfile: ${data['seccompProfile']}');
+      // for (Map<String, String> e in data['seccompProfile']) {
+      //   e.forEach((key, value) => seccompProfile[key] = value);
+      // }
+    }
+  }
 }
 
 class Toleration {
-  late String key;
-  late String operator;
-  late String effect;
-  late int tolerationSeconds;
+  late String? key;
+  late String? operator;
+  late String? effect;
+  late int? tolerationSeconds;
+
+  Toleration.fromMap(Map<String, dynamic> data) {
+    key = data['key'];
+    operator = data['operator'];
+    effect = data['effect'];
+    tolerationSeconds = data['tolerationSeconds'];
+  }
 }
 
 class Status {
