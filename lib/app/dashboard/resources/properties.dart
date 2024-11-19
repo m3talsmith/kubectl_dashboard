@@ -45,6 +45,7 @@ class OwnerReference {
 
   OwnerReference.fromMap(Map<String, dynamic> data) {
     apiVersion = data['apiVersion'];
+    name = data['name'];
     kind = data['kind'];
     uid = data['uid'];
     controller = data['controller'];
