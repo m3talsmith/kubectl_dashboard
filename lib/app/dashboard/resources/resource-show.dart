@@ -50,7 +50,8 @@ class ResourceShow extends ConsumerWidget {
                       _FieldTile(
                           name: 'resourceVersion',
                           value: resource.metadata.resourceVersion),
-                      if (resource.metadata.labels != null) ...[
+                      if (resource.metadata.labels != null &&
+                          resource.metadata.labels!.isNotEmpty) ...[
                         const Divider(),
                         const Padding(
                           padding: EdgeInsets.only(left: 8.0),
@@ -59,23 +60,17 @@ class ResourceShow extends ConsumerWidget {
                             textScaler: TextScaler.linear(1.5),
                           ),
                         ),
-                        GridView.count(
-                          crossAxisCount: 3,
-                          shrinkWrap: true,
-                          children: resource.metadata.labels?.entries
-                                  .map(
-                                    (e) => Tooltip(
-                                      message: '${e.value}',
-                                      child: Chip(
-                                        label: Text(e.key),
-                                      ),
-                                    ),
-                                  )
-                                  .toList() ??
-                              [],
+                        ...resource.metadata.labels!.entries.map(
+                          (e) => Tooltip(
+                            message: '${e.value}',
+                            child: Chip(
+                              label: Text(e.key),
+                            ),
+                          ),
                         ),
                       ],
-                      if (resource.metadata.managedFields != null) ...[
+                      if (resource.metadata.managedFields != null &&
+                          resource.metadata.managedFields!.isNotEmpty) ...[
                         const Divider(),
                         const Padding(
                           padding: EdgeInsets.all(8.0),
@@ -154,8 +149,8 @@ class _FieldTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(value),
-      subtitle: Text(name),
+      title: Text(name),
+      subtitle: Text(value),
     );
   }
 }
