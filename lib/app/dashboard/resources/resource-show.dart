@@ -50,31 +50,35 @@ class ResourceShow extends ConsumerWidget {
                       _FieldTile(
                           name: 'resourceVersion',
                           value: resource.metadata.resourceVersion),
-                      const Padding(
-                        padding: EdgeInsets.only(left: 8.0),
-                        child: Text(
-                          'Labels',
-                          textScaler: TextScaler.linear(1.5),
-                        ),
-                      ),
-                      GridView.count(
-                        crossAxisCount: 3,
-                        shrinkWrap: true,
-                        children: resource.metadata.labels?.entries
-                                .map(
-                                  (e) => Tooltip(
-                                    message: '${e.value}',
-                                    child: Chip(
-                                      label: Text(e.key),
-                                    ),
-                                  ),
-                                )
-                                .toList() ??
-                            [],
-                      ),
-                      if (resource.metadata.managedFields != null) ...[
+                      if (resource.metadata.labels != null) ...[
+                        const Divider(),
                         const Padding(
                           padding: EdgeInsets.only(left: 8.0),
+                          child: Text(
+                            'Labels',
+                            textScaler: TextScaler.linear(1.5),
+                          ),
+                        ),
+                        GridView.count(
+                          crossAxisCount: 3,
+                          shrinkWrap: true,
+                          children: resource.metadata.labels?.entries
+                                  .map(
+                                    (e) => Tooltip(
+                                      message: '${e.value}',
+                                      child: Chip(
+                                        label: Text(e.key),
+                                      ),
+                                    ),
+                                  )
+                                  .toList() ??
+                              [],
+                        ),
+                      ],
+                      if (resource.metadata.managedFields != null) ...[
+                        const Divider(),
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
                           child: Text(
                             'Managed Fields',
                             textScaler: TextScaler.linear(1.5),
@@ -85,8 +89,9 @@ class ResourceShow extends ConsumerWidget {
                       ],
                       if (resource.metadata.ownerReferences != null &&
                           resource.metadata.ownerReferences!.isNotEmpty) ...[
+                        const Divider(),
                         const Padding(
-                          padding: EdgeInsets.only(left: 8.0),
+                          padding: EdgeInsets.all(8.0),
                           child: Text(
                             'Owner References',
                             textScaler: TextScaler.linear(1.5),
