@@ -51,6 +51,7 @@ class Resource {
 
   Resource.fromMap(Map<String, dynamic> data) {
     if (data.isEmpty) return;
+
     if (data.containsKey('metadata') &&
         (data['metadata'] as Map<String, dynamic>).entries.isNotEmpty) {
       metadata = Metadata.fromMap(data['metadata']);

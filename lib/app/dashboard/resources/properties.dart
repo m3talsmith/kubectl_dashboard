@@ -8,8 +8,10 @@ class Metadata {
   late String resourceVersion;
   late DateTime creationTimestamp;
   late Map<String, dynamic>? labels;
-  late List<OwnerReference>? ownerReferences;
-  late List<ManagedField>? managedFields;
+  late List<OwnerReference> ownerReferences;
+  late List<ManagedField> managedFields;
+  late Map<String, dynamic> annotations;
+  late List<String> finalizers;
 
   Metadata.fromMap(Map<String, dynamic> data) {
     name = data['name'];
@@ -18,19 +20,34 @@ class Metadata {
     uid = data['uid'];
     resourceVersion = data['resourceVersion'];
     creationTimestamp = DateTime.parse(data['creationTimestamp']);
-    labels = data['labels'];
+
+    labels = {};
+    if (data.containsKey('labels')) {
+      labels = data['labels'];
+    }
+
     ownerReferences = [];
     if (data.containsKey('ownerReferences')) {
       for (Map<String, dynamic> e in data['ownerReferences']) {
-        ownerReferences!.add(OwnerReference.fromMap(e));
+        ownerReferences.add(OwnerReference.fromMap(e));
       }
     }
 
     managedFields = [];
     if (data.containsKey('managedFields')) {
       for (Map<String, dynamic> e in data['managedFields']) {
-        managedFields!.add(ManagedField.fromMap(e));
+        managedFields.add(ManagedField.fromMap(e));
       }
+    }
+
+    annotations = {};
+    if (data.containsKey('annotations')) {
+      annotations = data['annotations'];
+    }
+
+    finalizers = [];
+    if (data.containsKey('finalizers')) {
+      finalizers = data['finalizers'];
     }
   }
 }
@@ -72,6 +89,7 @@ class ManagedField {
 class Spec {
   Spec();
 
+  // pods
   late List<Volume> volumes;
   late List<Container> containers;
   late String? restartPolicy;
@@ -87,6 +105,18 @@ class Spec {
   late int? priority;
   late bool? enableServiceLinks;
   late String? preemptionPolicy;
+
+  // services
+  late List<Port> ports;
+  String? clusterIP;
+  late List<String> clusterIPs;
+  String? type;
+  String? sessionAffinity;
+  late List<String> ipFamilies;
+  String? ipFamilyPolicy;
+  String? internalTrafficPolicy;
+  Map<String, dynamic>? selector;
+  late Map<String, ServiceStatus> status;
 
   Spec.fromMap(Map<String, dynamic> data) {
     volumes = [];
@@ -132,6 +162,47 @@ class Spec {
     priority = data['priority'];
     enableServiceLinks = data['enableServiceLinks'];
     preemptionPolicy = data['preemptionPolicy'];
+
+    ports = [];
+    if (data.containsKey('ports')) {
+      for (Map<String, dynamic> e in data['ports']) {
+        ports.add(Port.fromMap(e));
+      }
+    }
+
+    clusterIP = data['clusterIP'];
+
+    clusterIPs = [];
+    if (data.containsKey('clusterIPs')) {
+      for (String e in data['clusterIPs']) {
+        clusterIPs.add(e);
+      }
+    }
+
+    type = data['type'];
+    sessionAffinity = data['sessionAffinity'];
+
+    ipFamilies = [];
+    if (data.containsKey('ipFamilies')) {
+      for (String e in data['ipFamilies']) {
+        ipFamilies.add(e);
+      }
+    }
+
+    ipFamilyPolicy = data['ipFamilyPolicy'];
+    internalTrafficPolicy = data['internalTrafficPolicy'];
+
+    status = {};
+    if (data.containsKey('status')) {
+      for (Map<String, dynamic> e in data['status']) {
+        for (var f in e.entries) {
+          switch (f.key) {
+            case 'loadBalancer':
+              status[f.key] = LoadBalancerStatus.fromMap(f.value);
+          }
+        }
+      }
+    }
   }
 }
 
@@ -303,11 +374,13 @@ class Port {
   late String name;
   late int containerPort;
   late String protocol;
+  int? targetPort;
 
   Port.fromMap(Map<String, dynamic> data) {
     name = data['name'];
     containerPort = data['containerPort'];
     protocol = data['protocol'];
+    targetPort = data['targetPort'];
   }
 }
 
@@ -424,6 +497,33 @@ class Status {
     }
 
     qosClass = data['qosClass'];
+  }
+}
+
+abstract class ServiceStatus {}
+
+class LoadBalancerStatus implements ServiceStatus {
+  late Map<String, InternalStatus> statuses;
+
+  LoadBalancerStatus.fromMap(Map<String, dynamic> data) {
+    for (var e in data.entries) {
+      switch (e.key) {
+        case 'ingress':
+          statuses[e.key] = IngressInternalStatus.fromMap(e.value);
+      }
+    }
+  }
+}
+
+abstract class InternalStatus {}
+
+class IngressInternalStatus implements InternalStatus {
+  late String ip;
+  late String ipMode;
+
+  IngressInternalStatus.fromMap(Map<String, dynamic> data) {
+    ip = data['ip'];
+    ipMode = data['ipMode'];
   }
 }
 

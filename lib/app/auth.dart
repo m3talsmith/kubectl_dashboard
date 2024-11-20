@@ -80,6 +80,7 @@ class Auth {
           }
 
           final output = results.stdout as String;
+
           if (output.isNotEmpty) {
             try {
               final data = jsonDecode(output);
