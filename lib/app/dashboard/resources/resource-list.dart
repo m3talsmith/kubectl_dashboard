@@ -32,7 +32,7 @@ class ResourcesList extends ConsumerWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
                       children: [
-                        Text(e.metadata.namespace),
+                        Text(e.metadata?.namespace ?? 'default'),
                         Expanded(
                           child: Center(
                             child: (e.status?.phase != null)
@@ -48,7 +48,7 @@ class ResourcesList extends ConsumerWidget {
                                 : null,
                           ),
                         ),
-                        Text(e.metadata.name),
+                        Text(e.metadata?.name ?? 'unknown'),
                       ],
                     ),
                   ),

@@ -116,8 +116,10 @@ class Spec {
     serviceAccountName = data['serviceAccountName'];
     serviceAccount = data['serviceAccount'];
     nodeName = data['nodeName'];
-    if (data.containsKey('securityContext'))
+    securityContext = null;
+    if (data.containsKey('securityContext')) {
       securityContext = SecurityContext.fromMap(data['securityContext']);
+    }
     schedulerName = data['schedulerName'];
 
     tolerations = [];
@@ -134,8 +136,8 @@ class Spec {
 }
 
 class Volume {
-  late String? name;
-  late Projected? projected;
+  String? name;
+  Projected? projected;
 
   Volume.fromMap(Map<String, dynamic> data) {
     name = data['name'];
@@ -147,7 +149,7 @@ class Volume {
 
 class Projected {
   late List<Source> sources;
-  late int defaultMode;
+  int? defaultMode;
 
   Projected.fromMap(Map<String, dynamic> data) {
     if (data.containsKey('sources')) {
@@ -370,15 +372,15 @@ class Toleration {
 }
 
 class Status {
-  late String? phase;
+  String? phase;
   late List<Condition> conditions;
-  late String? hostIP;
+  String? hostIP;
   late List<Map<String, String>> hostIPs;
-  late String? podIP;
+  String? podIP;
   late List<Map<String, String>> podIPs;
-  late DateTime? startTime;
+  DateTime? startTime;
   late List<ContainerStatus> containerStatuses;
-  late String? qosClass;
+  String? qosClass;
 
   Status.fromMap(Map<String, dynamic> data) {
     phase = data['phase'];
@@ -438,8 +440,9 @@ class Condition {
         (data.containsKey('lastProbeTime') && data['lastProbeTime'] != null)
             ? DateTime.parse(data['lastProbeTime'])
             : null;
-    if (data.containsKey('lastTransitionTime'))
+    if (data.containsKey('lastTransitionTime')) {
       lastTransitionTime = DateTime.parse(data['lastTransitionTime']);
+    }
   }
 }
 
@@ -447,22 +450,33 @@ class ContainerStatus {
   late String name;
   late Map<String, State> state;
   late Map<String, State> lastState;
-  late bool running;
-  late int restartCount;
-  late String image;
-  late String imageID;
-  late String containerID;
-  late bool started;
+  bool? running;
+  int? restartCount;
+  String? image;
+  String? imageID;
+  String? containerID;
+  bool? started;
 
   ContainerStatus.fromMap(Map<String, dynamic> data) {
     name = data['name'];
-
     state = (data['state'] as Map<String, dynamic>)
         .entries
         .fold(<String, State>{}, (previousValue, element) {
       previousValue[element.key] = State.fromMap(element.value);
       return previousValue;
     });
+    lastState = (data['lastState'] as Map<String, dynamic>)
+        .entries
+        .fold(<String, State>{}, (previousValue, element) {
+      previousValue[element.key] = State.fromMap(element.value);
+      return previousValue;
+    });
+    running = data['running'];
+    restartCount = data['restartCount'];
+    image = data['image'];
+    imageID = data['imageID'];
+    containerID = data['containerID'];
+    started = data['started'];
   }
 }
 
