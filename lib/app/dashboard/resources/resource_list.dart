@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kubectl_dashboard/app/dashboard/resources/providers.dart';
-import 'package:kubectl_dashboard/app/dashboard/resources/resource-show.dart';
+import 'package:kubectl_dashboard/app/dashboard/resources/resource_show.dart';
 
 class ResourcesList extends ConsumerWidget {
   const ResourcesList({super.key});
@@ -32,23 +32,23 @@ class ResourcesList extends ConsumerWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
                       children: [
-                        Text(e.metadata?.namespace ?? 'default'),
+                        Text(e.metadata.namespace ?? 'default'),
                         Expanded(
                           child: Center(
-                            child: (e.status?.phase != null)
+                            child: (e.status.phase != null)
                                 ? Container(
                                     color: Theme.of(context)
                                         .colorScheme
                                         .inversePrimary,
                                     child: Padding(
                                       padding: const EdgeInsets.all(16.0),
-                                      child: Text(e.status!.phase!),
+                                      child: Text(e.status.phase!),
                                     ),
                                   )
                                 : null,
                           ),
                         ),
-                        Text(e.metadata?.name ?? 'unknown'),
+                        Text(e.metadata.name ?? 'unknown'),
                       ],
                     ),
                   ),
