@@ -1,17 +1,18 @@
 class Metadata {
   Metadata();
 
-  late String name;
-  late String? generateName;
-  late String namespace;
-  late String uid;
-  late String resourceVersion;
-  late DateTime creationTimestamp;
-  late Map<String, dynamic>? labels;
+  String? name;
+  String? generateName;
+  String? namespace;
+  String? uid;
+  String? resourceVersion;
+  DateTime? creationTimestamp;
+  late Map<String, dynamic> labels;
   late List<OwnerReference> ownerReferences;
   late List<ManagedField> managedFields;
   late Map<String, dynamic> annotations;
-  late List<String> finalizers;
+  late List<dynamic> finalizers;
+  int? generation;
 
   Metadata.fromMap(Map<String, dynamic> data) {
     name = data['name'];
@@ -19,7 +20,10 @@ class Metadata {
     namespace = data['namespace'];
     uid = data['uid'];
     resourceVersion = data['resourceVersion'];
-    creationTimestamp = DateTime.parse(data['creationTimestamp']);
+    if (data.containsKey('creationTimestamp') &&
+        data['creationTimestamp'] != null) {
+      creationTimestamp = DateTime.parse(data['creationTimestamp']);
+    }
 
     labels = {};
     if (data.containsKey('labels')) {
@@ -49,6 +53,8 @@ class Metadata {
     if (data.containsKey('finalizers')) {
       finalizers = data['finalizers'];
     }
+
+    generation = data['generation'];
   }
 }
 
@@ -115,8 +121,17 @@ class Spec {
   late List<String> ipFamilies;
   String? ipFamilyPolicy;
   String? internalTrafficPolicy;
-  Map<String, dynamic>? selector;
+  late Map<String, Selector> selector;
   late Map<String, ServiceStatus> status;
+
+  // deployments
+  int? replicas;
+  late Map<String, Template> template;
+  String? priorityClassName;
+  late List<TopologySpreadConstraint> topologySpreadConstraints;
+  Strategy? strategy;
+  int? revisionHistoryLimit;
+  int? progressDeadlineSeconds;
 
   Spec.fromMap(Map<String, dynamic> data) {
     volumes = [];
@@ -203,17 +218,52 @@ class Spec {
         }
       }
     }
+
+    template = {};
+    if (data.containsKey('template')) {
+      Template.fromMap(data['template']);
+    }
+
+    topologySpreadConstraints = [];
+    if (data.containsKey('topologySpreadConstraints')) {
+      for (Map<String, dynamic> e in data['topologySpreadConstraints']) {
+        topologySpreadConstraints.add(TopologySpreadConstraint.fromMap(e));
+      }
+    }
+
+    if (data.containsKey('strategy')) {
+      strategy = Strategy.fromMap(data['strategy']);
+    }
+
+    revisionHistoryLimit = data['revisionHistoryLimit'];
+    progressDeadlineSeconds = data['progressDeadlineSeconds'];
+
+    selector = {};
+    if (data.containsKey('selector')) {
+      for (var e in (data['selector'] as Map<String, dynamic>).entries) {
+        switch (e.key) {
+          case 'matchLabels':
+            selector[e.key] = MatchLabelsSelector.fromMap(e.value);
+        }
+      }
+    }
   }
 }
 
 class Volume {
   String? name;
   Projected? projected;
+  ConfigMap? configMap;
 
   Volume.fromMap(Map<String, dynamic> data) {
     name = data['name'];
+
     if (data.containsKey('projected')) {
       projected = Projected.fromMap(data['projected']);
+    }
+
+    if (data.containsKey('configMap')) {
+      configMap = ConfigMap.fromMap(data['configMap']);
     }
   }
 }
@@ -256,15 +306,21 @@ class ServiceAccountToken implements Source {
 class ConfigMap implements Source {
   late String name;
   late List<ConfigMapItem> items;
+  int? defaultNode;
+  bool? optional;
 
   ConfigMap.fromMap(Map<String, dynamic> data) {
     name = data['name'];
+
     items = [];
     if (data.containsKey('items')) {
       for (Map<String, dynamic> e in data['items']) {
         items.add(ConfigMapItem.fromMap(e));
       }
     }
+
+    defaultNode = data['defaultNode'];
+    optional = data['optional'];
   }
 }
 
@@ -324,6 +380,11 @@ class Container {
   late String imagePullPolicy;
   late SecurityContext securityContext;
 
+  // deployments
+  Probe? livelinessProbe;
+  Probe? readinessProbe;
+  late List<String> command;
+
   Container.fromMap(Map<String, dynamic> data) {
     name = data['name'];
     image = data['image'];
@@ -367,14 +428,29 @@ class Container {
     if (data.containsKey('securityContext')) {
       securityContext = SecurityContext.fromMap(data['securityContext']);
     }
+
+    if (data.containsKey('livelinessProbe')) {
+      livelinessProbe = Probe.fromMap(data['livelinessProbe']);
+    }
+
+    if (data.containsKey('readinessProbe')) {
+      readinessProbe = Probe.fromMap(data['readinessProbe']);
+    }
+
+    command = [];
+    if (data.containsKey('command')) {
+      for (String e in data['command']) {
+        command.add(e);
+      }
+    }
   }
 }
 
 class Port {
   late String name;
-  late int containerPort;
-  late String protocol;
-  int? targetPort;
+  int? containerPort;
+  String? protocol;
+  dynamic targetPort;
 
   Port.fromMap(Map<String, dynamic> data) {
     name = data['name'];
@@ -445,6 +521,7 @@ class Toleration {
 }
 
 class Status {
+  // pods
   String? phase;
   late List<Condition> conditions;
   String? hostIP;
@@ -454,6 +531,13 @@ class Status {
   DateTime? startTime;
   late List<ContainerStatus> containerStatuses;
   String? qosClass;
+
+  // deployments
+  int? observedGeneration;
+  int? replicas;
+  int? updatedReplicas;
+  int? readyReplicas;
+  int? availableReplicas;
 
   Status.fromMap(Map<String, dynamic> data) {
     phase = data['phase'];
@@ -497,6 +581,12 @@ class Status {
     }
 
     qosClass = data['qosClass'];
+
+    observedGeneration = data['observedGeneration'];
+    replicas = data['replicas'];
+    updatedReplicas = data['updatedReplicas'];
+    readyReplicas = data['readyReplicas'];
+    availableReplicas = data['availableReplicas'];
   }
 }
 
@@ -528,21 +618,32 @@ class IngressInternalStatus implements InternalStatus {
 }
 
 class Condition {
+  // pods
   late String type;
   late String status;
-  late DateTime? lastProbeTime;
-  late DateTime? lastTransitionTime;
+  DateTime? lastProbeTime;
+  DateTime? lastTransitionTime;
+
+  // deployments
+  DateTime? lastUpdateTime;
+  String? reason;
+  String? message;
 
   Condition.fromMap(Map<String, dynamic> data) {
     type = data['type'];
     status = data['status'];
-    lastProbeTime =
-        (data.containsKey('lastProbeTime') && data['lastProbeTime'] != null)
-            ? DateTime.parse(data['lastProbeTime'])
-            : null;
-    if (data.containsKey('lastTransitionTime')) {
-      lastTransitionTime = DateTime.parse(data['lastTransitionTime']);
+    if (data.containsKey('lastProbeTime') && data['lastProbeTime'] != null) {
+      lastProbeTime = DateTime.parse(data['lastProbeTime']);
     }
+    if (data.containsKey('lastTransitionTime') &&
+        data['lastTransitionTime'] != null) {
+      lastTransitionTime = DateTime.tryParse(data['lastTransitionTime']);
+    }
+    if (data.containsKey('lastUpdateTime') && data['lastUpdateTime'] != null) {
+      lastUpdateTime = DateTime.tryParse(data['lastUpdateTime']);
+    }
+    reason = data['reason'];
+    message = data['message'];
   }
 }
 
@@ -585,5 +686,121 @@ class State {
 
   State.fromMap(Map<String, dynamic> data) {
     startedAt = DateTime.parse(data['startedAt']);
+  }
+}
+
+class Template {
+  late Metadata metadata;
+  late Spec spec;
+
+  Template.fromMap(Map<String, dynamic> data) {
+    metadata = Metadata.fromMap(data['metadata']);
+    spec = Spec.fromMap(data['spec']);
+  }
+}
+
+class Probe {
+  HttpGet? httpGet;
+  int? initialDelaySeconds;
+  int? timeoutSeconds;
+  int? periodSeconds;
+  int? successThreshold;
+  int? failureThreshold;
+
+  Probe.fromMap(Map<String, dynamic> data) {
+    if (data.containsKey('httpGet')) {
+      httpGet = HttpGet.fromMap(data['httpGet']);
+    }
+
+    initialDelaySeconds = data['initialDelaySeconds'];
+    timeoutSeconds = data['timeoutSeconds'];
+    periodSeconds = data['periodSeconds'];
+    successThreshold = data['successThreshold'];
+    failureThreshold = data['failureThreshold'];
+  }
+}
+
+class HttpGet {
+  String? path;
+  dynamic port;
+  String? scheme;
+
+  HttpGet.fromMap(Map<String, dynamic> data) {
+    path = data['path'];
+    port = data['port'];
+    scheme = data['scheme'];
+  }
+}
+
+class TopologySpreadConstraint {
+  late int maxSkew;
+  late String topologyKey;
+  late String whenUnsatisfiable;
+  late Map<String, LabelSelector> labelSelector;
+
+  TopologySpreadConstraint.fromMap(Map<String, dynamic> data) {
+    maxSkew = data['maxSkew'];
+    topologyKey = data['topologyKey'];
+    whenUnsatisfiable = data['whenUnsatisfiable'];
+
+    labelSelector = {};
+    if (data.containsKey('labelSelector')) {
+      for (var e in (data['labelSelector'] as Map<String, dynamic>).entries) {
+        switch (e.key) {
+          case 'matchLabels':
+            labelSelector[e.key] = MatchLabelsLabelSelector.fromMap(e.value);
+        }
+      }
+    }
+  }
+}
+
+abstract class LabelSelector {}
+
+class MatchLabelsLabelSelector implements LabelSelector {
+  late String k8sApp;
+
+  MatchLabelsLabelSelector.fromMap(Map<String, dynamic> data) {
+    k8sApp = data['k8s-app'];
+  }
+}
+
+class Strategy {
+  late String type;
+  late StrategyType _details;
+
+  Strategy.fromMap(Map<String, dynamic> data) {
+    type = data['type'];
+    switch (type) {
+      case 'RollingUpdate':
+        _details = RollingUpdateStrategy.fromMap(data['rollingUpdate']);
+    }
+  }
+
+  get details => _details;
+}
+
+abstract class StrategyType {}
+
+class RollingUpdateStrategy implements StrategyType {
+  dynamic maxUnavailable;
+  dynamic maxSurge;
+
+  RollingUpdateStrategy.fromMap(Map<String, dynamic> data) {
+    maxUnavailable = data['maxUnavailable'];
+    maxSurge = data['maxSurge'];
+  }
+}
+
+abstract class Selector {}
+
+class MatchLabelsSelector implements Selector {
+  late Map<String, dynamic> details;
+
+  MatchLabelsSelector.fromMap(Map<String, dynamic> data) {
+    details = {};
+    for (var e in data.entries) {
+      details[e.key] = e.value;
+    }
   }
 }

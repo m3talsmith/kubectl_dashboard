@@ -40,24 +40,25 @@ class ResourceShow extends ConsumerWidget {
                           textScaler: TextScaler.linear(2),
                         ),
                       ),
-                      _FieldTile(name: 'name', value: resource.metadata.name),
+                      _FieldTile(
+                          name: 'name', value: resource.metadata.name ?? ''),
                       if (resource.metadata.generateName != null)
                         _FieldTile(
                             name: 'generateName',
                             value: resource.metadata.generateName!),
                       _FieldTile(
                           name: 'namespace',
-                          value: resource.metadata.namespace),
-                      _FieldTile(name: 'uid', value: resource.metadata.uid),
+                          value: resource.metadata.namespace ?? ''),
+                      _FieldTile(
+                          name: 'uid', value: resource.metadata.uid ?? ''),
                       _FieldTile(
                           name: 'creationTimestamp',
                           value:
                               resource.metadata.creationTimestamp.toString()),
                       _FieldTile(
                           name: 'resourceVersion',
-                          value: resource.metadata.resourceVersion),
-                      if (resource.metadata.labels != null &&
-                          resource.metadata.labels!.isNotEmpty)
+                          value: resource.metadata.resourceVersion ?? ''),
+                      if (resource.metadata.labels.isNotEmpty)
                         Column(children: [
                           const Divider(),
                           const Padding(
@@ -67,7 +68,7 @@ class ResourceShow extends ConsumerWidget {
                               textScaler: TextScaler.linear(1.5),
                             ),
                           ),
-                          ...resource.metadata.labels!.entries.map(
+                          ...resource.metadata.labels.entries.map(
                             (e) => Tooltip(
                               message: '${e.value}',
                               child: Chip(
@@ -577,7 +578,7 @@ class _Port extends StatelessWidget {
       child: Column(
         children: [
           _FieldTile(name: 'name', value: port.name),
-          _FieldTile(name: 'protocol', value: port.protocol),
+          _FieldTile(name: 'protocol', value: port.protocol ?? ''),
           _FieldTile(
               name: 'containerPort', value: port.containerPort.toString()),
         ],
@@ -765,7 +766,12 @@ class _Condition extends StatelessWidget {
                 value: condition.lastProbeTime!.toString()),
           if (condition.lastTransitionTime != null)
             _FieldTile(
-                name: 'last', value: condition.lastTransitionTime!.toString())
+                name: 'lastTransitionTime',
+                value: condition.lastTransitionTime!.toString()),
+          if (condition.lastUpdateTime != null)
+            _FieldTile(
+                name: 'lastUpdateTime',
+                value: condition.lastUpdateTime!.toString()),
         ],
       ),
     );
