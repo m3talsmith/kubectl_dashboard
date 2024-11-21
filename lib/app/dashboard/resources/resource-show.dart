@@ -11,9 +11,9 @@ class ResourceShow extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final resource = ref.watch(currentResourceProvider);
     final columns = [
-      if (resource != null && resource.metadata != null) true,
-      if (resource != null && resource.spec != null) true,
-      if (resource != null && resource.status != null) true,
+      if (resource != null) true,
+      if (resource != null) true,
+      if (resource != null) true,
     ];
     final size = MediaQuery.of(context).size;
     final columnSize = Size(size.width / columns.length - 1, size.height);
@@ -22,346 +22,334 @@ class ResourceShow extends ConsumerWidget {
       appBar: resource != null
           ? AppBar(
               centerTitle: true,
-              title: Text(resource.metadata?.name ?? 'unknown'),
+              title: Text(resource.metadata.name ?? 'unknown'),
             )
           : null,
       body: resource != null
           ? Row(
               children: [
-                if (resource.metadata != null)
-                  SizedBox.fromSize(
-                    size: columnSize,
-                    child: ListView(
-                      shrinkWrap: true,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text(
-                            'Metadata',
-                            textScaler: TextScaler.linear(2),
-                          ),
+                SizedBox.fromSize(
+                  size: columnSize,
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          'Metadata',
+                          textScaler: TextScaler.linear(2),
                         ),
+                      ),
+                      _FieldTile(name: 'name', value: resource.metadata.name),
+                      if (resource.metadata.generateName != null)
                         _FieldTile(
-                            name: 'name', value: resource.metadata!.name),
-                        if (resource.metadata!.generateName != null)
-                          _FieldTile(
-                              name: 'generateName',
-                              value: resource.metadata!.generateName!),
-                        _FieldTile(
-                            name: 'namespace',
-                            value: resource.metadata!.namespace),
-                        _FieldTile(name: 'uid', value: resource.metadata!.uid),
-                        _FieldTile(
-                            name: 'creationTimestamp',
-                            value: resource.metadata!.creationTimestamp
-                                .toString()),
-                        _FieldTile(
-                            name: 'resourceVersion',
-                            value: resource.metadata!.resourceVersion),
-                        if (resource.metadata!.labels != null &&
-                            resource.metadata!.labels!.isNotEmpty)
-                          Column(children: [
-                            const Divider(),
-                            const Padding(
-                              padding: EdgeInsets.only(left: 8.0),
-                              child: Text(
-                                'Labels',
-                                textScaler: TextScaler.linear(1.5),
+                            name: 'generateName',
+                            value: resource.metadata.generateName!),
+                      _FieldTile(
+                          name: 'namespace',
+                          value: resource.metadata.namespace),
+                      _FieldTile(name: 'uid', value: resource.metadata.uid),
+                      _FieldTile(
+                          name: 'creationTimestamp',
+                          value:
+                              resource.metadata.creationTimestamp.toString()),
+                      _FieldTile(
+                          name: 'resourceVersion',
+                          value: resource.metadata.resourceVersion),
+                      if (resource.metadata.labels != null &&
+                          resource.metadata.labels!.isNotEmpty)
+                        Column(children: [
+                          const Divider(),
+                          const Padding(
+                            padding: EdgeInsets.only(left: 8.0),
+                            child: Text(
+                              'Labels',
+                              textScaler: TextScaler.linear(1.5),
+                            ),
+                          ),
+                          ...resource.metadata.labels!.entries.map(
+                            (e) => Tooltip(
+                              message: '${e.value}',
+                              child: Chip(
+                                label: Text(e.key),
                               ),
                             ),
-                            ...resource.metadata!.labels!.entries.map(
-                              (e) => Tooltip(
-                                message: '${e.value}',
-                                child: Chip(
-                                  label: Text(e.key),
-                                ),
-                              ),
+                          ),
+                        ]),
+                      if (resource.metadata.managedFields.isNotEmpty)
+                        Column(children: [
+                          const Divider(),
+                          const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              'Managed Fields',
+                              textScaler: TextScaler.linear(1.5),
                             ),
-                          ]),
-                        if (resource.metadata!.managedFields != null &&
-                            resource.metadata!.managedFields!.isNotEmpty)
-                          Column(children: [
-                            const Divider(),
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text(
-                                'Managed Fields',
-                                textScaler: TextScaler.linear(1.5),
-                              ),
+                          ),
+                          ...resource.metadata.managedFields
+                              .map((e) => _ManagedField(field: e)),
+                        ]),
+                      if (resource.metadata.ownerReferences.isNotEmpty)
+                        Column(children: [
+                          const Divider(),
+                          const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              'Owner References',
+                              textScaler: TextScaler.linear(1.5),
                             ),
-                            ...resource.metadata!.managedFields!
-                                .map((e) => _ManagedField(field: e)),
-                          ]),
-                        if (resource.metadata!.ownerReferences != null &&
-                            resource.metadata!.ownerReferences!.isNotEmpty)
-                          Column(children: [
-                            const Divider(),
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text(
-                                'Owner References',
-                                textScaler: TextScaler.linear(1.5),
-                              ),
-                            ),
-                            ...resource.metadata!.ownerReferences!
-                                .map((e) => _OwnerReference(reference: e)),
-                          ]),
-                      ],
-                    ),
+                          ),
+                          ...resource.metadata.ownerReferences
+                              .map((e) => _OwnerReference(reference: e)),
+                        ]),
+                    ],
                   ),
-                if (resource.spec != null)
-                  SizedBox.fromSize(
-                    size: columnSize,
-                    child: ListView(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text(
-                            'Spec',
-                            textScaler: TextScaler.linear(2),
-                          ),
+                ),
+                SizedBox.fromSize(
+                  size: columnSize,
+                  child: ListView(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          'Spec',
+                          textScaler: TextScaler.linear(2),
                         ),
-                        if (resource.spec!.nodeName != null)
-                          _FieldTile(
-                              name: 'nodeName',
-                              value: resource.spec!.nodeName!),
-                        if (resource.spec!.schedulerName != null)
-                          _FieldTile(
-                              name: 'schedulerName',
-                              value: resource.spec!.schedulerName!),
-                        if (resource.spec!.dnsPolicy != null)
-                          _FieldTile(
-                              name: 'dnsPolicy',
-                              value: resource.spec!.dnsPolicy!),
-                        if (resource.spec!.preemptionPolicy != null)
-                          _FieldTile(
-                              name: 'preemptionPolicy',
-                              value: resource.spec!.preemptionPolicy!),
-                        if (resource.spec!.restartPolicy != null)
-                          _FieldTile(
-                              name: 'restartPolicy',
-                              value: resource.spec!.restartPolicy!),
-                        if (resource.spec!.priority != null)
-                          _FieldTile(
-                              name: 'priority',
-                              value: resource.spec!.priority!.toString()),
-                        if (resource.spec!.serviceAccount != null)
-                          _FieldTile(
-                              name: 'serviceAccount',
-                              value: resource.spec!.serviceAccount!),
-                        if (resource.spec!.serviceAccountName != null)
-                          _FieldTile(
-                              name: 'serviceAccountName',
-                              value: resource.spec!.serviceAccountName!),
-                        if (resource.spec!.securityContext != null)
-                          _SecurityContext(
-                              securityContext: resource.spec!.securityContext!),
-                        if (resource.spec!.terminationGracePeriodSeconds !=
-                            null)
-                          _FieldTile(
-                              name: 'terminationGracePeriodSeconds',
-                              value: resource
-                                  .spec!.terminationGracePeriodSeconds
-                                  .toString()),
-                        if (resource.spec!.enableServiceLinks != null)
-                          _FieldTile(
-                              name: 'enableServiceLinks',
-                              value:
-                                  resource.spec!.enableServiceLinks.toString()),
-                        if (resource.spec!.tolerations.isNotEmpty)
-                          Column(
-                            children: [
-                              const Divider(),
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Tolerations',
-                                  textScaler: TextScaler.linear(1.5),
-                                ),
+                      ),
+                      if (resource.spec.nodeName != null)
+                        _FieldTile(
+                            name: 'nodeName', value: resource.spec.nodeName!),
+                      if (resource.spec.schedulerName != null)
+                        _FieldTile(
+                            name: 'schedulerName',
+                            value: resource.spec.schedulerName!),
+                      if (resource.spec.dnsPolicy != null)
+                        _FieldTile(
+                            name: 'dnsPolicy', value: resource.spec.dnsPolicy!),
+                      if (resource.spec.preemptionPolicy != null)
+                        _FieldTile(
+                            name: 'preemptionPolicy',
+                            value: resource.spec.preemptionPolicy!),
+                      if (resource.spec.restartPolicy != null)
+                        _FieldTile(
+                            name: 'restartPolicy',
+                            value: resource.spec.restartPolicy!),
+                      if (resource.spec.priority != null)
+                        _FieldTile(
+                            name: 'priority',
+                            value: resource.spec.priority!.toString()),
+                      if (resource.spec.serviceAccount != null)
+                        _FieldTile(
+                            name: 'serviceAccount',
+                            value: resource.spec.serviceAccount!),
+                      if (resource.spec.serviceAccountName != null)
+                        _FieldTile(
+                            name: 'serviceAccountName',
+                            value: resource.spec.serviceAccountName!),
+                      if (resource.spec.securityContext != null)
+                        _SecurityContext(
+                            securityContext: resource.spec.securityContext!),
+                      if (resource.spec.terminationGracePeriodSeconds != null)
+                        _FieldTile(
+                            name: 'terminationGracePeriodSeconds',
+                            value: resource.spec.terminationGracePeriodSeconds
+                                .toString()),
+                      if (resource.spec.enableServiceLinks != null)
+                        _FieldTile(
+                            name: 'enableServiceLinks',
+                            value: resource.spec.enableServiceLinks.toString()),
+                      if (resource.spec.tolerations.isNotEmpty)
+                        Column(
+                          children: [
+                            const Divider(),
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                'Tolerations',
+                                textScaler: TextScaler.linear(1.5),
                               ),
-                              ...resource.spec!.tolerations.map(
-                                (e) => _Toleration(toleration: e),
-                              )
-                            ],
-                          ),
-                        if (resource.spec!.nodeSelector.isNotEmpty)
-                          Column(
-                            children: [
-                              const Divider(),
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Node Selector',
-                                  textScaler: TextScaler.linear(1.5),
-                                ),
+                            ),
+                            ...resource.spec.tolerations.map(
+                              (e) => _Toleration(toleration: e),
+                            )
+                          ],
+                        ),
+                      if (resource.spec.nodeSelector.isNotEmpty)
+                        Column(
+                          children: [
+                            const Divider(),
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                'Node Selector',
+                                textScaler: TextScaler.linear(1.5),
                               ),
-                              Card(
-                                child: Column(
-                                  children: resource.spec!.nodeSelector.entries
+                            ),
+                            Card(
+                              child: Column(
+                                children: resource.spec.nodeSelector.entries
+                                    .map(
+                                      (e) => _FieldTile(
+                                          name: e.key, value: e.value),
+                                    )
+                                    .toList(),
+                              ),
+                            ),
+                          ],
+                        ),
+                      if (resource.spec.containers.isNotEmpty)
+                        Column(
+                          children: [
+                            const Divider(),
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                'Containers',
+                                textScaler: TextScaler.linear(1.5),
+                              ),
+                            ),
+                            ...resource.spec.containers.map(
+                              (e) => _Container(container: e),
+                            )
+                          ],
+                        ),
+                      if (resource.spec.volumes.isNotEmpty)
+                        Column(
+                          children: [
+                            const Divider(),
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                'Volumes',
+                                textScaler: TextScaler.linear(1.5),
+                              ),
+                            ),
+                            ...resource.spec.volumes.map(
+                              (e) => _Volume(volume: e),
+                            ),
+                          ],
+                        )
+                    ],
+                  ),
+                ),
+                SizedBox.fromSize(
+                  size: columnSize,
+                  child: ListView(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          'Status',
+                          textScaler: TextScaler.linear(2),
+                        ),
+                      ),
+                      if (resource.status.phase != null)
+                        _FieldTile(
+                            name: 'phase', value: resource.status.phase!),
+                      if (resource.status.startTime != null)
+                        _FieldTile(
+                            name: 'startTime',
+                            value: resource.status.startTime!.toString()),
+                      if (resource.status.qosClass != null)
+                        _FieldTile(
+                            name: 'qosClass', value: resource.status.qosClass!),
+                      if (resource.status.hostIP != null)
+                        _FieldTile(
+                            name: 'hostIP', value: resource.status.hostIP!),
+                      if (resource.status.podIP != null) ...[
+                        const Divider(),
+                        _FieldTile(
+                            name: 'podIP', value: resource.status.podIP!),
+                      ],
+                      if (resource.status.hostIPs.isNotEmpty)
+                        Column(
+                          children: [
+                            const Divider(),
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                'Host IPs',
+                                textScaler: TextScaler.linear(1.5),
+                              ),
+                            ),
+                            ...resource.status.hostIPs.map(
+                              (e) {
+                                return Column(
+                                  children: e.entries
                                       .map(
-                                        (e) => _FieldTile(
-                                            name: e.key, value: e.value),
+                                        (e) => Tooltip(
+                                          message: e.value,
+                                          child: Chip(label: Text(e.key)),
+                                        ),
                                       )
                                       .toList(),
-                                ),
-                              ),
-                            ],
-                          ),
-                        if (resource.spec!.containers.isNotEmpty)
-                          Column(
-                            children: [
-                              const Divider(),
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Containers',
-                                  textScaler: TextScaler.linear(1.5),
-                                ),
-                              ),
-                              ...resource.spec!.containers.map(
-                                (e) => _Container(container: e),
-                              )
-                            ],
-                          ),
-                        if (resource.spec!.volumes.isNotEmpty)
-                          Column(
-                            children: [
-                              const Divider(),
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Volumes',
-                                  textScaler: TextScaler.linear(1.5),
-                                ),
-                              ),
-                              ...resource.spec!.volumes.map(
-                                (e) => _Volume(volume: e),
-                              ),
-                            ],
-                          )
-                      ],
-                    ),
-                  ),
-                if (resource.status != null)
-                  SizedBox.fromSize(
-                    size: columnSize,
-                    child: ListView(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text(
-                            'Status',
-                            textScaler: TextScaler.linear(2),
-                          ),
+                                );
+                              },
+                            ),
+                          ],
                         ),
-                        if (resource.status!.phase != null)
-                          _FieldTile(
-                              name: 'phase', value: resource.status!.phase!),
-                        if (resource.status!.startTime != null)
-                          _FieldTile(
-                              name: 'startTime',
-                              value: resource.status!.startTime!.toString()),
-                        if (resource.status!.qosClass != null)
-                          _FieldTile(
-                              name: 'qosClass',
-                              value: resource.status!.qosClass!),
-                        if (resource.status!.hostIP != null)
-                          _FieldTile(
-                              name: 'hostIP', value: resource.status!.hostIP!),
-                        if (resource.status!.podIP != null) ...[
-                          const Divider(),
-                          _FieldTile(
-                              name: 'podIP', value: resource.status!.podIP!),
-                        ],
-                        if (resource.status!.hostIPs.isNotEmpty)
-                          Column(
-                            children: [
-                              const Divider(),
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Host IPs',
-                                  textScaler: TextScaler.linear(1.5),
-                                ),
+                      if (resource.status.podIPs.isNotEmpty)
+                        Column(
+                          children: [
+                            const Divider(),
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                'Pod IPs',
+                                textScaler: TextScaler.linear(1.5),
                               ),
-                              ...resource.status!.hostIPs.map(
-                                (e) {
-                                  return Column(
-                                    children: e.entries
-                                        .map(
-                                          (e) => Tooltip(
-                                            message: e.value,
-                                            child: Chip(label: Text(e.key)),
-                                          ),
-                                        )
-                                        .toList(),
-                                  );
-                                },
+                            ),
+                            ...resource.status.podIPs.map(
+                              (e) {
+                                return Column(
+                                  children: e.entries
+                                      .map(
+                                        (e) => Tooltip(
+                                          message: e.value,
+                                          child: Chip(label: Text(e.key)),
+                                        ),
+                                      )
+                                      .toList(),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      if (resource.status.conditions.isNotEmpty)
+                        Column(
+                          children: [
+                            const Divider(),
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                'Conditions',
+                                textScaler: TextScaler.linear(1.5),
                               ),
-                            ],
-                          ),
-                        if (resource.status!.podIPs.isNotEmpty)
-                          Column(
-                            children: [
-                              const Divider(),
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Pod IPs',
-                                  textScaler: TextScaler.linear(1.5),
-                                ),
+                            ),
+                            ...resource.status.conditions.map(
+                              (e) => _Condition(condition: e),
+                            ),
+                          ],
+                        ),
+                      if (resource.status.containerStatuses.isNotEmpty)
+                        Column(
+                          children: [
+                            const Divider(),
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                'Conditions',
+                                textScaler: TextScaler.linear(1.5),
                               ),
-                              ...resource.status!.podIPs.map(
-                                (e) {
-                                  return Column(
-                                    children: e.entries
-                                        .map(
-                                          (e) => Tooltip(
-                                            message: e.value,
-                                            child: Chip(label: Text(e.key)),
-                                          ),
-                                        )
-                                        .toList(),
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        if (resource.status!.conditions.isNotEmpty)
-                          Column(
-                            children: [
-                              const Divider(),
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Conditions',
-                                  textScaler: TextScaler.linear(1.5),
-                                ),
-                              ),
-                              ...resource.status!.conditions.map(
-                                (e) => _Condition(condition: e),
-                              ),
-                            ],
-                          ),
-                        if (resource.status!.containerStatuses.isNotEmpty)
-                          Column(
-                            children: [
-                              const Divider(),
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Conditions',
-                                  textScaler: TextScaler.linear(1.5),
-                                ),
-                              ),
-                              ...resource.status!.containerStatuses.map(
-                                (e) => _ContainerStatus(containerStatus: e),
-                              ),
-                            ],
-                          ),
-                      ],
-                    ),
+                            ),
+                            ...resource.status.containerStatuses.map(
+                              (e) => _ContainerStatus(containerStatus: e),
+                            ),
+                          ],
+                        ),
+                    ],
                   ),
+                ),
               ],
             )
           : const Center(

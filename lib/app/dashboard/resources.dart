@@ -8,9 +8,9 @@ import '../errors.dart';
 import 'resources/properties.dart';
 
 class Resource {
-  Metadata? metadata;
-  Spec? spec;
-  Status? status;
+  late Metadata metadata;
+  late Spec spec;
+  late Status status;
 
   static Future<List<Resource>> list({
     required WidgetRef ref,
@@ -52,17 +52,8 @@ class Resource {
   Resource.fromMap(Map<String, dynamic> data) {
     if (data.isEmpty) return;
 
-    if (data.containsKey('metadata') &&
-        (data['metadata'] as Map<String, dynamic>).entries.isNotEmpty) {
-      metadata = Metadata.fromMap(data['metadata']);
-    }
-    if (data.containsKey('spec') &&
-        (data['spec'] as Map<String, dynamic>).entries.isNotEmpty) {
-      spec = Spec.fromMap(data['spec']);
-    }
-    if (data.containsKey('status') &&
-        (data['status'] as Map<String, dynamic>).entries.isNotEmpty) {
-      status = Status.fromMap(data['status']);
-    }
+    metadata = Metadata.fromMap(data['metadata']);
+    spec = Spec.fromMap(data['spec']);
+    status = Status.fromMap(data['status']);
   }
 }
