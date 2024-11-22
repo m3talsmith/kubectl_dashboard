@@ -63,8 +63,8 @@ class OwnerReference {
   late String kind;
   late String name;
   late String uid;
-  late bool controller;
-  late bool blockOwnerDeletion;
+  late bool? controller;
+  late bool? blockOwnerDeletion;
 
   OwnerReference.fromMap(Map<String, dynamic> data) {
     apiVersion = data['apiVersion'];
@@ -447,7 +447,7 @@ class Container {
 }
 
 class Port {
-  late String name;
+  String? name;
   int? containerPort;
   String? protocol;
   dynamic targetPort;

@@ -577,7 +577,7 @@ class _Port extends StatelessWidget {
       color: Theme.of(context).canvasColor,
       child: Column(
         children: [
-          _FieldTile(name: 'name', value: port.name),
+          _FieldTile(name: 'name', value: port.name ?? 'n/a'),
           _FieldTile(name: 'protocol', value: port.protocol ?? ''),
           _FieldTile(
               name: 'containerPort', value: port.containerPort.toString()),
