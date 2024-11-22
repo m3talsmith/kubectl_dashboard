@@ -46,6 +46,7 @@ class Resource {
       final resource = Resource.fromMap(item);
       resources.add(resource);
     }
+
     return resources;
   }
 

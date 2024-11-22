@@ -10,13 +10,8 @@ class ResourceShow extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final resource = ref.watch(currentResourceProvider);
-    final columns = [
-      if (resource != null) true,
-      if (resource != null) true,
-      if (resource != null) true,
-    ];
     final size = MediaQuery.of(context).size;
-    final columnSize = Size(size.width / columns.length - 1, size.height);
+    final columnSize = Size(size.width / 3, size.height);
 
     return Scaffold(
       appBar: resource != null
@@ -307,7 +302,10 @@ class ResourceShow extends ConsumerWidget {
                                       .map(
                                         (e) => Tooltip(
                                           message: e.value,
-                                          child: Chip(label: Text(e.key)),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Chip(label: Text(e.key)),
+                                          ),
                                         ),
                                       )
                                       .toList(),
@@ -339,7 +337,7 @@ class ResourceShow extends ConsumerWidget {
                             const Padding(
                               padding: EdgeInsets.all(8.0),
                               child: Text(
-                                'Conditions',
+                                'Container Statuses',
                                 textScaler: TextScaler.linear(1.5),
                               ),
                             ),
@@ -540,7 +538,7 @@ class _Container extends StatelessWidget {
                   ),
                 ),
                 ...container.args.map(
-                  (e) => Chip(label: Text(e)),
+                  (e) => Tooltip(message: e, child: Chip(label: Text(e))),
                 ),
               ],
             ),

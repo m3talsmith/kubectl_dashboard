@@ -682,10 +682,12 @@ class ContainerStatus {
 }
 
 class State {
-  late DateTime startedAt;
+  DateTime? startedAt;
 
   State.fromMap(Map<String, dynamic> data) {
-    startedAt = DateTime.parse(data['startedAt']);
+    if (data.containsKey('startedAt')) {
+      startedAt = DateTime.parse(data['startedAt']);
+    }
   }
 }
 
