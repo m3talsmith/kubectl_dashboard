@@ -191,9 +191,11 @@ class AuthCert extends BaseClient implements AuthClient {
     request.headers['user-agent'] = AuthClient._userAgent;
     var context = SecurityContext()
       ..allowLegacyUnsafeRenegotiation = true
-      ..setClientAuthoritiesBytes(clientCertificateAuthority)
-      ..useCertificateChainBytes(clientCertificateData)
-      ..usePrivateKeyBytes(clientKeyData);
+      ..setClientAuthoritiesBytes(clientCertificateAuthority);
+    if (clientCertificateData.isNotEmpty) {
+      context.useCertificateChainBytes(clientCertificateData);
+    }
+    if (clientKeyData.isNotEmpty) context.usePrivateKeyBytes(clientKeyData);
     var client = HttpClient(context: context)
       ..badCertificateCallback = (_, __, ___) => true;
     return IOClient(client).send(request);

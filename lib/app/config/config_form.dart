@@ -42,6 +42,8 @@ class _ConfigFormState extends ConsumerState<ConfigForm> {
       ref.watch(currentConfigIndexProvider.notifier).state = index;
       ref.watch(configsProvider.notifier).state = configs;
       ref.watch(currentConfigProvider.notifier).state = config;
+      ref.watch(currentContextIndexProvider.notifier).state = 0;
+      ref.watch(currentContextProvider.notifier).state = config.contexts.first;
       ref.watch(authenticationProvider.notifier).state =
           Auth.fromConfig(config);
       await saveConfigs(configs);
