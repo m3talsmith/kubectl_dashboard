@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kubectl_dashboard/app/auth.dart';
 import 'package:kubectl_dashboard/app/config/providers.dart';
 
 import '../config.dart';
@@ -27,7 +28,7 @@ class _ConfigFormState extends ConsumerState<ConfigForm> {
       final config = Config.fromYaml(data!);
       if (config == null) return;
 
-      var index = configs.length-1;
+      var index = configs.length - 1;
 
       if (widget.config != null) {
         if (configs.contains(widget.config!)) {
@@ -41,6 +42,8 @@ class _ConfigFormState extends ConsumerState<ConfigForm> {
       ref.watch(currentConfigIndexProvider.notifier).state = index;
       ref.watch(configsProvider.notifier).state = configs;
       ref.watch(currentConfigProvider.notifier).state = config;
+      ref.watch(authenticationProvider.notifier).state =
+          Auth.fromConfig(config);
       await saveConfigs(configs);
 
       nav.pop();
@@ -87,5 +90,4 @@ class _ConfigFormState extends ConsumerState<ConfigForm> {
       ),
     );
   }
-
 }

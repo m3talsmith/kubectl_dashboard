@@ -137,8 +137,8 @@ class Config {
     config.kind = buff['kind'];
     for (var u in buff['users']) {
       final exec = (u['user'].containsKey('exec') && u['user']['exec'] != null)
-        ? u['user']['exec']
-        : null;
+          ? Exec.fromMap(u['user']['exec'])
+          : null;
       User user = User(
         clientCertificateData: u['user']['client-certificate-data'],
         clientKeyData: u['user']['client-key-data'],
