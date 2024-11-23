@@ -1,40 +1,47 @@
 class Metadata {
   Metadata();
 
-  String? name;
-  String? generateName;
-  String? namespace;
-  String? uid;
-  String? resourceVersion;
-  DateTime? creationTimestamp;
-  late Map<String, dynamic> labels;
-  late List<OwnerReference> ownerReferences;
-  late List<ManagedField> managedFields;
   late Map<String, dynamic> annotations;
+  DateTime? creationTimestamp;
+  int? deletionGracePeriodSeconds;
+  DateTime? deletionTimestamp;
   late List<dynamic> finalizers;
+  String? generateName;
   int? generation;
+  late Map<String, dynamic> labels;
+  late List<ManagedField> managedFields;
+  String? name;
+  String? namespace;
+  late List<OwnerReference> ownerReferences;
+  String? resourceVersion;
+  String? selfLink;
+  String? uid;
 
   Metadata.fromMap(Map<String, dynamic> data) {
-    name = data['name'];
-    generateName = data['generateName'];
-    namespace = data['namespace'];
-    uid = data['uid'];
-    resourceVersion = data['resourceVersion'];
+    annotations = {};
+    if (data.containsKey('annotations')) {
+      annotations = data['annotations'];
+    }
+
     if (data.containsKey('creationTimestamp') &&
         data['creationTimestamp'] != null) {
       creationTimestamp = DateTime.parse(data['creationTimestamp']);
     }
 
+    deletionGracePeriodSeconds = data['deletionGracePeriodSeconds'];
+    deletionTimestamp = data['deletionTimestamp'];
+
+    finalizers = [];
+    if (data.containsKey('finalizers')) {
+      finalizers = data['finalizers'];
+    }
+
+    generateName = data['generateName'];
+    generation = data['generation'];
+
     labels = {};
     if (data.containsKey('labels')) {
       labels = data['labels'];
-    }
-
-    ownerReferences = [];
-    if (data.containsKey('ownerReferences')) {
-      for (Map<String, dynamic> e in data['ownerReferences']) {
-        ownerReferences.add(OwnerReference.fromMap(e));
-      }
     }
 
     managedFields = [];
@@ -44,17 +51,19 @@ class Metadata {
       }
     }
 
-    annotations = {};
-    if (data.containsKey('annotations')) {
-      annotations = data['annotations'];
+    name = data['name'];
+    namespace = data['namespace'];
+
+    ownerReferences = [];
+    if (data.containsKey('ownerReferences')) {
+      for (Map<String, dynamic> e in data['ownerReferences']) {
+        ownerReferences.add(OwnerReference.fromMap(e));
+      }
     }
 
-    finalizers = [];
-    if (data.containsKey('finalizers')) {
-      finalizers = data['finalizers'];
-    }
-
-    generation = data['generation'];
+    resourceVersion = data['resourceVersion'];
+    selfLink = data['selfLink'];
+    uid = data['uid'];
   }
 }
 

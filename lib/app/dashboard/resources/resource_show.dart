@@ -57,14 +57,7 @@ class ResourceShow extends ConsumerWidget {
                           value: resource.metadata.resourceVersion ?? ''),
                       if (resource.metadata.labels.isNotEmpty)
                         Column(children: [
-                          const Divider(),
-                          const Padding(
-                            padding: EdgeInsets.only(left: 8.0),
-                            child: Text(
-                              'Labels',
-                              textScaler: TextScaler.linear(1.5),
-                            ),
-                          ),
+                          const _CategoryHeader(title: 'Labels'),
                           ...resource.metadata.labels.entries.map(
                             (e) => Tooltip(
                               message: '${e.value}',
@@ -76,27 +69,13 @@ class ResourceShow extends ConsumerWidget {
                         ]),
                       if (resource.metadata.managedFields.isNotEmpty)
                         Column(children: [
-                          const Divider(),
-                          const Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text(
-                              'Managed Fields',
-                              textScaler: TextScaler.linear(1.5),
-                            ),
-                          ),
+                          const _CategoryHeader(title: 'Managed Fields'),
                           ...resource.metadata.managedFields
                               .map((e) => _ManagedField(field: e)),
                         ]),
                       if (resource.metadata.ownerReferences.isNotEmpty)
                         Column(children: [
-                          const Divider(),
-                          const Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text(
-                              'Owner References',
-                              textScaler: TextScaler.linear(1.5),
-                            ),
-                          ),
+                          const _CategoryHeader(title: 'Owner References'),
                           ...resource.metadata.ownerReferences
                               .map((e) => _OwnerReference(reference: e)),
                         ]),
@@ -203,13 +182,8 @@ class ResourceShow extends ConsumerWidget {
                         if (resource.spec!.tolerations.isNotEmpty)
                           Column(
                             children: [
-                              const Divider(),
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Tolerations',
-                                  textScaler: TextScaler.linear(1.5),
-                                ),
+                              const _CategoryHeader(
+                                title: 'Tolerations',
                               ),
                               ...resource.spec!.tolerations.map(
                                 (e) => _Toleration(toleration: e),
@@ -219,14 +193,7 @@ class ResourceShow extends ConsumerWidget {
                         if (resource.spec!.nodeSelector.isNotEmpty)
                           Column(
                             children: [
-                              const Divider(),
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Node Selector',
-                                  textScaler: TextScaler.linear(1.5),
-                                ),
-                              ),
+                              const _CategoryHeader(title: 'Node Selector'),
                               Card(
                                 child: Column(
                                   children: resource.spec!.nodeSelector.entries
@@ -242,14 +209,7 @@ class ResourceShow extends ConsumerWidget {
                         if (resource.spec!.containers.isNotEmpty)
                           Column(
                             children: [
-                              const Divider(),
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Containers',
-                                  textScaler: TextScaler.linear(1.5),
-                                ),
-                              ),
+                              const _CategoryHeader(title: 'Containers'),
                               ...resource.spec!.containers.map(
                                 (e) => _Container(container: e),
                               )
@@ -258,14 +218,7 @@ class ResourceShow extends ConsumerWidget {
                         if (resource.spec!.volumes.isNotEmpty)
                           Column(
                             children: [
-                              const Divider(),
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Volumes',
-                                  textScaler: TextScaler.linear(1.5),
-                                ),
-                              ),
+                              const _CategoryHeader(title: 'Volumes'),
                               ...resource.spec!.volumes.map(
                                 (e) => _Volume(volume: e),
                               ),
@@ -274,14 +227,7 @@ class ResourceShow extends ConsumerWidget {
                         if (resource.spec!.ports.isNotEmpty)
                           Column(
                             children: [
-                              const Divider(),
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Ports',
-                                  textScaler: TextScaler.linear(1.5),
-                                ),
-                              ),
+                              const _CategoryHeader(title: 'Ports'),
                               ...resource.spec!.ports.map(
                                 (e) => _Port(
                                   port: e,
@@ -295,14 +241,7 @@ class ResourceShow extends ConsumerWidget {
                         if (resource.spec!.clusterIPs.isNotEmpty)
                           Column(
                             children: [
-                              const Divider(),
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Cluster IPs',
-                                  textScaler: TextScaler.linear(1.5),
-                                ),
-                              ),
+                              const _CategoryHeader(title: 'Cluster IPs'),
                               ...resource.spec!.clusterIPs.map(
                                 (e) => Tooltip(
                                   message: e,
@@ -314,14 +253,7 @@ class ResourceShow extends ConsumerWidget {
                         if (resource.spec!.ipFamilies.isNotEmpty)
                           Column(
                             children: [
-                              const Divider(),
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  'IP Families',
-                                  textScaler: TextScaler.linear(1.5),
-                                ),
-                              ),
+                              const _CategoryHeader(title: 'IP Families'),
                               ...resource.spec!.ipFamilies.map(
                                 (e) => Tooltip(
                                   message: e,
@@ -333,14 +265,7 @@ class ResourceShow extends ConsumerWidget {
                         if (resource.spec!.selector.entries.isNotEmpty)
                           Column(
                             children: [
-                              const Divider(),
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Selector',
-                                  textScaler: TextScaler.linear(1.5),
-                                ),
-                              ),
+                              const _CategoryHeader(title: 'Selector'),
                               ...resource.spec!.selector.values.map(
                                 (e) => _Selector(selector: e),
                               ),
@@ -383,14 +308,7 @@ class ResourceShow extends ConsumerWidget {
                         if (resource.status!.hostIPs.isNotEmpty)
                           Column(
                             children: [
-                              const Divider(),
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Host IPs',
-                                  textScaler: TextScaler.linear(1.5),
-                                ),
-                              ),
+                              const _CategoryHeader(title: 'Host IPs'),
                               ...resource.status!.hostIPs.map(
                                 (e) {
                                   return Column(
@@ -410,14 +328,7 @@ class ResourceShow extends ConsumerWidget {
                         if (resource.status!.podIPs.isNotEmpty)
                           Column(
                             children: [
-                              const Divider(),
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Pod IPs',
-                                  textScaler: TextScaler.linear(1.5),
-                                ),
-                              ),
+                              const _CategoryHeader(title: 'Pod IPs'),
                               ...resource.status!.podIPs.map(
                                 (e) {
                                   return Column(
@@ -441,14 +352,7 @@ class ResourceShow extends ConsumerWidget {
                         if (resource.status!.conditions.isNotEmpty)
                           Column(
                             children: [
-                              const Divider(),
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Conditions',
-                                  textScaler: TextScaler.linear(1.5),
-                                ),
-                              ),
+                              const _CategoryHeader(title: 'Conditions'),
                               ...resource.status!.conditions.map(
                                 (e) => _Condition(condition: e),
                               ),
@@ -457,14 +361,8 @@ class ResourceShow extends ConsumerWidget {
                         if (resource.status!.containerStatuses.isNotEmpty)
                           Column(
                             children: [
-                              const Divider(),
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Container Statuses',
-                                  textScaler: TextScaler.linear(1.5),
-                                ),
-                              ),
+                              const _CategoryHeader(
+                                  title: 'Container Statuses'),
                               ...resource.status!.containerStatuses.map(
                                 (e) => _ContainerStatus(containerStatus: e),
                               ),
@@ -584,13 +482,7 @@ class _SecurityContext extends StatelessWidget {
           Card(
             child: Column(
               children: [
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    'seccompProfile',
-                    textScaler: TextScaler.linear(1.2),
-                  ),
-                ),
+                const _CategoryHeader(title: 'seccomProfile'),
                 ...securityContext.seccompProfile.entries.map(
                   (e) => _FieldTile(
                     name: e.key,
@@ -653,14 +545,7 @@ class _Container extends StatelessWidget {
           if (container.args.isNotEmpty)
             Column(
               children: [
-                const Divider(),
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    'Args',
-                    textScaler: TextScaler.linear(1.2),
-                  ),
-                ),
+                const _CategoryHeader(title: 'Args'),
                 ...container.args.map(
                   (e) => Tooltip(message: e, child: Chip(label: Text(e))),
                 ),
@@ -669,14 +554,7 @@ class _Container extends StatelessWidget {
           if (container.ports.isNotEmpty)
             Column(
               children: [
-                const Divider(),
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    'Ports',
-                    textScaler: TextScaler.linear(1.2),
-                  ),
-                ),
+                const _CategoryHeader(title: 'Ports'),
                 ...container.ports.map(
                   (e) => _Port(port: e),
                 ),
@@ -685,28 +563,14 @@ class _Container extends StatelessWidget {
           if (container.livelinessProbe != null)
             Column(
               children: [
-                const Divider(),
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    'Liveliness Probe',
-                    textScaler: TextScaler.linear(1.2),
-                  ),
-                ),
+                const _CategoryHeader(title: 'Liveliness Probe'),
                 _Probe(probe: container.livelinessProbe!),
               ],
             ),
           if (container.readinessProbe != null)
             Column(
               children: [
-                const Divider(),
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    'Readiness Probe',
-                    textScaler: TextScaler.linear(1.2),
-                  ),
-                ),
+                const _CategoryHeader(title: 'Rediness Probe'),
                 _Probe(probe: container.readinessProbe!),
               ],
             ),
@@ -714,14 +578,7 @@ class _Container extends StatelessWidget {
             Card(
               child: Column(
                 children: [
-                  const Divider(),
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text(
-                      'Command',
-                      textScaler: TextScaler.linear(1.2),
-                    ),
-                  ),
+                  const _CategoryHeader(title: 'Command'),
                   ...container.command.map(
                     (e) => Tooltip(
                       message: e,
@@ -771,17 +628,11 @@ class _Volume extends StatelessWidget {
         children: [
           if (volume.name != null)
             _FieldTile(name: 'name', value: volume.name!),
-          if (volume.projected != null) ...[
-            const Divider(),
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(
-                'Projected',
-                textScaler: TextScaler.linear(1.2),
-              ),
-            ),
-            _Projected(projected: volume.projected!),
-          ],
+          if (volume.projected != null)
+            Column(children: [
+              const _CategoryHeader(title: 'Projected'),
+              _Projected(projected: volume.projected!),
+            ]),
         ],
       ),
     );
@@ -805,10 +656,7 @@ class _Projected extends StatelessWidget {
           if (projected.sources.isNotEmpty)
             Column(
               children: [
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text('Sources'),
-                ),
+                const _CategoryHeader(title: 'Sources'),
                 ...projected.sources.map(
                   (e) => _Source(source: e),
                 )
@@ -840,34 +688,27 @@ class _Source extends StatelessWidget {
             _FieldTile(
                 name: 'path', value: (source as prop.ServiceAccountToken).path),
           ],
-          if (source is prop.ConfigMap) ...[
-            const _FieldTile(name: 'kind', value: 'configMap'),
-            _FieldTile(name: 'name', value: (source as prop.ConfigMap).name),
-            const Divider(),
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text('Items'),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: (source as prop.ConfigMap)
-                    .items
-                    .map(
-                      (e) => Tooltip(
-                          message: e.path, child: Chip(label: Text(e.key))),
-                    )
-                    .toList(),
-              ),
-            )
-          ],
+          if (source is prop.ConfigMap)
+            Column(children: [
+              const _FieldTile(name: 'kind', value: 'configMap'),
+              _FieldTile(name: 'name', value: (source as prop.ConfigMap).name),
+              const _CategoryHeader(title: 'Items'),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: (source as prop.ConfigMap)
+                      .items
+                      .map(
+                        (e) => Tooltip(
+                            message: e.path, child: Chip(label: Text(e.key))),
+                      )
+                      .toList(),
+                ),
+              )
+            ]),
           if (source is prop.DownwardAPI) ...[
             const _FieldTile(name: 'kind', value: 'downwardAPI'),
-            const Divider(),
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text('Items'),
-            ),
+            const _CategoryHeader(title: 'Items'),
             ...(source as prop.DownwardAPI).items.map(
                   (e) => _DownwardAPIItem(downwardAPIItem: e),
                 ),
@@ -890,11 +731,7 @@ class _DownwardAPIItem extends StatelessWidget {
       child: Column(
         children: [
           _FieldTile(name: 'path', value: downwardAPIItem.path),
-          const Divider(),
-          const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text('FieldRef'),
-          ),
+          const _CategoryHeader(title: 'FieldRef'),
           _FieldRef(fieldRef: downwardAPIItem.fieldRef),
         ],
       ),
@@ -981,11 +818,7 @@ class _ContainerStatus extends StatelessWidget {
           if (containerStatus.state.isNotEmpty)
             Column(
               children: [
-                const Divider(),
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text('State'),
-                ),
+                const _CategoryHeader(title: 'State'),
                 ...containerStatus.state.entries.map(
                   (e) => Tooltip(
                     message: e.value.startedAt.toString(),
@@ -997,11 +830,7 @@ class _ContainerStatus extends StatelessWidget {
           if (containerStatus.lastState.isNotEmpty)
             Column(
               children: [
-                const Divider(),
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text('Last State'),
-                ),
+                const _CategoryHeader(title: 'Last State'),
                 ...containerStatus.lastState.entries.map(
                   (e) => Tooltip(
                     message: e.value.startedAt.toString(),
@@ -1137,5 +966,25 @@ class _Selector extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class _CategoryHeader extends StatelessWidget {
+  const _CategoryHeader({required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: [
+      const Divider(),
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          title,
+          textScaler: const TextScaler.linear(1.5),
+        ),
+      ),
+    ]);
   }
 }
