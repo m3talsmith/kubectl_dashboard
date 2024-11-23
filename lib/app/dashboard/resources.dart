@@ -113,7 +113,7 @@ class Resource {
     final resources = <Resource>[];
 
     final p = Pluralize();
-    var resourceKindPluralized;
+    var resourceKindPluralized = resourceKind;
     if (pluralize) {
       resourceKindPluralized =
           p.pluralize(resourceKind.toLowerCase(), 3, false);
@@ -152,7 +152,6 @@ class Resource {
     bool pluralize = true,
     String? namespace = 'default',
   }) async {
-    log('[DEBUG] resourceKind: $resourceKind');
     final api = Resource.getApi(resourceKind: resourceKind);
 
     final auth = ref.watch(authenticationProvider);
@@ -160,13 +159,15 @@ class Resource {
     if (auth.cluster == null) return null;
 
     final p = Pluralize();
-    if (pluralize && p.isSingular(resourceKind)) {
-      resourceKind = p.pluralize(resourceKind.toLowerCase(), 3, false);
+    var resourceKindPluralized = resourceKind;
+    if (pluralize) {
+      resourceKindPluralized =
+          p.pluralize(resourceKind.toLowerCase(), 3, false);
     }
 
     final resourcePath = (namespace != null)
-        ? '$api/namespaces/$namespace/$resourceKind/$resourceName'
-        : '$api/$resourceKind/$resourceName';
+        ? '$api/namespaces/$namespace/$resourceKindPluralized/$resourceName'
+        : '$api/$resourceKindPluralized/$resourceName';
     final uri = Uri.parse('${auth.cluster!.server!}$resourcePath');
 
     final response = await auth.get(uri);
