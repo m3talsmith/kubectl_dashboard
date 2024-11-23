@@ -107,10 +107,9 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                   children: [
                     ...Resource.apiReadKinds.map(
                       (e) => _SubTab(
-                        title: SymbolName(e.name)
+                        title: SymbolName(e.name.toPluralForm())
                             .toHumanizedName()
-                            .toTitleCase()
-                            .toPluralForm(),
+                            .toTitleCase(),
                         resourceKind: e.name,
                         selected: subTabs.indexOf(e.name) == _subTabIndex,
                         onSelected: () {
