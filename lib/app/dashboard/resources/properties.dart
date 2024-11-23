@@ -806,8 +806,9 @@ class Selector {
           details[f.value] = f.key;
         }
       } else {
-        details[e.key] = e.value;
+        details[e.value] = e.key;
       }
     }
+    log('[DEBUG] details: $details');
   }
 }
