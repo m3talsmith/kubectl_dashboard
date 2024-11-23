@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:humanizer/humanizer.dart';
@@ -1126,8 +1124,6 @@ class _Selector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log('[DEBUG] details: ${selector.details}');
-
     return Card(
       child: Column(
         children: [

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 class Metadata {
   Metadata();
 
@@ -797,7 +795,6 @@ class Selector {
   late Map<String, dynamic> details;
 
   Selector.fromMap(Map<String, dynamic> data) {
-    log('[DEBUG] data: $data');
     details = {};
     for (var e in data.entries) {
       type = e.key;
@@ -809,6 +806,5 @@ class Selector {
         details[e.value] = e.key;
       }
     }
-    log('[DEBUG] details: $details');
   }
 }
