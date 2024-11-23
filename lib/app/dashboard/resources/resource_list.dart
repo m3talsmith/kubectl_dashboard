@@ -21,22 +21,23 @@ class ResourcesList extends ConsumerWidget {
               child: InkWell(
                 onTap: () async {
                   final nav = Navigator.of(context);
-                  final resource = await Resource.show(
-                    ref: ref,
-                    resourceKind: e.kind,
-                    resourceName: e.metadata.name!,
-                    namespace: e.namespace,
-                  );
-                  if (resource != null) {
-                    ref.watch(currentResourceProvider.notifier).state =
-                        resource;
-                    nav.push(
-                      MaterialPageRoute(
-                        builder: (context) => const ResourceShow(),
-                      ),
+                  Resource? resource;
+                  if (!Resource.ignoreShow
+                      .contains(ResourceKind.fromString(e.kind))) {
+                    resource = await Resource.show(
+                      ref: ref,
+                      resourceKind: e.kind,
+                      resourceName: e.metadata.name!,
+                      namespace: e.namespace,
                     );
-                    return;
                   }
+                  resource = e;
+                  ref.watch(currentResourceProvider.notifier).state = resource;
+                  nav.push(
+                    MaterialPageRoute(
+                      builder: (context) => const ResourceShow(),
+                    ),
+                  );
                 },
                 child: Card(
                   margin: const EdgeInsets.all(8.0),

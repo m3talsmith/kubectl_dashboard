@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:humanizer/humanizer.dart';
 import 'package:kubectl_dashboard/app/auth.dart';
 import 'package:kubectl_dashboard/app/config/providers.dart';
 import 'package:kubectl_dashboard/app/dashboard/dashboard_list_tile.dart';
@@ -7,7 +8,6 @@ import 'package:kubectl_dashboard/app/dashboard/resources.dart';
 import 'package:kubectl_dashboard/app/dashboard/resources/providers.dart';
 import 'package:kubectl_dashboard/app/dashboard/resources/resource_list.dart';
 import 'package:kubectl_dashboard/app/preferences.dart';
-import 'package:pluralize/pluralize.dart';
 
 class DashboardView extends ConsumerStatefulWidget {
   const DashboardView({this.contextIndex, super.key});
@@ -60,8 +60,6 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             .toList() ??
         [];
 
-    final helper = Pluralize();
-
     final List<dynamic> subTabs = Resource.apiReadKinds
         .map(
           (e) => e.name,
@@ -109,7 +107,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                   children: [
                     ...Resource.apiReadKinds.map(
                       (e) => _SubTab(
-                        title: helper.pluralize(e.name, 3, false),
+                        title: SymbolName(e.name)
+                            .toHumanizedName()
+                            .toTitleCase()
+                            .toPluralForm(),
                         resourceKind: e.name,
                         selected: subTabs.indexOf(e.name) == _subTabIndex,
                         onSelected: () {

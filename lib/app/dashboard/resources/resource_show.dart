@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:humanizer/humanizer.dart';
 import 'package:kubectl_dashboard/app/dashboard/resources/properties.dart'
     as prop;
 import 'package:kubectl_dashboard/app/dashboard/resources/providers.dart';
@@ -19,7 +20,8 @@ class ResourceShow extends ConsumerWidget {
       appBar: resource != null
           ? AppBar(
               centerTitle: true,
-              title: Text(resource.metadata.name ?? 'unknown'),
+              title: Text(
+                  '${resource.kind.toTitleCase()}: ${resource.metadata.name!}'),
             )
           : null,
       body: resource != null

@@ -47,6 +47,7 @@ dependencies:
   http: ^1.2.2
   json2yaml: ^3.0.1
   pluralize: ^0.0.8
+  humanizer: ^3.0.0
 
 dev_dependencies:
   flutter_test:

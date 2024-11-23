@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pluralize/pluralize.dart';
+import 'package:humanizer/humanizer.dart';
 
 import '../auth.dart';
 import '../errors.dart';
@@ -62,21 +62,26 @@ class Resource {
   static const appsAPI = '/apis/apps/v1';
   static const batchAPI = '/apis/batch/v1';
 
-  static List<ResourceKind> get apiReadKinds {
-    final ignore = [
-      ResourceKind.unknown,
-      ResourceKind.container,
-      ResourceKind.volume,
-      ResourceKind.binding,
-    ];
+  static const ignoreList = [
+    ResourceKind.unknown,
+    ResourceKind.container,
+    ResourceKind.volume,
+    ResourceKind.binding,
+  ];
 
+  static const ignoreShow = [
+    ...ignoreList,
+    ResourceKind.persistentVolume,
+  ];
+
+  static List<ResourceKind> get apiReadKinds {
     List<ResourceKind> values = [];
     for (var e in ResourceKind.values) {
       values.add(e);
     }
     return values
       ..removeWhere(
-        (e) => ignore.contains(e),
+        (e) => ignoreList.contains(e),
       );
   }
 
@@ -112,11 +117,9 @@ class Resource {
 
     final resources = <Resource>[];
 
-    final p = Pluralize();
     var resourceKindPluralized = resourceKind;
     if (pluralize) {
-      resourceKindPluralized =
-          p.pluralize(resourceKind.toLowerCase(), 3, false);
+      resourceKindPluralized = resourceKind.toLowerCase().toPluralForm();
     }
 
     final resourcePath = (namespace != null)
@@ -158,11 +161,9 @@ class Resource {
     if (auth == null) return null;
     if (auth.cluster == null) return null;
 
-    final p = Pluralize();
     var resourceKindPluralized = resourceKind;
     if (pluralize) {
-      resourceKindPluralized =
-          p.pluralize(resourceKind.toLowerCase(), 3, false);
+      resourceKindPluralized = resourceKind.toLowerCase().toPluralForm();
     }
 
     final resourcePath = (namespace != null)
@@ -181,7 +182,7 @@ class Resource {
     }
     final data = jsonDecode(response.body);
 
-    data['kind'] = pluralize ? p.singular(resourceKind) : resourceKind;
+    data['kind'] = resourceKind.toSingularForm();
     return Resource.fromMap(data);
   }
 
