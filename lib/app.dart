@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kubectl_dashboard/app/app_drawer.dart';
 import 'package:kubectl_dashboard/app/config/providers.dart';
 import 'package:kubectl_dashboard/app/dashboard.dart';
+import 'package:kubectl_dashboard/app/dashboard/resources/providers.dart';
+import 'package:kubectl_dashboard/app/dashboard/resources/resource_show.dart';
 import 'package:kubectl_dashboard/app/preferences.dart';
 import 'package:kubectl_dashboard/window.dart';
 import 'package:window_manager/window_manager.dart';
@@ -73,6 +75,8 @@ class _AppState extends ConsumerState<App> with WindowListener {
   Widget build(BuildContext context) {
     final config = ref.watch(currentConfigProvider);
     final currentContextIndex = ref.watch(currentContextIndexProvider);
+    final resources = ref.watch(resourcesProvider);
+    final searchController = SearchController();
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -90,6 +94,39 @@ class _AppState extends ConsumerState<App> with WindowListener {
             centerTitle: true,
             title: const Text('Kubectl Dashboard'),
             actions: [
+              SearchAnchor(
+                searchController: searchController,
+                builder: (context, controller) {
+                  return IconButton(
+                      onPressed: () {
+                        controller.openView();
+                      },
+                      icon: const Icon(Icons.search_rounded));
+                },
+                suggestionsBuilder: (context, controller) {
+                  return resources
+                      .where(
+                        (e) =>
+                            e.metadata.name!.contains(controller.text) ||
+                            e.namespace.contains(controller.text),
+                      )
+                      .map(
+                        (e) => ListTile(
+                          onTap: () async {
+                            final nav = Navigator.of(context);
+                            ref.watch(currentResourceProvider.notifier).state =
+                                e;
+                            await nav.push(MaterialPageRoute(
+                              builder: (context) => const ResourceShow(),
+                            ));
+                            nav.pop();
+                          },
+                          title: Text(e.metadata.name!),
+                          subtitle: Text(e.namespace),
+                        ),
+                      );
+                },
+              ),
               if (Platform.isLinux || Platform.isMacOS || Platform.isWindows)
                 Padding(
                   padding: const EdgeInsets.all(8.0),
