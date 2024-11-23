@@ -138,13 +138,13 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
 class _SubTab extends ConsumerWidget {
   const _SubTab({
     required this.title,
-    this.resourceKind,
+    required this.resourceKind,
     this.selected = false,
     this.onSelected,
   });
 
   final String title;
-  final String? resourceKind;
+  final String resourceKind;
   final bool selected;
   final Function()? onSelected;
 
@@ -156,7 +156,7 @@ class _SubTab extends ConsumerWidget {
         onTap: () async {
           final resources = await Resource.list(
             ref: ref,
-            resourceKind: (resourceKind == null) ? title : resourceKind!,
+            resourceKind: resourceKind,
             namespace: null,
           );
           ref.watch(resourcesProvider.notifier).state = resources;

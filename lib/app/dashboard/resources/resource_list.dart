@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kubectl_dashboard/app/dashboard/resources/providers.dart';
@@ -20,11 +22,14 @@ class ResourcesList extends ConsumerWidget {
               height: 120,
               child: InkWell(
                 onTap: () async {
+                  log('[DEBUG] resourceKind: ${e.kind}');
                   final nav = Navigator.of(context);
                   final resource = await Resource.show(
-                      ref: ref,
-                      resourceKind: e.kind,
-                      resourceName: e.metadata.name!);
+                    ref: ref,
+                    resourceKind: e.kind,
+                    resourceName: e.metadata.name!,
+                    namespace: e.namespace,
+                  );
                   if (resource != null) {
                     ref.watch(currentResourceProvider.notifier).state =
                         resource;

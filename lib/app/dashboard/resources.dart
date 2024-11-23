@@ -56,6 +56,7 @@ class Resource {
   Status? status;
 
   late String kind;
+  late String namespace;
 
   static const coreAPI = '/api/v1';
   static const appsAPI = '/apis/apps/v1';
@@ -82,7 +83,7 @@ class Resource {
   static String? getApi({required String resourceKind, bool pluralize = true}) {
     switch (ResourceKind.fromString(resourceKind)) {
       case ResourceKind.unknown:
-        return null;
+        return coreAPI;
       case ResourceKind.daemonSet:
       case ResourceKind.deployment:
       case ResourceKind.replicaSet:
@@ -112,18 +113,20 @@ class Resource {
     final resources = <Resource>[];
 
     final p = Pluralize();
-    if (pluralize && p.isSingular(resourceKind)) {
-      resourceKind = p.pluralize(resourceKind.toLowerCase(), 3, false);
+    var resourceKindPluralized;
+    if (pluralize) {
+      resourceKindPluralized =
+          p.pluralize(resourceKind.toLowerCase(), 3, false);
     }
 
     final resourcePath = (namespace != null)
-        ? '$api/namespaces/$namespace/$resourceKind'
-        : '$api/$resourceKind';
+        ? '$api/namespaces/$namespace/$resourceKindPluralized'
+        : '$api/$resourceKindPluralized';
     final uri = Uri.parse('${auth.cluster!.server!}$resourcePath');
 
     final response = await auth.get(uri);
     if (response.statusCode > 299) {
-      log('[ERROR] list: uri: $uri, status: ${response.statusCode} error: ${response.body}');
+      log('[ERROR] list: resourceKind: $resourceKind, uri: $uri, status: ${response.statusCode} error: ${response.body}');
       ref
           .watch(errorsProvider.notifier)
           .state
@@ -149,6 +152,7 @@ class Resource {
     bool pluralize = true,
     String? namespace = 'default',
   }) async {
+    log('[DEBUG] resourceKind: $resourceKind');
     final api = Resource.getApi(resourceKind: resourceKind);
 
     final auth = ref.watch(authenticationProvider);
@@ -167,7 +171,7 @@ class Resource {
 
     final response = await auth.get(uri);
     if (response.statusCode > 299) {
-      log('[ERROR] list: uri: $uri, status: ${response.statusCode} error: ${response.body}');
+      log('[ERROR] show: resourceKind: $resourceKind, uri: $uri, status: ${response.statusCode} error: ${response.body}');
       ref
           .watch(errorsProvider.notifier)
           .state
@@ -185,6 +189,7 @@ class Resource {
 
     kind = data['kind'];
     metadata = Metadata.fromMap(data['metadata']);
+    namespace = metadata.namespace ?? 'default';
     if (data.containsKey('spec')) {
       spec = Spec.fromMap(data['spec']);
     }
