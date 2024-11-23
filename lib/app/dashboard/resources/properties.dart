@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 class Metadata {
   Metadata();
 
@@ -240,12 +242,8 @@ class Spec {
 
     selector = {};
     if (data.containsKey('selector')) {
-      for (var e in (data['selector'] as Map<String, dynamic>).entries) {
-        switch (e.key) {
-          case 'matchLabels':
-            selector[e.key] = MatchLabelsSelector.fromMap(e.value);
-        }
-      }
+      final e = Selector.fromMap(data['selector']);
+      selector[e.type] = e;
     }
   }
 }
@@ -794,15 +792,18 @@ class RollingUpdateStrategy implements StrategyType {
   }
 }
 
-abstract class Selector {}
-
-class MatchLabelsSelector implements Selector {
+class Selector {
+  late String type;
   late Map<String, dynamic> details;
 
-  MatchLabelsSelector.fromMap(Map<String, dynamic> data) {
+  Selector.fromMap(Map<String, dynamic> data) {
+    log('[DEBUG] data: $data');
     details = {};
     for (var e in data.entries) {
-      details[e.key] = e.value;
+      type = e.key;
+      // for (var f in (e.value as Map<String, dynamic>).entries) {
+      //   details[f.key] = f.value;
+      // }
     }
   }
 }

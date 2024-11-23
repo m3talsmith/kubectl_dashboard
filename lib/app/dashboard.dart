@@ -60,13 +60,13 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             .toList() ??
         [];
 
-    final List<dynamic> subTabs = [
-      'Pods',
-      'Services',
-      'Deployments',
-      'Ingresses',
-      'Certificates',
-    ];
+    final helper = Pluralize();
+
+    final List<dynamic> subTabs = Resource.apiReadKinds
+        .map(
+          (e) => e.name,
+        )
+        .toList();
 
     return (config == null || authentication == null || currentContext == null)
         ? const Center(
@@ -107,43 +107,21 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                 child: ListView(
                   shrinkWrap: true,
                   children: [
-                    _SubTab(
-                      title: 'Pods',
-                      selected: subTabs.indexOf('Pods') == _subTabIndex,
-                      onSelected: () {
-                        final i = subTabs.indexOf('Pods');
-                        if (i != _subTabIndex) {
-                          setState(() {
-                            _subTabIndex = i;
-                          });
-                        }
-                      },
+                    ...Resource.apiReadKinds.map(
+                      (e) => _SubTab(
+                        title: helper.pluralize(e.name, 3, false),
+                        resourceKind: e.name,
+                        selected: subTabs.indexOf(e.name) == _subTabIndex,
+                        onSelected: () {
+                          final i = subTabs.indexOf(e.name);
+                          if (i != _subTabIndex) {
+                            setState(() {
+                              _subTabIndex = i;
+                            });
+                          }
+                        },
+                      ),
                     ),
-                    _SubTab(
-                      title: 'Services',
-                      selected: subTabs.indexOf('Services') == _subTabIndex,
-                      onSelected: () {
-                        final i = subTabs.indexOf('Services');
-                        if (i != _subTabIndex) {
-                          setState(() {
-                            _subTabIndex = i;
-                          });
-                        }
-                      },
-                    ),
-                    _SubTab(
-                      title: 'Deployments',
-                      api: '/apis/apps/v1',
-                      selected: subTabs.indexOf('Deployments') == _subTabIndex,
-                      onSelected: () {
-                        final i = subTabs.indexOf('Deployments');
-                        if (i != _subTabIndex) {
-                          setState(() {
-                            _subTabIndex = i;
-                          });
-                        }
-                      },
-                    )
                   ],
                 ),
               ),
@@ -160,35 +138,26 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
 class _SubTab extends ConsumerWidget {
   const _SubTab({
     required this.title,
-    this.resource,
-    this.pluralize = true,
-    this.downcase = true,
+    this.resourceKind,
     this.selected = false,
     this.onSelected,
-    this.api,
   });
 
   final String title;
-  final String? resource;
-  final bool pluralize;
-  final bool downcase;
+  final String? resourceKind;
   final bool selected;
   final Function()? onSelected;
-  final String? api;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    String resourceName = (resource == null) ? title : resource!;
-    if (pluralize) resourceName = Pluralize().pluralize(resourceName, 3, false);
-    if (downcase) resourceName = resourceName.toLowerCase();
     return DashboardListTile(
         title: Text(title),
         selected: selected,
         onTap: () async {
           final resources = await Resource.list(
             ref: ref,
-            resource: resourceName,
-            api: api,
+            resourceKind: (resourceKind == null) ? title : resourceKind!,
+            namespace: null,
           );
           ref.watch(resourcesProvider.notifier).state = resources;
           if (!selected && onSelected != null) onSelected!();
