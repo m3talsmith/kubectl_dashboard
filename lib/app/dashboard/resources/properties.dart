@@ -801,9 +801,13 @@ class Selector {
     details = {};
     for (var e in data.entries) {
       type = e.key;
-      // for (var f in (e.value as Map<String, dynamic>).entries) {
-      //   details[f.key] = f.value;
-      // }
+      if (e.value is Map<String, dynamic>) {
+        for (var f in e.value.entries) {
+          details[f.value] = f.key;
+        }
+      } else {
+        details[e.key] = e.value;
+      }
     }
   }
 }

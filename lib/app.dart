@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kubectl_dashboard/app/app_drawer.dart';
 import 'package:kubectl_dashboard/app/config/providers.dart';
 import 'package:kubectl_dashboard/app/dashboard.dart';
-import 'package:kubectl_dashboard/app/errors.dart';
 import 'package:kubectl_dashboard/app/preferences.dart';
 import 'package:kubectl_dashboard/window.dart';
 import 'package:window_manager/window_manager.dart';
@@ -74,7 +73,6 @@ class _AppState extends ConsumerState<App> with WindowListener {
   Widget build(BuildContext context) {
     final config = ref.watch(currentConfigProvider);
     final currentContextIndex = ref.watch(currentContextIndexProvider);
-    final errors = ref.watch(errorsProvider);
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -86,12 +84,6 @@ class _AppState extends ConsumerState<App> with WindowListener {
       home: Builder(builder: (context) {
         final fullscreen = ref.watch(fullscreenProvider);
         final size = MediaQuery.of(context).size;
-        for (var err in errors) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: ErrorView(
-                  error: Error(
-                      message: err.message, statusCode: err.statusCode))));
-        }
 
         return Scaffold(
           appBar: AppBar(
