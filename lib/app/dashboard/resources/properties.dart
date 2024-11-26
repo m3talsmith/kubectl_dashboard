@@ -29,7 +29,10 @@ class Metadata {
     }
 
     deletionGracePeriodSeconds = data['deletionGracePeriodSeconds'];
-    deletionTimestamp = data['deletionTimestamp'];
+
+    if (data.containsKey('deletionTimestamp')) {
+      deletionTimestamp = DateTime.parse(data['deletionTimestamp']);
+    }
 
     finalizers = [];
     if (data.containsKey('finalizers')) {

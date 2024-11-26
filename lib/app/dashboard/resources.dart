@@ -80,6 +80,9 @@ class Resource {
       values.add(e);
     }
     return values
+      ..sort(
+        (a, b) => a.name.compareTo(b.name),
+      )
       ..removeWhere(
         (e) => ignoreList.contains(e),
       );
@@ -145,7 +148,10 @@ class Resource {
       resources.add(resource);
     }
 
-    return resources;
+    return resources
+      ..sort(
+        (a, b) => a.namespace.compareTo(b.namespace),
+      );
   }
 
   static Future<Resource?> show({
@@ -184,6 +190,30 @@ class Resource {
 
     data['kind'] = resourceKind.toSingularForm();
     return Resource.fromMap(data);
+  }
+
+  delete({required WidgetRef ref}) async {
+    final api = Resource.getApi(resourceKind: kind);
+
+    final auth = ref.watch(authenticationProvider);
+    if (auth == null) return null;
+    if (auth.cluster == null) return null;
+
+    var resourceKindPluralized = kind.toLowerCase().toPluralForm();
+
+    final resourcePath =
+        '$api/namespaces/$namespace/$resourceKindPluralized/${metadata.name!}';
+    final uri = Uri.parse('${auth.cluster!.server!}$resourcePath');
+
+    final response = await auth.delete(uri);
+    if (response.statusCode > 299) {
+      log('[ERROR] delete: resourceKind: $kind, uri: $uri, status: ${response.statusCode} error: ${response.body}');
+      ref
+          .watch(errorsProvider.notifier)
+          .state
+          .add(Error(message: response.body, statusCode: response.statusCode));
+      return null;
+    }
   }
 
   Resource.fromMap(Map<String, dynamic> data) {

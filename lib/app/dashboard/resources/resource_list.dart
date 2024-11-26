@@ -39,34 +39,63 @@ class ResourcesList extends ConsumerWidget {
                     ),
                   );
                 },
-                child: Card(
-                  margin: const EdgeInsets.all(8.0),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      children: [
-                        Text(e.metadata.namespace ?? 'default'),
-                        if (e.status != null)
-                          Expanded(
-                            child: Center(
-                              child: (e.status!.phase != null)
-                                  ? Container(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .inversePrimary,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(16.0),
-                                        child: Text(e.status!.phase!),
-                                      ),
-                                    )
-                                  : null,
-                            ),
+                child: Builder(builder: (context) {
+                  final controller = MenuController();
+                  return Card(
+                    margin: const EdgeInsets.all(8.0),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(child: Container()),
+                              MenuAnchor(
+                                controller: controller,
+                                menuChildren: [
+                                  MenuItemButton(
+                                    onPressed: () {
+                                      e.delete(ref: ref);
+                                      ref
+                                          .watch(resourcesProvider.notifier)
+                                          .state = resources..remove(e);
+                                    },
+                                    child: const ListTile(
+                                      title: Text('Delete'),
+                                    ),
+                                  )
+                                ],
+                                child: IconButton(
+                                    onPressed: () => (controller.isOpen)
+                                        ? controller.close()
+                                        : controller.open(),
+                                    icon: const Icon(Icons.more_vert_rounded)),
+                              ),
+                            ],
                           ),
-                        Text(e.metadata.name ?? 'unknown'),
-                      ],
+                          Text(e.metadata.namespace ?? 'default'),
+                          if (e.status != null)
+                            Expanded(
+                              child: Center(
+                                child: (e.status!.phase != null)
+                                    ? Container(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .inversePrimary,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(16.0),
+                                          child: Text(e.status!.phase!),
+                                        ),
+                                      )
+                                    : Container(),
+                              ),
+                            ),
+                          Text(e.metadata.name ?? 'unknown'),
+                        ],
+                      ),
                     ),
-                  ),
-                ),
+                  );
+                }),
               ),
             ),
           )
