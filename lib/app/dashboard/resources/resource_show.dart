@@ -1,9 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:humanizer/humanizer.dart';
-import 'package:kubectl_dashboard/app/dashboard/resources/properties.dart'
-    as prop;
 import 'package:kubectl_dashboard/app/dashboard/resources/providers.dart';
+
+import 'properties/condition.dart';
+import 'properties/config_map.dart';
+import 'properties/container.dart' as properties_container;
+import 'properties/container_status.dart';
+import 'properties/downward_api.dart';
+import 'properties/field_ref.dart';
+import 'properties/http_get.dart';
+import 'properties/managed_field.dart';
+import 'properties/owner_reference.dart';
+import 'properties/port.dart';
+import 'properties/probe.dart';
+import 'properties/projected.dart';
+import 'properties/rolling_update_strategy_type.dart';
+import 'properties/security_context.dart';
+import 'properties/selector.dart';
+import 'properties/service_account_token.dart';
+import 'properties/source.dart';
+import 'properties/strategy.dart';
+import 'properties/toleration.dart';
+import 'properties/volume.dart' as properties_volume;
 
 class ResourceShow extends ConsumerWidget {
   const ResourceShow({super.key});
@@ -403,7 +422,7 @@ class _FieldTile extends StatelessWidget {
 class _ManagedField extends StatelessWidget {
   const _ManagedField({required this.field});
 
-  final prop.ManagedField field;
+  final ManagedField field;
 
   @override
   Widget build(BuildContext context) {
@@ -425,7 +444,7 @@ class _ManagedField extends StatelessWidget {
 class _OwnerReference extends StatelessWidget {
   const _OwnerReference({required this.reference});
 
-  final prop.OwnerReference reference;
+  final OwnerReference reference;
 
   @override
   Widget build(BuildContext context) {
@@ -450,7 +469,7 @@ class _OwnerReference extends StatelessWidget {
 class _SecurityContext extends StatelessWidget {
   const _SecurityContext({required this.securityContext});
 
-  final prop.SecurityContext securityContext;
+  final SecurityContext securityContext;
 
   @override
   Widget build(BuildContext context) {
@@ -500,7 +519,7 @@ class _SecurityContext extends StatelessWidget {
 class _Toleration extends StatelessWidget {
   const _Toleration({required this.toleration});
 
-  final prop.Toleration toleration;
+  final Toleration toleration;
 
   @override
   Widget build(BuildContext context) {
@@ -526,7 +545,7 @@ class _Toleration extends StatelessWidget {
 class _Container extends StatelessWidget {
   const _Container({required this.container});
 
-  final prop.Container container;
+  final properties_container.Container container;
 
   @override
   Widget build(BuildContext context) {
@@ -597,7 +616,7 @@ class _Container extends StatelessWidget {
 class _Port extends StatelessWidget {
   const _Port({required this.port, this.color});
 
-  final prop.Port port;
+  final Port port;
   final Color? color;
 
   @override
@@ -619,7 +638,7 @@ class _Port extends StatelessWidget {
 class _Volume extends StatelessWidget {
   const _Volume({required this.volume});
 
-  final prop.Volume volume;
+  final properties_volume.Volume volume;
 
   @override
   Widget build(BuildContext context) {
@@ -642,7 +661,7 @@ class _Volume extends StatelessWidget {
 class _Projected extends StatelessWidget {
   const _Projected({required this.projected});
 
-  final prop.Projected projected;
+  final Projected projected;
 
   @override
   Widget build(BuildContext context) {
@@ -671,32 +690,32 @@ class _Projected extends StatelessWidget {
 class _Source extends StatelessWidget {
   const _Source({required this.source});
 
-  final prop.Source source;
+  final Source source;
 
   @override
   Widget build(BuildContext context) {
     return Card(
       child: Column(
         children: [
-          if (source is prop.ServiceAccountToken) ...[
+          if (source is ServiceAccountToken) ...[
             const _FieldTile(name: 'kind', value: 'serviceAccountToken'),
             _FieldTile(
                 name: 'expirationSeconds',
-                value: (source as prop.ServiceAccountToken)
+                value: (source as ServiceAccountToken)
                     .expirationSeconds
                     .toString()),
             _FieldTile(
-                name: 'path', value: (source as prop.ServiceAccountToken).path),
+                name: 'path', value: (source as ServiceAccountToken).path),
           ],
-          if (source is prop.ConfigMap)
+          if (source is ConfigMap)
             Column(children: [
               const _FieldTile(name: 'kind', value: 'configMap'),
-              _FieldTile(name: 'name', value: (source as prop.ConfigMap).name),
+              _FieldTile(name: 'name', value: (source as ConfigMap).name),
               const _CategoryHeader(title: 'Items'),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
-                  children: (source as prop.ConfigMap)
+                  children: (source as ConfigMap)
                       .items
                       .map(
                         (e) => Tooltip(
@@ -706,10 +725,10 @@ class _Source extends StatelessWidget {
                 ),
               )
             ]),
-          if (source is prop.DownwardAPI) ...[
+          if (source is DownwardAPI) ...[
             const _FieldTile(name: 'kind', value: 'downwardAPI'),
             const _CategoryHeader(title: 'Items'),
-            ...(source as prop.DownwardAPI).items.map(
+            ...(source as DownwardAPI).items.map(
                   (e) => _DownwardAPIItem(downwardAPIItem: e),
                 ),
           ],
@@ -722,7 +741,7 @@ class _Source extends StatelessWidget {
 class _DownwardAPIItem extends StatelessWidget {
   const _DownwardAPIItem({required this.downwardAPIItem});
 
-  final prop.DownwardAPIItem downwardAPIItem;
+  final DownwardAPIItem downwardAPIItem;
 
   @override
   Widget build(BuildContext context) {
@@ -742,7 +761,7 @@ class _DownwardAPIItem extends StatelessWidget {
 class _FieldRef extends StatelessWidget {
   const _FieldRef({required this.fieldRef});
 
-  final prop.FieldRef fieldRef;
+  final FieldRef fieldRef;
 
   @override
   Widget build(BuildContext context) {
@@ -760,7 +779,7 @@ class _FieldRef extends StatelessWidget {
 class _Condition extends StatelessWidget {
   const _Condition({required this.condition});
 
-  final prop.Condition condition;
+  final Condition condition;
 
   @override
   Widget build(BuildContext context) {
@@ -790,7 +809,7 @@ class _Condition extends StatelessWidget {
 class _ContainerStatus extends StatelessWidget {
   const _ContainerStatus({required this.containerStatus});
 
-  final prop.ContainerStatus containerStatus;
+  final ContainerStatus containerStatus;
 
   @override
   Widget build(BuildContext context) {
@@ -848,7 +867,7 @@ class _ContainerStatus extends StatelessWidget {
 class _Probe extends StatelessWidget {
   const _Probe({required this.probe});
 
-  final prop.Probe probe;
+  final Probe probe;
 
   @override
   Widget build(BuildContext context) {
@@ -884,7 +903,7 @@ class _Probe extends StatelessWidget {
 class _HttpGet extends StatelessWidget {
   const _HttpGet({required this.httpGet});
 
-  final prop.HttpGet httpGet;
+  final HttpGet httpGet;
 
   @override
   Widget build(BuildContext context) {
@@ -909,14 +928,14 @@ class _HttpGet extends StatelessWidget {
 class _Strategy extends StatelessWidget {
   const _Strategy({required this.strategy});
 
-  final prop.Strategy strategy;
+  final Strategy strategy;
 
   @override
   Widget build(BuildContext context) {
     Widget? details;
     switch (strategy.type) {
       case 'RollingUpdate':
-        final e = (strategy.details as prop.RollingUpdateStrategy);
+        final e = (strategy.details as RollingUpdateStrategyType);
         details = Column(
           children: [
             if (e.maxUnavailable != null)
@@ -949,7 +968,7 @@ class _Strategy extends StatelessWidget {
 class _Selector extends StatelessWidget {
   const _Selector({required this.selector});
 
-  final prop.Selector selector;
+  final Selector selector;
 
   @override
   Widget build(BuildContext context) {
