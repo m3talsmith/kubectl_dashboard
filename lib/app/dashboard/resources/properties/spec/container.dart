@@ -6,6 +6,7 @@ import 'lifecycle.dart';
 import 'probe.dart';
 import 'resource_requirements.dart';
 
+// https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#container-v1-core
 class Container {
   late List<String> args;
   late List<String> command;
