@@ -11,6 +11,7 @@ import 'pod_scheduling_gate.dart';
 import 'pod_security_context.dart';
 import 'toleration.dart';
 import 'topology_spread_constraint.dart';
+import 'volume.dart';
 
 class PodSpec {
   int? activeDeadlineSeconds;

@@ -65,5 +65,37 @@ class Volume {
     awsElasticBlockStore =
         AWSElasticBlockStoreVolumeSource.fromMap(data['awsElasticBlockStore']);
     azureDisk = AzureDiskVolumeSource.fromMap(data['azureDisk']);
+    azureFile = AzureFileVolumeSource.fromMap(data['azureFile']);
+    cephfs = CephFSVolumeSource.fromMap(data['cephfs']);
+    cinder = CinderVolumeSource.fromMap(data['cinder']);
+    configMap = ConfigMapVolumeSource.fromMap(data['configMap']);
+    csi = CSIVolumeSource.fromMap(data['csi']);
+    downwardAPI = DownwardAPIVolumeSource.fromMap(data['downwardAPI']);
+    emptyDir = EmptyDirVolumeSource.fromMap(data['emptyDir']);
+    ephemeral = EphemeralVolumeSource.fromMap(data['ephemeral']);
+    fc = FCVolumeSource.fromMap(data['fc']);
+    flexVolume = FlexVolumeSource.fromMap(data['flexVolume']);
+    flocker = FlockerVolumeSource.fromMap(data['flocker']);
+    gcePersistentDisk =
+        GCEPersistentDiskVolumeSource.fromMap(data['gcePersistentDisk']);
+    gitRepo = GitRepoVolumeSource.fromMap(data['gitRepo']);
+    glusterfs = GlusterfsVolumeSource.fromMap(data['glusterfs']);
+    hostPath = HostPathVolumeSource.fromMap(data['hostPath']);
+    iscsi = ISCSIVolumeSource.fromMap(data['iscsi']);
+    name = data['name'];
+    nfs = NFSVolumeSource.fromMap(data['nfs']);
+    persistentVolumeClaim = PersistentVolumeClaimVolumeSource.fromMap(
+        data['persistentVolumeClaim']);
+    photonPersistentDisk =
+        PhotonPersistentDiskVolumeSource.fromMap(data['photonPersistentDisk']);
+    portworxVolume = PortworxVolumeSource.fromMap(data['portworxVolume']);
+    projected = ProjectedVolumeSource.fromMap(data['projected']);
+    quobyte = QuobyteVolumeSource.fromMap(data['quobyte']);
+    rbd = RBDVolumeSource.fromMap(data['rbd']);
+    scaleIO = ScaleIOVolumeSource.fromMap(data['scaleIO']);
+    secret = SecretVolumeSource.fromMap(data['secret']);
+    storageos = StorageOSVolumeSource.fromMap(data['storageos']);
+    vsphereVolume =
+        VsphereVirtualDiskVolumeSource.fromMap(data['vsphereVolume']);
   }
 }
