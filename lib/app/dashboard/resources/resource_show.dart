@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:humanizer/humanizer.dart';
+import 'package:kubectl_dashboard/app/dashboard/resources/properties/meta/managed_field_entry.dart';
+import 'package:kubectl_dashboard/app/dashboard/resources/properties/meta/owner_reference.dart';
+import 'package:kubectl_dashboard/app/dashboard/resources/properties/spec/container_port.dart';
+import 'package:kubectl_dashboard/app/dashboard/resources/properties/spec/http_get_action.dart';
 import 'package:kubectl_dashboard/app/dashboard/resources/providers.dart';
 
 import 'properties/condition.dart';
 import 'properties/config_map.dart';
-import 'properties/container.dart' as properties_container;
 import 'properties/container_status.dart';
 import 'properties/downward_api.dart';
 import 'properties/field_ref.dart';
-import 'properties/http_get.dart';
-import 'properties/managed_field.dart';
-import 'properties/owner_reference.dart';
-import 'properties/port.dart';
-import 'properties/probe.dart';
 import 'properties/projected.dart';
 import 'properties/rolling_update_strategy_type.dart';
 import 'properties/security_context.dart';
 import 'properties/selector.dart';
 import 'properties/service_account_token.dart';
 import 'properties/source.dart';
+import 'properties/spec/container.dart' as properties_container;
+import 'properties/spec/probe.dart';
 import 'properties/strategy.dart';
 import 'properties/toleration.dart';
 import 'properties/volume.dart' as properties_volume;
@@ -38,7 +38,7 @@ class ResourceShow extends ConsumerWidget {
           ? AppBar(
               centerTitle: true,
               title: Text(
-                  '${resource.kind.toTitleCase()}: ${resource.metadata.name!}'),
+                  '${resource.kind.toTitleCase()}: ${resource.metadata.name}'),
             )
           : null,
       body: resource != null
@@ -56,8 +56,7 @@ class ResourceShow extends ConsumerWidget {
                           textScaler: TextScaler.linear(2),
                         ),
                       ),
-                      _FieldTile(
-                          name: 'name', value: resource.metadata.name ?? ''),
+                      _FieldTile(name: 'name', value: resource.metadata.name),
                       if (resource.metadata.generateName != null)
                         _FieldTile(
                             name: 'generateName',
@@ -74,10 +73,10 @@ class ResourceShow extends ConsumerWidget {
                       _FieldTile(
                           name: 'resourceVersion',
                           value: resource.metadata.resourceVersion ?? ''),
-                      if (resource.metadata.labels.isNotEmpty)
+                      if (resource.metadata.labels != null)
                         Column(children: [
                           const _CategoryHeader(title: 'Labels'),
-                          ...resource.metadata.labels.entries.map(
+                          ...resource.metadata.labels!.entries.map(
                             (e) => Tooltip(
                               message: '${e.value}',
                               child: Chip(
@@ -86,16 +85,16 @@ class ResourceShow extends ConsumerWidget {
                             ),
                           ),
                         ]),
-                      if (resource.metadata.managedFields.isNotEmpty)
+                      if (resource.metadata.managedFields != null)
                         Column(children: [
                           const _CategoryHeader(title: 'Managed Fields'),
-                          ...resource.metadata.managedFields
+                          ...resource.metadata.managedFields!
                               .map((e) => _ManagedField(field: e)),
                         ]),
-                      if (resource.metadata.ownerReferences.isNotEmpty)
+                      if (resource.metadata.ownerReferences != null)
                         Column(children: [
                           const _CategoryHeader(title: 'Owner References'),
-                          ...resource.metadata.ownerReferences
+                          ...resource.metadata.ownerReferences!
                               .map((e) => _OwnerReference(reference: e)),
                         ]),
                     ],
@@ -113,183 +112,183 @@ class ResourceShow extends ConsumerWidget {
                             textScaler: TextScaler.linear(2),
                           ),
                         ),
-                        if (resource.spec!.nodeName != null)
-                          _FieldTile(
-                              name: 'nodeName',
-                              value: resource.spec!.nodeName!),
-                        if (resource.spec!.schedulerName != null)
-                          _FieldTile(
-                              name: 'schedulerName',
-                              value: resource.spec!.schedulerName!),
-                        if (resource.spec!.dnsPolicy != null)
-                          _FieldTile(
-                              name: 'dnsPolicy',
-                              value: resource.spec!.dnsPolicy!),
-                        if (resource.spec!.preemptionPolicy != null)
-                          _FieldTile(
-                              name: 'preemptionPolicy',
-                              value: resource.spec!.preemptionPolicy!),
-                        if (resource.spec!.restartPolicy != null)
-                          _FieldTile(
-                              name: 'restartPolicy',
-                              value: resource.spec!.restartPolicy!),
-                        if (resource.spec!.priority != null)
-                          _FieldTile(
-                              name: 'priority',
-                              value: resource.spec!.priority!.toString()),
-                        if (resource.spec!.serviceAccount != null)
-                          _FieldTile(
-                              name: 'serviceAccount',
-                              value: resource.spec!.serviceAccount!),
-                        if (resource.spec!.serviceAccountName != null)
-                          _FieldTile(
-                              name: 'serviceAccountName',
-                              value: resource.spec!.serviceAccountName!),
-                        if (resource.spec!.securityContext != null)
-                          _SecurityContext(
-                              securityContext: resource.spec!.securityContext!),
-                        if (resource.spec!.terminationGracePeriodSeconds !=
-                            null)
-                          _FieldTile(
-                              name: 'terminationGracePeriodSeconds',
-                              value: resource
-                                  .spec!.terminationGracePeriodSeconds
-                                  .toString()),
-                        if (resource.spec!.enableServiceLinks != null)
-                          _FieldTile(
-                              name: 'enableServiceLinks',
-                              value:
-                                  resource.spec!.enableServiceLinks.toString()),
-                        if (resource.spec!.clusterIP != null)
-                          _FieldTile(
-                              name: 'clusterIP',
-                              value: resource.spec!.clusterIP!),
-                        if (resource.spec!.type != null)
-                          _FieldTile(name: 'type', value: resource.spec!.type!),
-                        if (resource.spec!.sessionAffinity != null)
-                          _FieldTile(
-                              name: 'sessionAffinity',
-                              value: resource.spec!.sessionAffinity!),
-                        if (resource.spec!.ipFamilyPolicy != null)
-                          _FieldTile(
-                              name: 'ipFamilyPolicy',
-                              value: resource.spec!.ipFamilyPolicy!),
-                        if (resource.spec!.internalTrafficPolicy != null)
-                          _FieldTile(
-                              name: 'internalTrafficPolicy',
-                              value: resource.spec!.internalTrafficPolicy!),
-                        if (resource.spec!.replicas != null)
-                          _FieldTile(
-                              name: 'replicas',
-                              value: resource.spec!.replicas!.toString()),
-                        if (resource.spec!.priorityClassName != null)
-                          _FieldTile(
-                              name: 'priorityClassName',
-                              value: resource.spec!.priorityClassName!),
-                        if (resource.spec!.strategy != null)
-                          _Strategy(strategy: resource.spec!.strategy!),
-                        if (resource.spec!.revisionHistoryLimit != null)
-                          _FieldTile(
-                              name: 'revisionHistoryLimit',
-                              value: resource.spec!.revisionHistoryLimit!
-                                  .toString()),
-                        if (resource.spec!.progressDeadlineSeconds != null)
-                          _FieldTile(
-                              name: 'progressDeadlineSeconds',
-                              value: resource.spec!.progressDeadlineSeconds!
-                                  .toString()),
-                        if (resource.spec!.tolerations.isNotEmpty)
-                          Column(
-                            children: [
-                              const _CategoryHeader(
-                                title: 'Tolerations',
-                              ),
-                              ...resource.spec!.tolerations.map(
-                                (e) => _Toleration(toleration: e),
-                              )
-                            ],
-                          ),
-                        if (resource.spec!.nodeSelector.isNotEmpty)
-                          Column(
-                            children: [
-                              const _CategoryHeader(title: 'Node Selector'),
-                              Card(
-                                child: Column(
-                                  children: resource.spec!.nodeSelector.entries
-                                      .map(
-                                        (e) => _FieldTile(
-                                            name: e.key, value: e.value),
-                                      )
-                                      .toList(),
-                                ),
-                              ),
-                            ],
-                          ),
-                        if (resource.spec!.containers.isNotEmpty)
-                          Column(
-                            children: [
-                              const _CategoryHeader(title: 'Containers'),
-                              ...resource.spec!.containers.map(
-                                (e) => _Container(container: e),
-                              )
-                            ],
-                          ),
-                        if (resource.spec!.volumes.isNotEmpty)
-                          Column(
-                            children: [
-                              const _CategoryHeader(title: 'Volumes'),
-                              ...resource.spec!.volumes.map(
-                                (e) => _Volume(volume: e),
-                              ),
-                            ],
-                          ),
-                        if (resource.spec!.ports.isNotEmpty)
-                          Column(
-                            children: [
-                              const _CategoryHeader(title: 'Ports'),
-                              ...resource.spec!.ports.map(
-                                (e) => _Port(
-                                  port: e,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .surfaceContainerLow,
-                                ),
-                              ),
-                            ],
-                          ),
-                        if (resource.spec!.clusterIPs.isNotEmpty)
-                          Column(
-                            children: [
-                              const _CategoryHeader(title: 'Cluster IPs'),
-                              ...resource.spec!.clusterIPs.map(
-                                (e) => Tooltip(
-                                  message: e,
-                                  child: Chip(label: Text(e)),
-                                ),
-                              ),
-                            ],
-                          ),
-                        if (resource.spec!.ipFamilies.isNotEmpty)
-                          Column(
-                            children: [
-                              const _CategoryHeader(title: 'IP Families'),
-                              ...resource.spec!.ipFamilies.map(
-                                (e) => Tooltip(
-                                  message: e,
-                                  child: Chip(label: Text(e)),
-                                ),
-                              ),
-                            ],
-                          ),
-                        if (resource.spec!.selector.entries.isNotEmpty)
-                          Column(
-                            children: [
-                              const _CategoryHeader(title: 'Selector'),
-                              ...resource.spec!.selector.values.map(
-                                (e) => _Selector(selector: e),
-                              ),
-                            ],
-                          )
+                        // if (resource.spec!.nodeName != null)
+                        //   _FieldTile(
+                        //       name: 'nodeName',
+                        //       value: resource.spec!.nodeName!),
+                        // if (resource.spec!.schedulerName != null)
+                        //   _FieldTile(
+                        //       name: 'schedulerName',
+                        //       value: resource.spec!.schedulerName!),
+                        // if (resource.spec!.dnsPolicy != null)
+                        //   _FieldTile(
+                        //       name: 'dnsPolicy',
+                        //       value: resource.spec!.dnsPolicy!),
+                        // if (resource.spec!.preemptionPolicy != null)
+                        //   _FieldTile(
+                        //       name: 'preemptionPolicy',
+                        //       value: resource.spec!.preemptionPolicy!),
+                        // if (resource.spec!.restartPolicy != null)
+                        //   _FieldTile(
+                        //       name: 'restartPolicy',
+                        //       value: resource.spec!.restartPolicy!),
+                        // if (resource.spec!.priority != null)
+                        //   _FieldTile(
+                        //       name: 'priority',
+                        //       value: resource.spec!.priority!.toString()),
+                        // if (resource.spec!.serviceAccount != null)
+                        //   _FieldTile(
+                        //       name: 'serviceAccount',
+                        //       value: resource.spec!.serviceAccount!),
+                        // if (resource.spec!.serviceAccountName != null)
+                        //   _FieldTile(
+                        //       name: 'serviceAccountName',
+                        //       value: resource.spec!.serviceAccountName!),
+                        // if (resource.spec!.securityContext != null)
+                        //   _SecurityContext(
+                        //       securityContext: resource.spec!.securityContext!),
+                        // if (resource.spec!.terminationGracePeriodSeconds !=
+                        //     null)
+                        //   _FieldTile(
+                        //       name: 'terminationGracePeriodSeconds',
+                        //       value: resource
+                        //           .spec!.terminationGracePeriodSeconds
+                        //           .toString()),
+                        // if (resource.spec!.enableServiceLinks != null)
+                        //   _FieldTile(
+                        //       name: 'enableServiceLinks',
+                        //       value:
+                        //           resource.spec!.enableServiceLinks.toString()),
+                        // if (resource.spec!.clusterIP != null)
+                        //   _FieldTile(
+                        //       name: 'clusterIP',
+                        //       value: resource.spec!.clusterIP!),
+                        // if (resource.spec!.type != null)
+                        //   _FieldTile(name: 'type', value: resource.spec!.type!),
+                        // if (resource.spec!.sessionAffinity != null)
+                        //   _FieldTile(
+                        //       name: 'sessionAffinity',
+                        //       value: resource.spec!.sessionAffinity!),
+                        // if (resource.spec!.ipFamilyPolicy != null)
+                        //   _FieldTile(
+                        //       name: 'ipFamilyPolicy',
+                        //       value: resource.spec!.ipFamilyPolicy!),
+                        // if (resource.spec!.internalTrafficPolicy != null)
+                        //   _FieldTile(
+                        //       name: 'internalTrafficPolicy',
+                        //       value: resource.spec!.internalTrafficPolicy!),
+                        // if (resource.spec!.replicas != null)
+                        //   _FieldTile(
+                        //       name: 'replicas',
+                        //       value: resource.spec!.replicas!.toString()),
+                        // if (resource.spec!.priorityClassName != null)
+                        //   _FieldTile(
+                        //       name: 'priorityClassName',
+                        //       value: resource.spec!.priorityClassName!),
+                        // if (resource.spec!.strategy != null)
+                        //   _Strategy(strategy: resource.spec!.strategy!),
+                        // if (resource.spec!.revisionHistoryLimit != null)
+                        //   _FieldTile(
+                        //       name: 'revisionHistoryLimit',
+                        //       value: resource.spec!.revisionHistoryLimit!
+                        //           .toString()),
+                        // if (resource.spec!.progressDeadlineSeconds != null)
+                        //   _FieldTile(
+                        //       name: 'progressDeadlineSeconds',
+                        //       value: resource.spec!.progressDeadlineSeconds!
+                        //           .toString()),
+                        // if (resource.spec!.tolerations.isNotEmpty)
+                        //   Column(
+                        //     children: [
+                        //       const _CategoryHeader(
+                        //         title: 'Tolerations',
+                        //       ),
+                        //       ...resource.spec!.tolerations.map(
+                        //         (e) => _Toleration(toleration: e),
+                        //       )
+                        //     ],
+                        //   ),
+                        // if (resource.spec!.nodeSelector.isNotEmpty)
+                        //   Column(
+                        //     children: [
+                        //       const _CategoryHeader(title: 'Node Selector'),
+                        //       Card(
+                        //         child: Column(
+                        //           children: resource.spec!.nodeSelector.entries
+                        //               .map(
+                        //                 (e) => _FieldTile(
+                        //                     name: e.key, value: e.value),
+                        //               )
+                        //               .toList(),
+                        //         ),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // if (resource.spec!.containers.isNotEmpty)
+                        //   Column(
+                        //     children: [
+                        //       const _CategoryHeader(title: 'Containers'),
+                        //       ...resource.spec!.containers.map(
+                        //         (e) => _Container(container: e),
+                        //       )
+                        //     ],
+                        //   ),
+                        // if (resource.spec!.volumes.isNotEmpty)
+                        //   Column(
+                        //     children: [
+                        //       const _CategoryHeader(title: 'Volumes'),
+                        //       ...resource.spec!.volumes.map(
+                        //         (e) => _Volume(volume: e),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // if (resource.spec!.ports.isNotEmpty)
+                        //   Column(
+                        //     children: [
+                        //       const _CategoryHeader(title: 'Ports'),
+                        //       ...resource.spec!.ports.map(
+                        //         (e) => _Port(
+                        //           port: e,
+                        //           color: Theme.of(context)
+                        //               .colorScheme
+                        //               .surfaceContainerLow,
+                        //         ),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // if (resource.spec!.clusterIPs.isNotEmpty)
+                        //   Column(
+                        //     children: [
+                        //       const _CategoryHeader(title: 'Cluster IPs'),
+                        //       ...resource.spec!.clusterIPs.map(
+                        //         (e) => Tooltip(
+                        //           message: e,
+                        //           child: Chip(label: Text(e)),
+                        //         ),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // if (resource.spec!.ipFamilies.isNotEmpty)
+                        //   Column(
+                        //     children: [
+                        //       const _CategoryHeader(title: 'IP Families'),
+                        //       ...resource.spec!.ipFamilies.map(
+                        //         (e) => Tooltip(
+                        //           message: e,
+                        //           child: Chip(label: Text(e)),
+                        //         ),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // if (resource.spec!.selector.entries.isNotEmpty)
+                        //   Column(
+                        //     children: [
+                        //       const _CategoryHeader(title: 'Selector'),
+                        //       ...resource.spec!.selector.values.map(
+                        //         (e) => _Selector(selector: e),
+                        //       ),
+                        //     ],
+                        //   )
                       ],
                     ),
                   ),
@@ -422,7 +421,7 @@ class _FieldTile extends StatelessWidget {
 class _ManagedField extends StatelessWidget {
   const _ManagedField({required this.field});
 
-  final ManagedField field;
+  final ManagedFieldEntry field;
 
   @override
   Widget build(BuildContext context) {
@@ -432,8 +431,8 @@ class _ManagedField extends StatelessWidget {
           _FieldTile(name: 'apiVersion', value: field.apiVersion),
           _FieldTile(name: 'manager', value: field.manager),
           _FieldTile(name: 'operation', value: field.operation),
-          if (field.subresource.isNotEmpty)
-            _FieldTile(name: 'subresource', value: field.subresource),
+          if (field.subresource != null)
+            _FieldTile(name: 'subresource', value: field.subresource!),
           _FieldTile(name: 'time', value: field.time.toString()),
         ],
       ),
@@ -552,53 +551,57 @@ class _Container extends StatelessWidget {
     return Card(
       child: Column(
         children: [
-          _FieldTile(name: 'name', value: container.name),
-          _FieldTile(name: 'image', value: container.image),
-          _FieldTile(
-              name: 'terminationMessagePath',
-              value: container.terminationMessagePath),
-          _FieldTile(
-              name: 'terminationMessagePolicy',
-              value: container.terminationMessagePolicy),
-          _FieldTile(name: 'imagePullPolicy', value: container.imagePullPolicy),
-          if (container.args.isNotEmpty)
+          _FieldTile(name: 'name', value: container.name!),
+          _FieldTile(name: 'image', value: container.image!),
+          if (container.terminationMessagePath != null)
+            _FieldTile(
+                name: 'terminationMessagePath',
+                value: container.terminationMessagePath!),
+          if (container.terminationMessagePolicy != null)
+            _FieldTile(
+                name: 'terminationMessagePolicy',
+                value: container.terminationMessagePolicy!),
+          if (container.imagePullPolicy != null)
+            _FieldTile(
+                name: 'imagePullPolicy', value: container.imagePullPolicy!),
+          if (container.args != null)
             Column(
               children: [
                 const _CategoryHeader(title: 'Args'),
-                ...container.args.map(
+                ...container.args!.map(
                   (e) => Tooltip(message: e, child: Chip(label: Text(e))),
                 ),
               ],
             ),
-          if (container.ports.isNotEmpty)
+          if (container.ports != null)
             Column(
               children: [
                 const _CategoryHeader(title: 'Ports'),
-                ...container.ports.map(
+                ...container.ports!.map(
                   (e) => _Port(port: e),
                 ),
               ],
             ),
-          if (container.livelinessProbe != null)
+          if (container.livenessProbe != null)
             Column(
               children: [
                 const _CategoryHeader(title: 'Liveliness Probe'),
-                _Probe(probe: container.livelinessProbe!),
+                _Probe(probe: container.livenessProbe!),
               ],
             ),
           if (container.readinessProbe != null)
             Column(
               children: [
-                const _CategoryHeader(title: 'Rediness Probe'),
+                const _CategoryHeader(title: 'Readiness Probe'),
                 _Probe(probe: container.readinessProbe!),
               ],
             ),
-          if (container.command.isNotEmpty)
+          if (container.command != null)
             Card(
               child: Column(
                 children: [
                   const _CategoryHeader(title: 'Command'),
-                  ...container.command.map(
+                  ...container.command!.map(
                     (e) => Tooltip(
                       message: e,
                       child: Chip(label: Text(e)),
@@ -616,7 +619,7 @@ class _Container extends StatelessWidget {
 class _Port extends StatelessWidget {
   const _Port({required this.port, this.color});
 
-  final Port port;
+  final ContainerPort port;
   final Color? color;
 
   @override
@@ -625,8 +628,8 @@ class _Port extends StatelessWidget {
       color: color ?? Theme.of(context).canvasColor,
       child: Column(
         children: [
-          _FieldTile(name: 'name', value: port.name ?? 'n/a'),
-          _FieldTile(name: 'protocol', value: port.protocol ?? ''),
+          _FieldTile(name: 'name', value: port.name),
+          _FieldTile(name: 'protocol', value: port.protocol),
           _FieldTile(
               name: 'containerPort', value: port.containerPort.toString()),
         ],
@@ -875,25 +878,19 @@ class _Probe extends StatelessWidget {
       child: Column(
         children: [
           if (probe.httpGet != null) _HttpGet(httpGet: probe.httpGet!),
-          if (probe.initialDelaySeconds != null)
-            _FieldTile(
-                name: 'initialDelaySeconds',
-                value: probe.initialDelaySeconds!.toString()),
-          if (probe.timeoutSeconds != null)
-            _FieldTile(
-                name: 'timeoutSeconds',
-                value: probe.timeoutSeconds!.toString()),
-          if (probe.periodSeconds != null)
-            _FieldTile(
-                name: 'periodSeconds', value: probe.periodSeconds!.toString()),
-          if (probe.successThreshold != null)
-            _FieldTile(
-                name: 'successThreshold',
-                value: probe.successThreshold!.toString()),
-          if (probe.failureThreshold != null)
-            _FieldTile(
-                name: 'failureThreshold',
-                value: probe.failureThreshold!.toString()),
+          _FieldTile(
+              name: 'initialDelaySeconds',
+              value: probe.initialDelaySeconds.toString()),
+          _FieldTile(
+              name: 'timeoutSeconds', value: probe.timeoutSeconds.toString()),
+          _FieldTile(
+              name: 'periodSeconds', value: probe.periodSeconds.toString()),
+          _FieldTile(
+              name: 'successThreshold',
+              value: probe.successThreshold.toString()),
+          _FieldTile(
+              name: 'failureThreshold',
+              value: probe.failureThreshold.toString()),
         ],
       ),
     );
@@ -903,7 +900,7 @@ class _Probe extends StatelessWidget {
 class _HttpGet extends StatelessWidget {
   const _HttpGet({required this.httpGet});
 
-  final HttpGet httpGet;
+  final HTTPGetAction httpGet;
 
   @override
   Widget build(BuildContext context) {

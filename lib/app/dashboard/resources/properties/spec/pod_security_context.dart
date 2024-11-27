@@ -4,16 +4,16 @@ import 'sysctl.dart';
 import 'windows_security_context_options.dart';
 
 class PodSecurityContext {
-  late int fsGroup;
-  late String fsGroupChangePolicy;
-  late int runAsGroup;
-  late bool runAsNonRoot;
-  late int runAsUser;
-  late SELinuxOptions seLinuxOptions;
-  late SeccompProfile seccompProfile;
-  late List<int> supplementalGroups;
-  late List<Sysctl> sysctls;
-  late WindowsSecurityContextOptions windowsOptions;
+  int? fsGroup;
+  String? fsGroupChangePolicy;
+  int? runAsGroup;
+  bool? runAsNonRoot;
+  int? runAsUser;
+  SELinuxOptions? seLinuxOptions;
+  SeccompProfile? seccompProfile;
+  List<int>? supplementalGroups;
+  List<Sysctl>? sysctls;
+  WindowsSecurityContextOptions? windowsOptions;
 
   PodSecurityContext.fromMap(Map<String, dynamic> data) {
     fsGroup = data['fsGroup'];
@@ -21,15 +21,27 @@ class PodSecurityContext {
     runAsGroup = data['runAsGroup'];
     runAsNonRoot = data['runAsNonRoot'];
     runAsUser = data['runAsUser'];
-    seLinuxOptions = SELinuxOptions.fromMap(data['seLinuxOptions']);
-    seccompProfile = SeccompProfile.fromMap(data['seccompProfile']);
-    supplementalGroups = data['supplementalGroups'] as List<int>;
-    sysctls = (data['sysctls'] as List<Map<String, dynamic>>)
-        .map(
-          (e) => Sysctl.fromMap(e),
-        )
-        .toList();
-    windowsOptions =
-        WindowsSecurityContextOptions.fromMap(data['windowsOptions']);
+    if (data['seLinuxOptions'] != null) {
+      seLinuxOptions = SELinuxOptions.fromMap(data['seLinuxOptions']);
+    }
+    if (data['seccompProfile'] != null) {
+      seccompProfile = SeccompProfile.fromMap(data['seccompProfile']);
+    }
+    if (data['supplementalGroups'] != null) {
+      supplementalGroups = [];
+      for (var e in data['supplementalGroups']) {
+        supplementalGroups!.add(e);
+      }
+    }
+    if (data['sysctls'] != null) {
+      sysctls = [];
+      for (var e in data['sysctls']) {
+        sysctls!.add(Sysctl.fromMap(e));
+      }
+    }
+    if (data['windowsOptions'] != null) {
+      windowsOptions =
+          WindowsSecurityContextOptions.fromMap(data['windowsOptions']);
+    }
   }
 }

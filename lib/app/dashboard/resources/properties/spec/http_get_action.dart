@@ -1,19 +1,20 @@
 import 'http_header.dart';
 
 class HTTPGetAction {
-  late String host;
-  late List<HTTPHeader> httpHeaders;
-  late String path;
-  late dynamic port;
-  late String scheme;
+  String? host;
+  List<HTTPHeader>? httpHeaders;
+  String? path;
+  dynamic port;
+  String? scheme;
 
   HTTPGetAction.fromMap(Map<String, dynamic> data) {
     host = data['host'];
-    httpHeaders = (data['httpHeaders'] as List<Map<String, dynamic>>)
-        .map(
-          (e) => HTTPHeader.fromMap(e),
-        )
-        .toList();
+    if (data['httpHeaders'] != null) {
+      httpHeaders = [];
+      for (var e in data['httpHeaders']) {
+        httpHeaders!.add(HTTPHeader.fromMap(e));
+      }
+    }
     path = data['path'];
     port = data['port'];
     scheme = data['scheme'];

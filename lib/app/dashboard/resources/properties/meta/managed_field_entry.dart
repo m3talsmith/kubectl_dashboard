@@ -6,7 +6,7 @@ class ManagedFieldEntry {
   late FieldsV1 fieldsV1;
   late String manager;
   late String operation;
-  late String subresource;
+  String? subresource;
   late DateTime time;
 
   ManagedFieldEntry.fromMap(Map<String, dynamic> data) {

@@ -30,72 +30,130 @@ import 'volume/vsphere_virtual_disk_volume_source.dart';
 
 // https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#volume-v1-core
 class Volume {
-  late AWSElasticBlockStoreVolumeSource awsElasticBlockStore;
-  late AzureDiskVolumeSource azureDisk;
-  late AzureFileVolumeSource azureFile;
-  late CephFSVolumeSource cephfs;
-  late CinderVolumeSource cinder;
-  late ConfigMapVolumeSource configMap;
-  late CSIVolumeSource csi;
-  late DownwardAPIVolumeSource downwardAPI;
-  late EmptyDirVolumeSource emptyDir;
-  late EphemeralVolumeSource ephemeral;
-  late FCVolumeSource fc;
-  late FlexVolumeSource flexVolume;
-  late FlockerVolumeSource flocker;
-  late GCEPersistentDiskVolumeSource gcePersistentDisk;
-  late GitRepoVolumeSource gitRepo;
-  late GlusterfsVolumeSource glusterfs;
-  late HostPathVolumeSource hostPath;
-  late ISCSIVolumeSource iscsi;
-  late String name;
-  late NFSVolumeSource nfs;
-  late PersistentVolumeClaimVolumeSource persistentVolumeClaim;
-  late PhotonPersistentDiskVolumeSource photonPersistentDisk;
-  late PortworxVolumeSource portworxVolume;
-  late ProjectedVolumeSource projected;
-  late QuobyteVolumeSource quobyte;
-  late RBDVolumeSource rbd;
-  late ScaleIOVolumeSource scaleIO;
-  late SecretVolumeSource secret;
-  late StorageOSVolumeSource storageos;
-  late VsphereVirtualDiskVolumeSource vsphereVolume;
+  AWSElasticBlockStoreVolumeSource? awsElasticBlockStore;
+  AzureDiskVolumeSource? azureDisk;
+  AzureFileVolumeSource? azureFile;
+  CephFSVolumeSource? cephfs;
+  CinderVolumeSource? cinder;
+  ConfigMapVolumeSource? configMap;
+  CSIVolumeSource? csi;
+  DownwardAPIVolumeSource? downwardAPI;
+  EmptyDirVolumeSource? emptyDir;
+  EphemeralVolumeSource? ephemeral;
+  FCVolumeSource? fc;
+  FlexVolumeSource? flexVolume;
+  FlockerVolumeSource? flocker;
+  GCEPersistentDiskVolumeSource? gcePersistentDisk;
+  GitRepoVolumeSource? gitRepo;
+  GlusterfsVolumeSource? glusterfs;
+  HostPathVolumeSource? hostPath;
+  ISCSIVolumeSource? iscsi;
+  String? name;
+  NFSVolumeSource? nfs;
+  PersistentVolumeClaimVolumeSource? persistentVolumeClaim;
+  PhotonPersistentDiskVolumeSource? photonPersistentDisk;
+  PortworxVolumeSource? portworxVolume;
+  ProjectedVolumeSource? projected;
+  QuobyteVolumeSource? quobyte;
+  RBDVolumeSource? rbd;
+  ScaleIOVolumeSource? scaleIO;
+  SecretVolumeSource? secret;
+  StorageOSVolumeSource? storageos;
+  VsphereVirtualDiskVolumeSource? vsphereVolume;
 
   Volume.fromMap(Map<String, dynamic> data) {
-    awsElasticBlockStore =
-        AWSElasticBlockStoreVolumeSource.fromMap(data['awsElasticBlockStore']);
-    azureDisk = AzureDiskVolumeSource.fromMap(data['azureDisk']);
-    azureFile = AzureFileVolumeSource.fromMap(data['azureFile']);
-    cephfs = CephFSVolumeSource.fromMap(data['cephfs']);
-    cinder = CinderVolumeSource.fromMap(data['cinder']);
-    configMap = ConfigMapVolumeSource.fromMap(data['configMap']);
-    csi = CSIVolumeSource.fromMap(data['csi']);
-    downwardAPI = DownwardAPIVolumeSource.fromMap(data['downwardAPI']);
-    emptyDir = EmptyDirVolumeSource.fromMap(data['emptyDir']);
-    ephemeral = EphemeralVolumeSource.fromMap(data['ephemeral']);
-    fc = FCVolumeSource.fromMap(data['fc']);
-    flexVolume = FlexVolumeSource.fromMap(data['flexVolume']);
-    flocker = FlockerVolumeSource.fromMap(data['flocker']);
-    gcePersistentDisk =
-        GCEPersistentDiskVolumeSource.fromMap(data['gcePersistentDisk']);
-    gitRepo = GitRepoVolumeSource.fromMap(data['gitRepo']);
-    glusterfs = GlusterfsVolumeSource.fromMap(data['glusterfs']);
-    hostPath = HostPathVolumeSource.fromMap(data['hostPath']);
-    iscsi = ISCSIVolumeSource.fromMap(data['iscsi']);
+    if (data['awsElasticBlockStore'] != null) {
+      awsElasticBlockStore = AWSElasticBlockStoreVolumeSource.fromMap(
+          data['awsElasticBlockStore']);
+    }
+    if (data['azureDisk'] != null) {
+      azureDisk = AzureDiskVolumeSource.fromMap(data['azureDisk']);
+    }
+    if (data['azureFile'] != null) {
+      azureFile = AzureFileVolumeSource.fromMap(data['azureFile']);
+    }
+    if (data['cephfs'] != null) {
+      cephfs = CephFSVolumeSource.fromMap(data['cephfs']);
+    }
+    if (data['cinder'] != null) {
+      cinder = CinderVolumeSource.fromMap(data['cinder']);
+    }
+    if (data['configMap'] != null) {
+      configMap = ConfigMapVolumeSource.fromMap(data['configMap']);
+    }
+    if (data['csi'] != null) {
+      csi = CSIVolumeSource.fromMap(data['csi']);
+    }
+    if (data['downwardAPI'] != null) {
+      downwardAPI = DownwardAPIVolumeSource.fromMap(data['downwardAPI']);
+    }
+    if (data['emptyDir'] != null) {
+      emptyDir = EmptyDirVolumeSource.fromMap(data['emptyDir']);
+    }
+    if (data['ephemeral'] != null) {
+      ephemeral = EphemeralVolumeSource.fromMap(data['ephemeral']);
+    }
+    if (data['fc'] != null) {
+      fc = FCVolumeSource.fromMap(data['fc']);
+    }
+    if (data['flexVolume'] != null) {
+      flexVolume = FlexVolumeSource.fromMap(data['flexVolume']);
+    }
+    if (data['flocker'] != null) {
+      flocker = FlockerVolumeSource.fromMap(data['flocker']);
+    }
+    if (data['gcePersistentDisk'] != null) {
+      gcePersistentDisk =
+          GCEPersistentDiskVolumeSource.fromMap(data['gcePersistentDisk']);
+    }
+    if (data['gitRepo'] != null) {
+      gitRepo = GitRepoVolumeSource.fromMap(data['gitRepo']);
+    }
+    if (data['glusterfs'] != null) {
+      glusterfs = GlusterfsVolumeSource.fromMap(data['glusterfs']);
+    }
+    if (data['hostPath'] != null) {
+      hostPath = HostPathVolumeSource.fromMap(data['hostPath']);
+    }
+    if (data['iscsi'] != null) {
+      iscsi = ISCSIVolumeSource.fromMap(data['iscsi']);
+    }
     name = data['name'];
-    nfs = NFSVolumeSource.fromMap(data['nfs']);
-    persistentVolumeClaim = PersistentVolumeClaimVolumeSource.fromMap(
-        data['persistentVolumeClaim']);
-    photonPersistentDisk =
-        PhotonPersistentDiskVolumeSource.fromMap(data['photonPersistentDisk']);
-    portworxVolume = PortworxVolumeSource.fromMap(data['portworxVolume']);
-    projected = ProjectedVolumeSource.fromMap(data['projected']);
-    quobyte = QuobyteVolumeSource.fromMap(data['quobyte']);
-    rbd = RBDVolumeSource.fromMap(data['rbd']);
-    scaleIO = ScaleIOVolumeSource.fromMap(data['scaleIO']);
-    secret = SecretVolumeSource.fromMap(data['secret']);
-    storageos = StorageOSVolumeSource.fromMap(data['storageos']);
-    vsphereVolume =
-        VsphereVirtualDiskVolumeSource.fromMap(data['vsphereVolume']);
+    if (data['nfs'] != null) {
+      nfs = NFSVolumeSource.fromMap(data['nfs']);
+    }
+    if (data['persistentVolumeClaim'] != null) {
+      persistentVolumeClaim = PersistentVolumeClaimVolumeSource.fromMap(
+          data['persistentVolumeClaim']);
+    }
+    if (data['photonPersistentDisk'] != null) {
+      photonPersistentDisk = PhotonPersistentDiskVolumeSource.fromMap(
+          data['photonPersistentDisk']);
+    }
+    if (data['portworxVolume'] != null) {
+      portworxVolume = PortworxVolumeSource.fromMap(data['portworxVolume']);
+    }
+    if (data['projected'] != null) {
+      projected = ProjectedVolumeSource.fromMap(data['projected']);
+    }
+    if (data['quobyte'] != null) {
+      quobyte = QuobyteVolumeSource.fromMap(data['quobyte']);
+    }
+    if (data['rbd'] != null) {
+      rbd = RBDVolumeSource.fromMap(data['rbd']);
+    }
+    if (data['scaleIO'] != null) {
+      scaleIO = ScaleIOVolumeSource.fromMap(data['scaleIO']);
+    }
+    if (data['secret'] != null) {
+      secret = SecretVolumeSource.fromMap(data['secret']);
+    }
+    if (data['storageos'] != null) {
+      storageos = StorageOSVolumeSource.fromMap(data['storageos']);
+    }
+    if (data['vsphereVolume'] != null) {
+      vsphereVolume =
+          VsphereVirtualDiskVolumeSource.fromMap(data['vsphereVolume']);
+    }
   }
 }

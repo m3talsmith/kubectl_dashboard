@@ -11,79 +11,107 @@ import 'volume_mount.dart';
 
 // https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#container-v1-core
 class Container {
-  late List<String> args;
-  late List<String> command;
-  late List<EnvVar> env;
-  late List<EnvFromSource> envFrom;
-  late String image;
-  late String imagePullPolicy;
-  late Lifecycle lifecycle;
-  late Probe livenessProbe;
-  late String name;
-  late List<ContainerPort> ports;
-  late Probe readinessProbe;
-  late List<ContainerResizePolicy> resizePolicy;
-  late ResourceRequirements resources;
-  late String restartPolicy;
-  late SecurityContext securityContext;
-  late Probe startupProbe;
-  late bool stdin;
-  late bool stdinOnce;
-  late String terminationMessagePath;
-  late String terminationMessagePolicy;
-  late bool tty;
-  late List<VolumeDevice> volumeDevices;
-  late List<VolumeMount> volumeMounts;
-  late String workingDir;
+  List<String>? args;
+  List<String>? command;
+  List<EnvVar>? env;
+  List<EnvFromSource>? envFrom;
+  String? image;
+  String? imagePullPolicy;
+  Lifecycle? lifecycle;
+  Probe? livenessProbe;
+  String? name;
+  List<ContainerPort>? ports;
+  Probe? readinessProbe;
+  List<ContainerResizePolicy>? resizePolicy;
+  ResourceRequirements? resources;
+  String? restartPolicy;
+  SecurityContext? securityContext;
+  Probe? startupProbe;
+  bool? stdin;
+  bool? stdinOnce;
+  String? terminationMessagePath;
+  String? terminationMessagePolicy;
+  bool? tty;
+  List<VolumeDevice>? volumeDevices;
+  List<VolumeMount>? volumeMounts;
+  String? workingDir;
 
   Container.fromMap(Map<String, dynamic> data) {
-    args = data['args'] as List<String>;
-    command = data['command'] as List<String>;
-    env = (data['env'] as List<Map<String, dynamic>>)
-        .map(
-          (e) => EnvVar.fromMap(e),
-        )
-        .toList();
-    envFrom = (data['envFrom'] as List<Map<String, dynamic>>)
-        .map(
-          (e) => EnvFromSource.fromMap(e),
-        )
-        .toList();
+    if (data['args'] != null) {
+      args = [];
+      for (var e in data['args']) {
+        args!.add(e);
+      }
+    }
+    if (data['command'] != null) {
+      command = [];
+      for (var e in data['command']) {
+        command!.add(e);
+      }
+    }
+    if (data['env'] != null) {
+      env = [];
+      for (var e in data['env']) {
+        env!.add(EnvVar.fromMap(e));
+      }
+    }
+    if (data['envFrom'] != null) {
+      envFrom = [];
+      for (var e in data['envFrom']) {
+        envFrom!.add(EnvFromSource.fromMap(e));
+      }
+    }
     image = data['image'];
     imagePullPolicy = data['imagePullPolicy'];
-    lifecycle = Lifecycle.fromMap(data['lifecycle']);
-    livenessProbe = Probe.fromMap(data['livenessProbe']);
+    if (data['lifecycle'] != null) {
+      lifecycle = Lifecycle.fromMap(data['lifecycle']);
+    }
+    if (data['livenessProbe'] != null) {
+      livenessProbe = Probe.fromMap(data['livenessProbe']);
+    }
     name = data['name'];
-    ports = (data['ports'] as List<Map<String, dynamic>>)
-        .map(
-          (e) => ContainerPort.fromMap(e),
-        )
-        .toList();
-    readinessProbe = Probe.fromMap(data['readinessProbe']);
-    resizePolicy = (data['resizePolicy'] as List<Map<String, dynamic>>)
-        .map(
-          (e) => ContainerResizePolicy.fromMap(e),
-        )
-        .toList();
-    resources = ResourceRequirements.fromMap(data['resources']);
+    if (data['ports'] != null) {
+      ports = [];
+      for (var e in data['ports']) {
+        ports!.add(ContainerPort.fromMap(e));
+      }
+    }
+    if (data['readinessProbe'] != null) {
+      readinessProbe = Probe.fromMap(data['readinessProbe']);
+    }
+    if (data['resizePolicy'] != null) {
+      resizePolicy = [];
+      for (var e in data['resizePolicy']) {
+        resizePolicy!.add(ContainerResizePolicy.fromMap(e));
+      }
+    }
+    if (data['resources'] != null) {
+      resources = ResourceRequirements.fromMap(data['resources']);
+    }
     restartPolicy = data['restartPolicy'];
-    securityContext = SecurityContext.fromMap(data['securityContext']);
-    startupProbe = Probe.fromMap(data['startupProbe']);
+    if (data['securityContext'] != null) {
+      securityContext = SecurityContext.fromMap(data['securityContext']);
+    }
+    if (data['startupProbe'] != null) {
+      startupProbe = Probe.fromMap(data['startupProbe']);
+    }
     stdin = data['stdin'];
     stdinOnce = data['stdinOnce'];
     terminationMessagePath = data['terminationMessagePath'];
     terminationMessagePolicy = data['terminationMessagePolicy'];
     tty = data['tty'];
-    volumeDevices = (data['volumeDevices'] as List<Map<String, dynamic>>)
-        .map(
-          (e) => VolumeDevice.fromMap(e),
-        )
-        .toList();
-    volumeMounts = (data['volumeMounts'] as List<Map<String, dynamic>>)
-        .map(
-          (e) => VolumeMount.fromMap(e),
-        )
-        .toList();
+    if (data['volumeDevices'] != null) {
+      volumeDevices = [];
+      for (var e in data['volumeDevices']) {
+        volumeDevices!.add(VolumeDevice.fromMap(e));
+      }
+    }
+    if (data['volumeMounts'] != null) {
+      volumeMounts = [];
+      for (var e in data['volumeMounts']) {
+        volumeMounts!.add(VolumeMount.fromMap(e));
+      }
+    }
     workingDir = data['workingDir'];
   }
 }

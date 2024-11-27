@@ -1,15 +1,16 @@
 import 'volume_projection.dart';
 
 class ProjectedVolumeSource {
-  late int defaultMode;
-  late List<VolumeProjection> sources;
+  int? defaultMode;
+  List<VolumeProjection>? sources;
 
   ProjectedVolumeSource.fromMap(Map<String, dynamic> data) {
     defaultMode = data['defaultMode'];
-    sources = (data['sources'] as List<Map<String, dynamic>>)
-        .map(
-          (e) => VolumeProjection.fromMap(e),
-        )
-        .toList();
+    if (data['sources'] != null) {
+      sources = [];
+      for (var e in data['sources']) {
+        sources!.add(VolumeProjection.fromMap(e));
+      }
+    }
   }
 }

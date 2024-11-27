@@ -1,3 +1,5 @@
+import 'package:kubectl_dashboard/app/dashboard/resources/properties/spec/spec.dart';
+
 import 'affinity.dart';
 import 'container.dart';
 import 'ephemeral_container.dart';
@@ -13,136 +15,155 @@ import 'toleration.dart';
 import 'topology_spread_constraint.dart';
 import 'volume.dart';
 
-class PodSpec {
+class PodSpec extends Spec {
   int? activeDeadlineSeconds;
-  late Affinity affinity;
-  late bool automountServiceAccountToken;
-  late List<Container> containers;
-  late PodDNSConfig dnsConfig;
-  late String dnsPolicy;
-  late bool enableServiceLinks;
-  late List<EphemeralContainer> ephemeralContainers;
-  late List<HostAlias> hostAliases;
-  late bool hostIPC;
-  late bool hostNetwork;
-  late bool hostUsers;
-  late String hostname;
-  late List<LocalObjectReference> imagePullSecrets;
-  late List<Container> initContainers;
-  late String nodeName;
-  late Map<String, dynamic> nodeSelector;
-  late PodOS os;
-  late Map<String, dynamic> overhead;
-  late String preemptionPolicy;
-  late int priority;
-  late String priorityClassName;
-  late List<PodReadinessGate> readinessGates;
-  late List<PodResourceClaim> resourceClaims;
-  late String resourcePolicy;
-  late String runtimeClassName;
-  late String schedulerName;
-  late List<PodSchedulingGate> schedulingGates;
-  late PodSecurityContext securityContext;
-  late String serviceAccount;
-  late String serviceAccountName;
-  late bool setHostnameAsFQDN;
-  late bool shareProcessNamespace;
-  late String subdomain;
-  late int terminationGracePeriodSeconds;
-  late List<Toleration> tolerations;
-  late List<TopologySpreadConstraint> topologySpreadConstraints;
-  late List<Volume> volumes;
+  Affinity? affinity;
+  bool? automountServiceAccountToken;
+  List<Container>? containers;
+  PodDNSConfig? dnsConfig;
+  String? dnsPolicy;
+  bool? enableServiceLinks;
+  List<EphemeralContainer>? ephemeralContainers;
+  List<HostAlias>? hostAliases;
+  bool? hostIPC;
+  bool? hostNetwork;
+  bool? hostUsers;
+  String? hostname;
+  List<LocalObjectReference>? imagePullSecrets;
+  List<Container>? initContainers;
+  String? nodeName;
+  Map<String, dynamic>? nodeSelector;
+  PodOS? os;
+  Map<String, dynamic>? overhead;
+  String? preemptionPolicy;
+  int? priority;
+  String? priorityClassName;
+  List<PodReadinessGate>? readinessGates;
+  List<PodResourceClaim>? resourceClaims;
+  String? resourcePolicy;
+  String? runtimeClassName;
+  String? schedulerName;
+  List<PodSchedulingGate>? schedulingGates;
+  PodSecurityContext? securityContext;
+  String? serviceAccount;
+  String? serviceAccountName;
+  bool? setHostnameAsFQDN;
+  bool? shareProcessNamespace;
+  String? subdomain;
+  int? terminationGracePeriodSeconds;
+  List<Toleration>? tolerations;
+  List<TopologySpreadConstraint>? topologySpreadConstraints;
+  List<Volume>? volumes;
 
   PodSpec.fromMap(Map<String, dynamic> data) {
     activeDeadlineSeconds = data['activeDeadlineSeconds'];
-    affinity = data['affinity'];
+    if (data['affinity'] != null) affinity = Affinity.fromMap(data['affinity']);
     automountServiceAccountToken = data['automountServiceAccountToken'];
-    containers = (data['containers'] as List<Map<String, dynamic>>)
-        .map(
-          (e) => Container.fromMap(e),
-        )
-        .toList();
-    dnsConfig = PodDNSConfig.fromMap(data['dnsConfig']);
+    if (data['containers'] != null) {
+      containers = [];
+      for (var e in data['containers']) {
+        containers!.add(Container.fromMap(e));
+      }
+    }
+    if (data['dnsConfig'] != null) {
+      dnsConfig = PodDNSConfig.fromMap(data['dnsConfig']);
+    }
     dnsPolicy = data['dnsPolicy'];
     enableServiceLinks = data['enableServiceLinks'];
-    ephemeralContainers =
-        (data['ephemeralContainers'] as List<Map<String, dynamic>>)
-            .map(
-              (e) => EphemeralContainer.fromMap(e),
-            )
-            .toList();
-    hostAliases = (data['hostAliases'] as List<Map<String, dynamic>>)
-        .map(
-          (e) => HostAlias.fromMap(e),
-        )
-        .toList();
+    if (data['ephemeralContainers'] != null) {
+      ephemeralContainers = [];
+      for (var e in data['ephemeralContainers']) {
+        ephemeralContainers!.add(EphemeralContainer.fromMap(e));
+      }
+    }
+    if (data['hostAliases'] != null) {
+      hostAliases = [];
+      for (var e in data['hostAliases']) {
+        hostAliases!.add(HostAlias.fromMap(e));
+      }
+    }
     hostIPC = data['hostIPC'];
     hostNetwork = data['hostNetwork'];
     hostUsers = data['hostUsers'];
     hostname = data['hostname'];
-    imagePullSecrets = (data['imagePullSecrets'] as List<Map<String, dynamic>>)
-        .map(
-          (e) => LocalObjectReference.fromMap(e),
-        )
-        .toList();
-    initContainers = (data['initContainers'] as List<Map<String, dynamic>>)
-        .map(
-          (e) => Container.fromMap(e),
-        )
-        .toList();
-    nodeName = data['nodeName'];
-    nodeSelector = {};
-    for (var e in (data['nodeSelector'] as Map<String, dynamic>).entries) {
-      nodeSelector[e.key] = e.value;
+    if (data['imagePullSecrets'] != null) {
+      imagePullSecrets = [];
+      for (var e in data['imagePullSecrets']) {
+        imagePullSecrets!.add(LocalObjectReference.fromMap(e));
+      }
     }
-    os = PodOS.fromMap(data['os']);
-    overhead = {};
-    for (var e in (data['overhead'] as Map<String, dynamic>).entries) {
-      overhead[e.key] = e.value;
+    if (data['initContainers'] != null) {
+      initContainers = [];
+      for (var e in data['initContainers']) {
+        initContainers!.add(Container.fromMap(e));
+      }
+    }
+    nodeName = data['nodeName'];
+    if (data['nodeSelector'] != null) {
+      nodeSelector = {};
+      for (var e in (data['nodeSelector'] as Map<String, dynamic>).entries) {
+        nodeSelector![e.key] = e.value;
+      }
+    }
+    if (data['os'] != null) {
+      os = PodOS.fromMap(data['os']);
+    }
+    if (data['overhead'] != null) {
+      overhead = {};
+      for (var e in (data['overhead'] as Map<String, dynamic>).entries) {
+        overhead![e.key] = e.value;
+      }
     }
     preemptionPolicy = data['preemptionPolicy'];
     priority = data['priority'];
     priorityClassName = data['priorityClassName'];
-    readinessGates = (data['readinessGates'] as List<Map<String, dynamic>>)
-        .map(
-          (e) => PodReadinessGate.fromMap(e),
-        )
-        .toList();
-    resourceClaims = (data['resourceClaims'] as List<Map<String, dynamic>>)
-        .map(
-          (e) => PodResourceClaim.fromMap(e),
-        )
-        .toList();
+    if (data['readinessGates'] != null) {
+      readinessGates = [];
+      for (var e in data['readinessGates']) {
+        readinessGates!.add(PodReadinessGate.fromMap(e));
+      }
+    }
+    if (data['resourceClaims'] != null) {
+      resourceClaims = [];
+      for (var e in data['resourceClaims']) {
+        resourceClaims!.add(PodResourceClaim.fromMap(e));
+      }
+    }
     resourcePolicy = data['resourcePolicy'];
     runtimeClassName = data['runtimeClassName'];
     schedulerName = data['schedulerName'];
-    schedulingGates = (data['schedulingGates'] as List<Map<String, dynamic>>)
-        .map(
-          (e) => PodSchedulingGate.fromMap(e),
-        )
-        .toList();
-    securityContext = PodSecurityContext.fromMap(data['securityContext']);
+    if (data['schedulingGates'] != null) {
+      schedulingGates = [];
+      for (var e in data['schedulingGates']) {
+        schedulingGates!.add(PodSchedulingGate.fromMap(e));
+      }
+    }
+    if (data['securityContext'] != null) {
+      securityContext = PodSecurityContext.fromMap(data['securityContext']);
+    }
     serviceAccount = data['serviceAccount'];
     serviceAccountName = data['serviceAccountName'];
     setHostnameAsFQDN = data['setHostnameAsFQDN'];
     shareProcessNamespace = data['shareProcessNamespace'];
     subdomain = data['subdomain'];
     terminationGracePeriodSeconds = data['terminationGracePeriodSeconds'];
-    tolerations = (data['tolerations'] as List<Map<String, dynamic>>)
-        .map(
-          (e) => Toleration.fromMap(e),
-        )
-        .toList();
-    topologySpreadConstraints =
-        (data['topologySpreadConstraints'] as List<Map<String, dynamic>>)
-            .map(
-              (e) => TopologySpreadConstraint.fromMap(e),
-            )
-            .toList();
-    volumes = (data['volumes'] as List<Map<String, dynamic>>)
-        .map(
-          (e) => Volume.fromMap(e),
-        )
-        .toList();
+    if (data['tolerations'] != null) {
+      tolerations = [];
+      for (var e in data['tolerations']) {
+        tolerations!.add(Toleration.fromMap(e));
+      }
+    }
+    if (data['topologySpreadConstraints'] != null) {
+      topologySpreadConstraints = [];
+      for (var e in data['topologySpreadConstraints']) {
+        topologySpreadConstraints!.add(TopologySpreadConstraint.fromMap(e));
+      }
+    }
+    if (data['volumes'] != null) {
+      volumes = [];
+      for (var e in data['volumes']) {
+        volumes!.add(Volume.fromMap(e));
+      }
+    }
   }
 }

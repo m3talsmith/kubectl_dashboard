@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:humanizer/humanizer.dart';
+import 'package:kubectl_dashboard/app/dashboard/resources/properties/meta/object_meta.dart';
 
 import '../auth.dart';
 import '../errors.dart';
@@ -51,7 +52,7 @@ enum ResourceKind {
 }
 
 class Resource {
-  late Metadata metadata;
+  late ObjectMeta metadata;
   Spec? spec;
   Status? status;
 
@@ -202,7 +203,7 @@ class Resource {
     var resourceKindPluralized = kind.toLowerCase().toPluralForm();
 
     final resourcePath =
-        '$api/namespaces/$namespace/$resourceKindPluralized/${metadata.name!}';
+        '$api/namespaces/$namespace/$resourceKindPluralized/${metadata.name}';
     final uri = Uri.parse('${auth.cluster!.server!}$resourcePath');
 
     final response = await auth.delete(uri);
@@ -220,10 +221,10 @@ class Resource {
     if (data.isEmpty) return;
 
     kind = data['kind'];
-    metadata = Metadata.fromMap(data['metadata']);
+    metadata = ObjectMeta.fromMap(data['metadata']);
     namespace = metadata.namespace ?? 'default';
     if (data.containsKey('spec')) {
-      spec = Spec.fromMap(data['spec']);
+      spec = Spec.fromMap(data['spec'], kind: ResourceKind.fromString(kind));
     }
     if (data.containsKey('status')) {
       status = Status.fromMap(data['status']);

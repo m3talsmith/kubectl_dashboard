@@ -4,16 +4,24 @@ import 'projection/secret_projection.dart';
 import 'projection/service_account_token_projection.dart';
 
 class VolumeProjection {
-  late ConfigMapProjection configMap;
-  late DownwardAPIProjection downwardAPI;
-  late SecretProjection secret;
-  late ServiceAccountTokenProjection serviceAccountToken;
+  ConfigMapProjection? configMap;
+  DownwardAPIProjection? downwardAPI;
+  SecretProjection? secret;
+  ServiceAccountTokenProjection? serviceAccountToken;
 
   VolumeProjection.fromMap(Map<String, dynamic> data) {
-    configMap = ConfigMapProjection.fromMap(data['configMap']);
-    downwardAPI = DownwardAPIProjection.fromMap(data['downwardAPI']);
-    secret = SecretProjection.fromMap(data['secret']);
-    serviceAccountToken =
-        ServiceAccountTokenProjection.fromMap(data['serviceAccountToken']);
+    if (data['configMap'] != null) {
+      configMap = ConfigMapProjection.fromMap(data['configMap']);
+    }
+    if (data['downwardAPI'] != null) {
+      downwardAPI = DownwardAPIProjection.fromMap(data['downwardAPI']);
+    }
+    if (data['secret'] != null) {
+      secret = SecretProjection.fromMap(data['secret']);
+    }
+    if (data['serviceAccountToken'] != null) {
+      serviceAccountToken =
+          ServiceAccountTokenProjection.fromMap(data['serviceAccountToken']);
+    }
   }
 }

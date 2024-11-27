@@ -1,7 +1,12 @@
 class ExecAction {
-  late List<String> command;
+  List<String>? command;
 
   ExecAction.fromMap(Map<String, dynamic> data) {
-    command = data['command'] as List<String>;
+    if (data['command'] != null) {
+      command = [];
+      for (var e in data['command']) {
+        command!.add(e);
+      }
+    }
   }
 }

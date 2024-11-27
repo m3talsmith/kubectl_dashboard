@@ -1,11 +1,15 @@
 import 'lifecycle_handler.dart';
 
 class Lifecycle {
-  late LifecycleHandler postStart;
-  late LifecycleHandler preStop;
+  LifecycleHandler? postStart;
+  LifecycleHandler? preStop;
 
   Lifecycle.fromMap(Map<String, dynamic> data) {
-    postStart = LifecycleHandler.fromMap(data['postStart']);
-    preStop = LifecycleHandler.fromMap(data['preStop']);
+    if (data['postStart'] != null) {
+      postStart = LifecycleHandler.fromMap(data['postStart']);
+    }
+    if (data['preStop'] != null) {
+      preStop = LifecycleHandler.fromMap(data['preStop']);
+    }
   }
 }

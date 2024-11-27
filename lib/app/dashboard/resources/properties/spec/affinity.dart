@@ -3,7 +3,9 @@ import 'pod_affinity_term.dart';
 import 'preferred_scheduling_term.dart';
 import 'weighted_pod_affinity_term.dart';
 
-abstract class Affinity {}
+abstract class Affinity {
+  static fromMap(Map<String, dynamic> data) {}
+}
 
 class NodeAffinity implements Affinity {
   late List<PreferredSchedulingTerm>

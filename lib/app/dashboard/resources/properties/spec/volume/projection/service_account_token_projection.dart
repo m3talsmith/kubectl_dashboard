@@ -1,7 +1,7 @@
 class ServiceAccountTokenProjection {
-  late String audience;
-  late int expirationSeconds;
-  late String path;
+  String? audience;
+  int? expirationSeconds;
+  String? path;
 
   ServiceAccountTokenProjection.fromMap(Map<String, dynamic> data) {
     audience = data['audience'];

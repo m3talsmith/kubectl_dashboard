@@ -1,7 +1,7 @@
 class SecretKeySelector {
-  late String key;
-  late String name;
-  late bool optional;
+  String? key;
+  String? name;
+  bool? optional;
 
   SecretKeySelector.fromMap(Map<String, dynamic> data) {
     key = data['key'];

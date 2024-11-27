@@ -1,8 +1,8 @@
 class SELinuxOptions {
-  late String level;
-  late String role;
-  late String type;
-  late String user;
+  String? level;
+  String? role;
+  String? type;
+  String? user;
 
   SELinuxOptions.fromMap(Map<String, dynamic> data) {
     level = data['level'];

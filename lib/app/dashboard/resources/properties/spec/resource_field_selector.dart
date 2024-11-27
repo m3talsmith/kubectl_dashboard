@@ -1,13 +1,15 @@
 import 'quantity.dart';
 
 class ResourceFieldSelector {
-  late String containerName;
-  late Quantity divisor;
-  late String resource;
+  String? containerName;
+  dynamic divisor;
+  String? resource;
 
   ResourceFieldSelector.fromMap(Map<String, dynamic> data) {
     containerName = data['containerName'];
-    divisor = data['divisor'] as Quantity;
+    divisor = (data['divisor'] is String?)
+        ? data['divisor']
+        : data['divisor'] as Quantity?;
     resource = data['resource'];
   }
 }

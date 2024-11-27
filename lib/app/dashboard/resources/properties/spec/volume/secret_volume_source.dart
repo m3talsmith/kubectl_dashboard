@@ -1,18 +1,19 @@
 import 'package:kubectl_dashboard/app/dashboard/resources/properties/spec/key_to_path.dart';
 
 class SecretVolumeSource {
-  late int defaultMode;
-  late List<KeyToPath> items;
-  late bool optional;
-  late String secretName;
+  int? defaultMode;
+  List<KeyToPath>? items;
+  bool? optional;
+  String? secretName;
 
   SecretVolumeSource.fromMap(Map<String, dynamic> data) {
     defaultMode = data['defaultMode'];
-    items = (data['items'] as List<Map<String, dynamic>>)
-        .map(
-          (e) => KeyToPath.fromMap(e),
-        )
-        .toList();
+    if (data['items'] != null) {
+      items = [];
+      for (var e in data['items']) {
+        items!.add(KeyToPath.fromMap(e));
+      }
+    }
     optional = data['optional'];
     secretName = data['secretName'];
   }
