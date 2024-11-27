@@ -4,6 +4,7 @@ import 'port.dart';
 import 'security_context.dart';
 import 'selector.dart';
 import 'service_status.dart';
+import 'spec/container.dart';
 import 'strategy.dart';
 import 'template.dart';
 import 'toleration.dart';
