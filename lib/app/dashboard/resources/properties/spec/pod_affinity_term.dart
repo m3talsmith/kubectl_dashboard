@@ -1,4 +1,4 @@
-import 'package:kubectl_dashboard/app/dashboard/resources/properties/label_selector.dart';
+import 'label_selector.dart';
 
 class PodAffinityTerm {
   late LabelSelector labelSelector;
