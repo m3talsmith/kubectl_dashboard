@@ -12,7 +12,7 @@ class ManagedFieldEntry {
   ManagedFieldEntry.fromMap(Map<String, dynamic> data) {
     apiVersion = data['apiVersion'];
     fieldsType = data['fieldsType'];
-    fieldsV1 = FieldsV1();
+    fieldsV1 = data['fieldsV1'] as FieldsV1;
     manager = data['manager'];
     operation = data['operation'];
     subresource = data['subresource'];
