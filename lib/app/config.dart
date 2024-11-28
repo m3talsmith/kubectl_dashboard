@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:kubernetes/kubernetes.dart';
+import 'package:kuberneteslib/kuberneteslib.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 

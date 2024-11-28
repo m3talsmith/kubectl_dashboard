@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kubectl_dashboard/app/config/config_form.dart';
 import 'package:kubectl_dashboard/app/config/providers.dart';
-import 'package:kubernetes/kubernetes.dart';
+import 'package:kuberneteslib/kuberneteslib.dart';
 
 class EditConfig extends ConsumerWidget {
   const EditConfig({required this.index, this.config, super.key});

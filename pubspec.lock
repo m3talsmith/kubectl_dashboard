@@ -445,13 +445,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.3"
-  kubernetes:
+  kuberneteslib:
     dependency: "direct main"
     description:
-      path: "../kubernetes"
-      relative: true
-    source: path
-    version: "1.0.0"
+      name: kuberneteslib
+      sha256: "801715f37eedfdc01be101762e9dcd5b9cdae70bec7218955eaaad949333da63"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.0"
   leak_tracker:
     dependency: transitive
     description:

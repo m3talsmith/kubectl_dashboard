@@ -7,7 +7,7 @@ import 'package:kubectl_dashboard/app/dashboard/dashboard_list_tile.dart';
 import 'package:kubectl_dashboard/app/dashboard/resources/providers.dart';
 import 'package:kubectl_dashboard/app/dashboard/resources/resource_list.dart';
 import 'package:kubectl_dashboard/app/preferences.dart';
-import 'package:kubernetes/kubernetes.dart';
+import 'package:kuberneteslib/kuberneteslib.dart';
 
 class DashboardView extends ConsumerStatefulWidget {
   const DashboardView({this.contextIndex, super.key});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kubernetes/kubernetes.dart';
+import 'package:kuberneteslib/kuberneteslib.dart';
 
 import 'config.dart';
 import 'config/add_config.dart';

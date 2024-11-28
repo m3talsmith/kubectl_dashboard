@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kubectl_dashboard/app/auth.dart';
 import 'package:kubectl_dashboard/app/dashboard/resources/providers.dart';
 import 'package:kubectl_dashboard/app/dashboard/resources/resource_show.dart';
-import 'package:kubernetes/kubernetes.dart';
+import 'package:kuberneteslib/kuberneteslib.dart';
 
 class ResourcesList extends ConsumerWidget {
   const ResourcesList({super.key});
@@ -28,7 +28,7 @@ class ResourcesList extends ConsumerWidget {
                     resource = await Resource.show(
                       auth: auth,
                       resourceKind: e.kind,
-                      resourceName: e.metadata.name!,
+                      resourceName: e.metadata.name,
                       namespace: e.namespace,
                     );
                   }
@@ -81,7 +81,7 @@ class ResourcesList extends ConsumerWidget {
                                 child: Container(),
                               ),
                             ),
-                          Text(e.metadata.name ?? 'unknown'),
+                          Text(e.metadata.name),
                         ],
                       ),
                     ),

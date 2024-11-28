@@ -5,7 +5,7 @@ import 'package:kubectl_dashboard/app/config.dart';
 import 'package:kubectl_dashboard/app/config/providers.dart';
 import 'package:kubectl_dashboard/app/preferences.dart';
 import 'package:kubectl_dashboard/window.dart';
-import 'package:kubernetes/kubernetes.dart';
+import 'package:kuberneteslib/kuberneteslib.dart';
 
 import 'app/auth.dart';
 
