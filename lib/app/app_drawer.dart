@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kubernetes/kubernetes.dart';
 
 import 'config.dart';
 import 'config/add_config.dart';
@@ -37,11 +38,15 @@ class AppDrawer extends ConsumerWidget {
 
                     onEdit() async {
                       final configs = ref.watch(configsProvider);
-                      final index = (configs.isNotEmpty) ? configs.indexOf(e) : 0;
+                      final index =
+                          (configs.isNotEmpty) ? configs.indexOf(e) : 0;
                       final navigator = Navigator.of(context);
                       await navigator.push(
                         MaterialPageRoute(
-                          builder: (context) => EditConfig(index: index, config: configs[index],),
+                          builder: (context) => EditConfig(
+                            index: index,
+                            config: configs[index],
+                          ),
                         ),
                       );
                       navigator.pop();
@@ -52,18 +57,17 @@ class AppDrawer extends ConsumerWidget {
                           .watch(configsProvider.notifier)
                           .addListener(saveConfigs);
                       final index = ref.watch(configsProvider).indexOf(e);
-                      ref
-                          .watch(configsProvider.notifier)
-                          .state
-                          .removeAt(index);
+                      ref.watch(configsProvider.notifier).state.removeAt(index);
                       final configs = ref.watch(configsProvider);
                       final configIndex = (configs.isNotEmpty)
                           ? configs.indexOf(configs.last)
                           : -1;
 
-                      ref.watch(currentConfigIndexProvider.notifier).state = index;
+                      ref.watch(currentConfigIndexProvider.notifier).state =
+                          index;
 
-                      Config? config = (configIndex >= 0) ? configs[configIndex] : null;
+                      Config? config =
+                          (configIndex >= 0) ? configs[configIndex] : null;
                       ref.watch(currentConfigProvider.notifier).state = config;
 
                       ref.invalidate(configsProvider);

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kubectl_dashboard/app/auth.dart';
 import 'package:kubectl_dashboard/app/config/providers.dart';
+import 'package:kubernetes/kubernetes.dart';
 
 import '../config.dart';
 
@@ -45,7 +46,7 @@ class _ConfigFormState extends ConsumerState<ConfigForm> {
       ref.watch(currentContextIndexProvider.notifier).state = 0;
       ref.watch(currentContextProvider.notifier).state = config.contexts.first;
 
-      final auth = Auth.fromConfig(config);
+      final auth = ClusterAuth.fromConfig(config);
       await auth.ensureInitialization();
       ref.watch(authenticationProvider.notifier).state = auth;
 

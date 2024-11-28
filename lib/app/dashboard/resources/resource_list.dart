@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kubectl_dashboard/app/auth.dart';
 import 'package:kubectl_dashboard/app/dashboard/resources/providers.dart';
 import 'package:kubectl_dashboard/app/dashboard/resources/resource_show.dart';
-
-import '../resources.dart';
+import 'package:kubernetes/kubernetes.dart';
 
 class ResourcesList extends ConsumerWidget {
   const ResourcesList({super.key});
@@ -11,6 +11,7 @@ class ResourcesList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final resources = ref.watch(resourcesProvider);
+    final auth = ref.watch(authenticationProvider);
     return GridView.count(
       crossAxisCount: 3,
       children: resources
@@ -25,7 +26,7 @@ class ResourcesList extends ConsumerWidget {
                   if (!Resource.ignoreShow
                       .contains(ResourceKind.fromString(e.kind))) {
                     resource = await Resource.show(
-                      ref: ref,
+                      auth: auth,
                       resourceKind: e.kind,
                       resourceName: e.metadata.name!,
                       namespace: e.namespace,
@@ -55,7 +56,7 @@ class ResourcesList extends ConsumerWidget {
                                 menuChildren: [
                                   MenuItemButton(
                                     onPressed: () {
-                                      e.delete(ref: ref);
+                                      e.delete();
                                       ref
                                           .watch(resourcesProvider.notifier)
                                           .state = resources..remove(e);
@@ -77,17 +78,7 @@ class ResourcesList extends ConsumerWidget {
                           if (e.status != null)
                             Expanded(
                               child: Center(
-                                child: (e.status!.phase != null)
-                                    ? Container(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .inversePrimary,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(16.0),
-                                          child: Text(e.status!.phase!),
-                                        ),
-                                      )
-                                    : Container(),
+                                child: Container(),
                               ),
                             ),
                           Text(e.metadata.name ?? 'unknown'),

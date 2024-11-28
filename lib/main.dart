@@ -5,6 +5,7 @@ import 'package:kubectl_dashboard/app/config.dart';
 import 'package:kubectl_dashboard/app/config/providers.dart';
 import 'package:kubectl_dashboard/app/preferences.dart';
 import 'package:kubectl_dashboard/window.dart';
+import 'package:kubernetes/kubernetes.dart';
 
 import 'app/auth.dart';
 
@@ -20,7 +21,8 @@ void main() async {
       ? loadedConfigs[(currentConfigIndex < 0) ? 0 : currentConfigIndex]
       : null;
 
-  final auth = (currentConfig != null) ? Auth.fromConfig(currentConfig) : null;
+  final auth =
+      (currentConfig != null) ? ClusterAuth.fromConfig(currentConfig) : null;
   if (auth != null) await auth.ensureInitialization();
 
   final loadedContexts = currentConfig?.contexts;

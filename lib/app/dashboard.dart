@@ -4,10 +4,10 @@ import 'package:humanizer/humanizer.dart';
 import 'package:kubectl_dashboard/app/auth.dart';
 import 'package:kubectl_dashboard/app/config/providers.dart';
 import 'package:kubectl_dashboard/app/dashboard/dashboard_list_tile.dart';
-import 'package:kubectl_dashboard/app/dashboard/resources.dart';
 import 'package:kubectl_dashboard/app/dashboard/resources/providers.dart';
 import 'package:kubectl_dashboard/app/dashboard/resources/resource_list.dart';
 import 'package:kubectl_dashboard/app/preferences.dart';
+import 'package:kubernetes/kubernetes.dart';
 
 class DashboardView extends ConsumerStatefulWidget {
   const DashboardView({this.contextIndex, super.key});
@@ -150,12 +150,13 @@ class _SubTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final auth = ref.watch(authenticationProvider);
     return DashboardListTile(
         title: Text(title),
         selected: selected,
         onTap: () async {
           final resources = await Resource.list(
-            ref: ref,
+            auth: auth,
             resourceKind: resourceKind,
             namespace: null,
           );
