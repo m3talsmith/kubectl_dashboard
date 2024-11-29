@@ -449,10 +449,10 @@ packages:
     dependency: "direct main"
     description:
       name: kuberneteslib
-      sha256: "801715f37eedfdc01be101762e9dcd5b9cdae70bec7218955eaaad949333da63"
+      sha256: e4ad3e9ecbbfabd0f9732d51ed80eb2dfb143e95519f36f2e9386cbff9f0ae50
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.0"
+    version: "0.3.9"
   leak_tracker:
     dependency: transitive
     description:
@@ -813,6 +813,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  shimmer:
+    dependency: "direct main"
+    description:
+      name: shimmer
+      sha256: "5f88c883a22e9f9f299e5ba0e4f7e6054857224976a5d9f839d4ebdc94a14ac9"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.0"
   sky_engine:
     dependency: transitive
     description: flutter

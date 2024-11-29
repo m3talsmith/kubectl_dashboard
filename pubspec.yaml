@@ -48,6 +48,7 @@ dependencies:
   pluralize: ^0.0.8
   humanizer: ^3.0.0
   kuberneteslib: ^0.3.0
+  shimmer: ^3.0.0
 
 dev_dependencies:
   flutter_test:
