@@ -11,10 +11,14 @@ class ResourcesList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final resources = ref.watch(resourcesProvider);
+    final sortedResources = resources
+      ..sort(
+        (a, b) => a.metadata.name.compareTo(b.metadata.name),
+      );
     final auth = ref.watch(authenticationProvider);
     return GridView.count(
       crossAxisCount: 3,
-      children: resources
+      children: sortedResources
           .map(
             (e) => SizedBox(
               width: 120,
