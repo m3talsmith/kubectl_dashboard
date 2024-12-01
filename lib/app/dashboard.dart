@@ -8,6 +8,7 @@ import 'package:kubectl_dashboard/app/dashboard/resources/providers.dart';
 import 'package:kubectl_dashboard/app/dashboard/resources/resource_list.dart';
 import 'package:kubectl_dashboard/app/preferences.dart';
 import 'package:kuberneteslib/kuberneteslib.dart';
+import 'package:shimmer/shimmer.dart';
 
 class DashboardView extends ConsumerStatefulWidget {
   const DashboardView({this.contextIndex, super.key});
@@ -36,6 +37,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     final config = ref.watch(currentConfigProvider);
     final currentContext = ref.watch(currentContextProvider);
     final authentication = ref.watch(authenticationProvider);
+    final resources = ref.watch(resourcesProvider);
 
     final size = MediaQuery.of(context).size;
     const double tabsWidth = 280;
@@ -68,7 +70,10 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
 
     return (config == null || authentication == null || currentContext == null)
         ? const Center(
-            child: Text('Authenticating...'),
+            child: Shimmer(
+                gradient: LinearGradient(
+                    colors: [Colors.white10, Colors.transparent]),
+                child: Text('Authenticating...')),
           )
         : Row(
             children: [
@@ -128,7 +133,14 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
               SizedBox(
                 height: size.height,
                 width: contentWidth,
-                child: const ResourcesList(),
+                child: resources.isEmpty
+                    ? const Center(
+                        child: Shimmer(
+                            gradient: LinearGradient(
+                                colors: [Colors.white10, Colors.transparent]),
+                            child: Text('Querying...')),
+                      )
+                    : const ResourcesList(),
               ),
             ],
           );
@@ -160,7 +172,10 @@ class _SubTab extends ConsumerWidget {
             resourceKind: resourceKind,
             namespace: null,
           );
-          ref.watch(resourcesProvider.notifier).state = resources;
+          ref.watch(resourcesProvider.notifier).state = resources
+            ..sort(
+              (a, b) => a.metadata.name.compareTo(b.metadata.name),
+            );
           if (!selected && onSelected != null) onSelected!();
         });
   }
