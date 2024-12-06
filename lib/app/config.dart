@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:kuberneteslib/kuberneteslib.dart';
@@ -11,11 +10,10 @@ Future<void> saveConfigs(List<Config>? state) async {
 
   final rootPath = await getApplicationSupportDirectory();
   final configsPath = join(rootPath.path, "configs.json");
-  log('configsPath: $configsPath');
 
   final configs = Configs(configs: state);
-  final json = jsonEncode(configs);
-  File(configsPath).writeAsStringSync(json);
+  final json = configs.toJson();
+  File(configsPath).writeAsStringSync(jsonEncode(json));
 }
 
 Future<List<Config>> loadConfigs() async {
@@ -26,14 +24,13 @@ Future<List<Config>> loadConfigs() async {
     final file = File(configsPath);
     final buff = file.readAsStringSync();
     final json = jsonDecode(buff);
-    final configs = Configs.fromJson(json['configs']).toList();
-    return configs;
+    final configs = Configs.fromJson(json);
+    return configs.toList();
   } on PathNotFoundException {
     await File(configsPath).create();
     await saveConfigs([]);
     return loadConfigs();
   } catch (exception, stackTrace) {
-    log('[ERROR] loadConfigs: $exception\n$stackTrace');
-    return [];
+    return <Config>[];
   }
 }

@@ -3,16 +3,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:humanizer/humanizer.dart';
 import 'package:kubectl_dashboard/app/auth.dart';
 import 'package:kubectl_dashboard/app/dashboard/resources/providers.dart';
+import 'package:kubectl_dashboard/app/dashboard/resources/resource_add.dart';
 import 'package:kubectl_dashboard/app/dashboard/resources/resource_show.dart';
 import 'package:kuberneteslib/kuberneteslib.dart';
 
 class ResourcesList extends ConsumerWidget {
-  const ResourcesList({super.key});
+  const ResourcesList({required this.kind, super.key});
+
+  final String kind;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final resources = ref.watch(resourcesProvider);
-    final resourceKind = resources.first.kind;
     final auth = ref.watch(authenticationProvider);
     return Scaffold(
       appBar: AppBar(
@@ -20,9 +22,10 @@ class ResourcesList extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton.icon(
-              onPressed: () {},
-              label: Text(
-                  SymbolName(resourceKind).toHumanizedName().toTitleCase()),
+              onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => ResourceAdd(kind: kind),
+              )),
+              label: Text(SymbolName(kind).toHumanizedName().toTitleCase()),
               icon: const Icon(Icons.add_rounded),
             ),
           ),
@@ -41,11 +44,11 @@ class ResourcesList extends ConsumerWidget {
                     final nav = Navigator.of(context);
                     Resource? resource;
                     if (!Resource.ignoreShow
-                        .contains(ResourceKind.fromString(e.kind))) {
+                        .contains(ResourceKind.fromString(e.kind!))) {
                       resource = await Resource.show(
                         auth: auth,
-                        resourceKind: e.kind,
-                        resourceName: e.metadata.name,
+                        resourceKind: e.kind!,
+                        resourceName: e.metadata!.name,
                         namespace: e.namespace,
                       );
                     }
@@ -73,8 +76,8 @@ class ResourcesList extends ConsumerWidget {
                                   controller: controller,
                                   menuChildren: [
                                     MenuItemButton(
-                                      onPressed: () {
-                                        e.delete();
+                                      onPressed: () async {
+                                        await e.delete();
                                         ref
                                             .watch(resourcesProvider.notifier)
                                             .state = resources..remove(e);
@@ -93,14 +96,14 @@ class ResourcesList extends ConsumerWidget {
                                 ),
                               ],
                             ),
-                            Text(e.metadata.namespace ?? 'default'),
+                            Text(e.metadata?.namespace ?? 'default'),
                             if (e.status != null)
                               Expanded(
                                 child: Center(
                                   child: Container(),
                                 ),
                               ),
-                            Text(e.metadata.name),
+                            Text(e.metadata!.name),
                           ],
                         ),
                       ),

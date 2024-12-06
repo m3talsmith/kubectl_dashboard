@@ -17,7 +17,7 @@ class ResourceShow extends ConsumerWidget {
           ? AppBar(
               centerTitle: true,
               title: Text(
-                  '${resource.kind.toTitleCase()}: ${resource.metadata.name}'),
+                  '${resource.kind!.toTitleCase()}: ${resource.metadata!.name}'),
             )
           : null,
       body: resource != null
@@ -27,8 +27,8 @@ class ResourceShow extends ConsumerWidget {
                   size: columnSize,
                   child: ListView(
                     shrinkWrap: true,
-                    children: [
-                      const Padding(
+                    children: const [
+                      Padding(
                         padding: EdgeInsets.all(8.0),
                         child: Text(
                           'Metadata',
@@ -42,8 +42,8 @@ class ResourceShow extends ConsumerWidget {
                   SizedBox.fromSize(
                     size: columnSize,
                     child: ListView(
-                      children: [
-                        const Padding(
+                      children: const [
+                        Padding(
                           padding: EdgeInsets.all(8.0),
                           child: Text(
                             'Spec',
@@ -57,8 +57,8 @@ class ResourceShow extends ConsumerWidget {
                   SizedBox.fromSize(
                     size: columnSize,
                     child: ListView(
-                      children: [
-                        const Padding(
+                      children: const [
+                        Padding(
                           padding: EdgeInsets.all(8.0),
                           child: Text(
                             'Status',

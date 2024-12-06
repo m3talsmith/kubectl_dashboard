@@ -37,7 +37,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     final config = ref.watch(currentConfigProvider);
     final currentContext = ref.watch(currentContextProvider);
     final authentication = ref.watch(authenticationProvider);
-    final resources = ref.watch(resourcesProvider);
+    // final resources = ref.watch(resourcesProvider);
+    String resourceKind = '';
 
     final size = MediaQuery.of(context).size;
     const double tabsWidth = 280;
@@ -111,21 +112,26 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                   shrinkWrap: true,
                   children: [
                     ...Resource.apiReadKinds.map(
-                      (e) => _SubTab(
-                        title: SymbolName(e.name.toPluralForm())
-                            .toHumanizedName()
-                            .toTitleCase(),
-                        resourceKind: e.name,
-                        selected: subTabs.indexOf(e.name) == _subTabIndex,
-                        onSelected: () {
-                          final i = subTabs.indexOf(e.name);
-                          if (i != _subTabIndex) {
-                            setState(() {
-                              _subTabIndex = i;
-                            });
-                          }
-                        },
-                      ),
+                      (e) {
+                        final selected =
+                            subTabs.indexOf(e.name) == _subTabIndex;
+                        if (selected) resourceKind = e.name;
+                        return _SubTab(
+                          title: SymbolName(e.name.toPluralForm())
+                              .toHumanizedName()
+                              .toTitleCase(),
+                          resourceKind: e.name,
+                          selected: selected,
+                          onSelected: () {
+                            final i = subTabs.indexOf(e.name);
+                            if (i != _subTabIndex) {
+                              setState(() {
+                                _subTabIndex = i;
+                              });
+                            }
+                          },
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -133,14 +139,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
               SizedBox(
                 height: size.height,
                 width: contentWidth,
-                child: resources.isEmpty
-                    ? const Center(
-                        child: Shimmer(
-                            gradient: LinearGradient(
-                                colors: [Colors.white10, Colors.transparent]),
-                            child: Text('Querying...')),
-                      )
-                    : const ResourcesList(),
+                child: ResourcesList(kind: resourceKind),
               ),
             ],
           );
@@ -174,7 +173,7 @@ class _SubTab extends ConsumerWidget {
           );
           ref.watch(resourcesProvider.notifier).state = resources
             ..sort(
-              (a, b) => a.metadata.name.compareTo(b.metadata.name),
+              (a, b) => a.metadata!.name.compareTo(b.metadata!.name),
             );
           if (!selected && onSelected != null) onSelected!();
         });
