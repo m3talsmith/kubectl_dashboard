@@ -1,5 +1,4 @@
-import 'dart:io';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kubectl_dashboard/app/app_drawer.dart';
@@ -94,40 +93,42 @@ class _AppState extends ConsumerState<App> with WindowListener {
             centerTitle: true,
             title: const Text('Kubectl Dashboard'),
             actions: [
-              SearchAnchor(
-                searchController: searchController,
-                builder: (context, controller) {
-                  return IconButton(
-                      onPressed: () {
-                        controller.openView();
-                      },
-                      icon: const Icon(Icons.search_rounded));
-                },
-                suggestionsBuilder: (context, controller) {
-                  return resources
-                      .where(
-                        (e) =>
-                            e.metadata!.name.contains(controller.text) ||
-                            e.namespace!.contains(controller.text),
-                      )
-                      .map(
-                        (e) => ListTile(
-                          onTap: () async {
-                            final nav = Navigator.of(context);
-                            ref.watch(currentResourceProvider.notifier).state =
-                                e;
-                            await nav.push(MaterialPageRoute(
-                              builder: (context) => const ResourceShow(),
-                            ));
-                            nav.pop();
-                          },
-                          title: Text(e.metadata!.name),
-                          subtitle: Text(e.namespace!),
-                        ),
-                      );
-                },
-              ),
-              if (Platform.isLinux || Platform.isMacOS || Platform.isWindows)
+              if (resources.isNotEmpty)
+                SearchAnchor(
+                  searchController: searchController,
+                  builder: (context, controller) {
+                    return IconButton(
+                        onPressed: () {
+                          controller.openView();
+                        },
+                        icon: const Icon(Icons.search_rounded));
+                  },
+                  suggestionsBuilder: (context, controller) {
+                    return resources
+                        .where(
+                          (e) =>
+                              e.metadata!.name.contains(controller.text) ||
+                              e.namespace!.contains(controller.text),
+                        )
+                        .map(
+                          (e) => ListTile(
+                            onTap: () async {
+                              final nav = Navigator.of(context);
+                              ref
+                                  .watch(currentResourceProvider.notifier)
+                                  .state = e;
+                              await nav.push(MaterialPageRoute(
+                                builder: (context) => const ResourceShow(),
+                              ));
+                              nav.pop();
+                            },
+                            title: Text(e.metadata!.name),
+                            subtitle: Text(e.namespace!),
+                          ),
+                        );
+                  },
+                ),
+              if (!kIsWeb)
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: IconButton(

@@ -52,6 +52,7 @@ dependencies:
 #    path: ../../m3talsmith/kuberneteslib
   shimmer: ^3.0.0
   platform: ^3.1.6
+  localstorage: ^5.0.0
 
 dev_dependencies:
   flutter_test:

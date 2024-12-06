@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kubectl_dashboard/app.dart';
@@ -6,12 +7,14 @@ import 'package:kubectl_dashboard/app/config/providers.dart';
 import 'package:kubectl_dashboard/app/preferences.dart';
 import 'package:kubectl_dashboard/window.dart';
 import 'package:kuberneteslib/kuberneteslib.dart';
+import 'package:localstorage/localstorage.dart';
 import 'package:platform/platform.dart';
 
 import 'app/auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initLocalStorage();
 
   final loadedConfigs = await loadConfigs();
   int currentConfigIndex = -1;
@@ -19,26 +22,30 @@ void main() async {
   int currentContextIndex = -1;
   Context? currentContext;
 
-  bool isFullscreened = false;
+  bool isFullscreen = false;
   Preferences? preferences;
-  const platform = LocalPlatform();
-  if (platform.isMacOS ||
-      platform.isWindows ||
-      platform.isLinux ||
-      platform.isFuchsia) {
-    final window = Window();
-    await window.ensureInitialized();
 
-    currentConfigIndex =
-        (loadedConfigs.isNotEmpty) ? window.preferences.currentConfigIndex : -1;
-    currentConfig = (loadedConfigs.isNotEmpty)
-        ? loadedConfigs[(currentConfigIndex < 0) ? 0 : currentConfigIndex]
-        : null;
+  if (!kIsWeb) {
+    const platform = LocalPlatform();
+    if (platform.isMacOS ||
+        platform.isWindows ||
+        platform.isLinux ||
+        platform.isFuchsia) {
+      final window = Window();
+      await window.ensureInitialized();
 
-    currentContextIndex = window.preferences.currentContextIndex;
+      currentConfigIndex = (loadedConfigs.isNotEmpty)
+          ? window.preferences.currentConfigIndex
+          : -1;
+      currentConfig = (loadedConfigs.isNotEmpty)
+          ? loadedConfigs[(currentConfigIndex < 0) ? 0 : currentConfigIndex]
+          : null;
 
-    isFullscreened = window.fullscreen;
-    preferences = window.preferences;
+      currentContextIndex = window.preferences.currentContextIndex;
+
+      isFullscreen = window.fullscreen;
+      preferences = window.preferences;
+    }
   }
 
   final auth =
@@ -50,7 +57,7 @@ void main() async {
       loadedContexts?[(currentContextIndex < 0) ? 0 : currentContextIndex];
 
   final overrides = [
-    fullscreenProvider.overrideWith((ref) => isFullscreened),
+    fullscreenProvider.overrideWith((ref) => isFullscreen),
     preferencesProvider.overrideWith((ref) => preferences),
     configsProvider.overrideWith((ref) => loadedConfigs),
     currentConfigIndexProvider.overrideWith((ref) => currentConfigIndex),
