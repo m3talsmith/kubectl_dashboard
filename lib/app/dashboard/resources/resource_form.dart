@@ -45,6 +45,8 @@ class _ResourceFormState extends ConsumerState<ResourceForm> {
       ref.watch(currentResourceProvider.notifier).state = newResource;
       ref.watch(resourcesProvider.notifier).state = resources;
     }
+
+    nav.pop();
   }
 
   @override

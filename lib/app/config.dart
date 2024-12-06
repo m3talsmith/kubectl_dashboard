@@ -30,7 +30,7 @@ Future<List<Config>> loadConfigs() async {
     await File(configsPath).create();
     await saveConfigs([]);
     return loadConfigs();
-  } catch (exception, stackTrace) {
+  } catch (_) {
     return <Config>[];
   }
 }
