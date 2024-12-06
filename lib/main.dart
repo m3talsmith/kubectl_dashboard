@@ -6,33 +6,52 @@ import 'package:kubectl_dashboard/app/config/providers.dart';
 import 'package:kubectl_dashboard/app/preferences.dart';
 import 'package:kubectl_dashboard/window.dart';
 import 'package:kuberneteslib/kuberneteslib.dart';
+import 'package:platform/platform.dart';
 
 import 'app/auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final window = Window();
-  await window.ensureInitialized();
 
   final loadedConfigs = await loadConfigs();
-  final currentConfigIndex =
-      (loadedConfigs.isNotEmpty) ? window.preferences.currentConfigIndex : -1;
-  final currentConfig = (loadedConfigs.isNotEmpty)
-      ? loadedConfigs[(currentConfigIndex < 0) ? 0 : currentConfigIndex]
-      : null;
+  int currentConfigIndex = -1;
+  Config? currentConfig;
+  int currentContextIndex = -1;
+  Context? currentContext;
+
+  bool isFullscreened = false;
+  Preferences? preferences;
+  const platform = LocalPlatform();
+  if (platform.isMacOS ||
+      platform.isWindows ||
+      platform.isLinux ||
+      platform.isFuchsia) {
+    final window = Window();
+    await window.ensureInitialized();
+
+    currentConfigIndex =
+        (loadedConfigs.isNotEmpty) ? window.preferences.currentConfigIndex : -1;
+    currentConfig = (loadedConfigs.isNotEmpty)
+        ? loadedConfigs[(currentConfigIndex < 0) ? 0 : currentConfigIndex]
+        : null;
+
+    currentContextIndex = window.preferences.currentContextIndex;
+
+    isFullscreened = window.fullscreen;
+    preferences = window.preferences;
+  }
 
   final auth =
       (currentConfig != null) ? ClusterAuth.fromConfig(currentConfig) : null;
   if (auth != null) await auth.ensureInitialization();
 
   final loadedContexts = currentConfig?.contexts;
-  final currentContextIndex = window.preferences.currentContextIndex;
-  final currentContext =
+  currentContext =
       loadedContexts?[(currentContextIndex < 0) ? 0 : currentContextIndex];
 
   final overrides = [
-    fullscreenProvider.overrideWith((ref) => window.fullscreen),
-    preferencesProvider.overrideWith((ref) => window.preferences),
+    fullscreenProvider.overrideWith((ref) => isFullscreened),
+    preferencesProvider.overrideWith((ref) => preferences),
     configsProvider.overrideWith((ref) => loadedConfigs),
     currentConfigIndexProvider.overrideWith((ref) => currentConfigIndex),
     currentConfigProvider.overrideWith((ref) => currentConfig),
