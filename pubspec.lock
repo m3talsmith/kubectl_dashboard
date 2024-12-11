@@ -457,10 +457,10 @@ packages:
     dependency: "direct main"
     description:
       name: kuberneteslib
-      sha256: "811d9eeffcad5ef8825f5fe850f7249363a00530592f50f4ae49d3f1d693381e"
+      sha256: "1103b3db28351c1c19f4e9069f9987f62895ec133f5d0a3a375a0b01b7cceee1"
       url: "https://pub.dev"
     source: hosted
-    version: "0.4.59"
+    version: "0.4.74"
   leak_tracker:
     dependency: transitive
     description:
