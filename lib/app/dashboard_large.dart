@@ -172,7 +172,7 @@ class _SubTab extends ConsumerWidget {
           );
           ref.watch(resourcesProvider.notifier).state = resources
             ..sort(
-              (a, b) => a.metadata!.name.compareTo(b.metadata!.name),
+              (a, b) => a.metadata!.name!.compareTo(b.metadata!.name!),
             );
           if (!selected && onSelected != null) onSelected!();
         });

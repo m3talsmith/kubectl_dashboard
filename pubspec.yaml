@@ -47,9 +47,9 @@ dependencies:
   json2yaml: ^3.0.1
   pluralize: ^0.0.8
   humanizer: ^3.0.0
-  kuberneteslib: ^0.4.74
-#  kuberneteslib:
-#    path: ../../m3talsmith/kuberneteslib
+  # kuberneteslib: ^0.6.0
+  kuberneteslib:
+    git: https://github.com/m3talsmith/kuberneteslib.git
   shimmer: ^3.0.0
   platform: ^3.1.6
   localstorage: ^5.0.0

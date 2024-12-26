@@ -48,7 +48,7 @@ class ResourcesList extends ConsumerWidget {
                       resource = await Resource.show(
                         auth: auth,
                         resourceKind: e.kind!,
-                        resourceName: e.metadata!.name,
+                        resourceName: e.metadata!.name!,
                         namespace: e.namespace,
                       );
                     }
@@ -103,7 +103,7 @@ class ResourcesList extends ConsumerWidget {
                                   child: Container(),
                                 ),
                               ),
-                            Text(e.metadata!.name),
+                            Text(e.metadata!.name!),
                           ],
                         ),
                       ),

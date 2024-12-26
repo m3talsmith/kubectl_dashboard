@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kubectl_dashboard/app/dashboard_large.dart';
@@ -14,7 +12,6 @@ class DashboardView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     const platform = LocalPlatform();
-    log('platform: $platform');
     if (platform.isAndroid || platform.isIOS) {
       return DashboardSmall(
         contextIndex: contextIndex,

@@ -107,7 +107,7 @@ class _AppState extends ConsumerState<App> with WindowListener {
                     return resources
                         .where(
                           (e) =>
-                              e.metadata!.name.contains(controller.text) ||
+                              e.metadata!.name!.contains(controller.text) ||
                               e.namespace!.contains(controller.text),
                         )
                         .map(
@@ -122,7 +122,7 @@ class _AppState extends ConsumerState<App> with WindowListener {
                               ));
                               nav.pop();
                             },
-                            title: Text(e.metadata!.name),
+                            title: Text(e.metadata!.name!),
                             subtitle: Text(e.namespace!),
                           ),
                         );
