@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:humanizer/humanizer.dart';
 import 'package:kubectl_dashboard/app/auth.dart';
 import 'package:kubectl_dashboard/app/dashboard/resources/providers.dart';
@@ -31,14 +32,10 @@ class ResourcesList extends ConsumerWidget {
           ),
         ],
       ),
-      body: GridView.count(
-        crossAxisCount: 3,
-        shrinkWrap: true,
+      body: ListView(
         children: resources
             .map(
-              (e) => SizedBox(
-                width: 120,
-                height: 120,
+              (e) => Card(
                 child: InkWell(
                   onTap: () async {
                     final nav = Navigator.of(context);
@@ -63,50 +60,48 @@ class ResourcesList extends ConsumerWidget {
                   },
                   child: Builder(builder: (context) {
                     final controller = MenuController();
-                    return Card(
-                      margin: const EdgeInsets.all(8.0),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(child: Container()),
-                                MenuAnchor(
-                                  controller: controller,
-                                  menuChildren: [
-                                    MenuItemButton(
-                                      onPressed: () async {
-                                        await e.delete();
-                                        ref
-                                            .watch(resourcesProvider.notifier)
-                                            .state = resources..remove(e);
-                                      },
-                                      child: const ListTile(
-                                        title: Text('Delete'),
-                                      ),
-                                    )
-                                  ],
-                                  child: IconButton(
-                                      onPressed: () => (controller.isOpen)
-                                          ? controller.close()
-                                          : controller.open(),
-                                      icon:
-                                          const Icon(Icons.more_vert_rounded)),
+                    return Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Positioned(
+                          right: 0,
+                          top: 0,
+                          child: MenuAnchor(
+                            controller: controller,
+                            menuChildren: [
+                              MenuItemButton(
+                                onPressed: () async {
+                                  await e.delete();
+                                  ref.watch(resourcesProvider.notifier).state =
+                                      resources..remove(e);
+                                },
+                                child: const ListTile(
+                                  title: Text('Delete'),
                                 ),
-                              ],
+                              )
+                            ],
+                            builder: (context, controller, child) => IconButton(
+                              onPressed: () => (controller.isOpen)
+                                  ? controller.close()
+                                  : controller.open(),
+                              icon: const Icon(Icons.more_vert_rounded),
                             ),
-                            Text(e.metadata?.namespace ?? 'default'),
-                            if (e.status != null)
-                              Expanded(
-                                child: Center(
-                                  child: Container(),
-                                ),
-                              ),
-                            Text(e.metadata!.name!),
-                          ],
+                          ),
                         ),
-                      ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                e.metadata?.namespace ?? 'default',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                              Text(e.metadata!.name!),
+                            ],
+                          ),
+                        )
+                      ],
                     );
                   }),
                 ),
