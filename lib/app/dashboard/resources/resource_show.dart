@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:humanizer/humanizer.dart';
@@ -15,20 +17,37 @@ class ResourceShow extends ConsumerStatefulWidget {
 }
 
 class _ResourceShowState extends ConsumerState<ResourceShow> {
-  final List<_Page> pages = [
-    _Page(
-        title: 'Metadata',
-        page: const MetadataPage(),
-        icon: const Icon(Icons.info_rounded)),
-    _Page(
-        title: 'Spec',
-        page: const SpecPage(),
-        icon: const Icon(Icons.settings_applications_rounded)),
-    _Page(
-        title: 'Status',
-        page: const StatusPage(),
-        icon: const Icon(Icons.access_time_rounded)),
-  ];
+  final List<_Page> pages = [];
+
+  @override
+  void initState() {
+    super.initState();
+    final resource = ref.read(currentResourceProvider);
+    if (resource?.metadata != null) {
+      setState(() {
+        pages.add(_Page(
+            title: 'Metadata',
+            page: const MetadataPage(),
+            icon: const Icon(Icons.info_rounded)));
+      });
+    }
+    if (resource?.spec != null) {
+      setState(() {
+        pages.add(_Page(
+            title: 'Spec',
+            page: const SpecPage(),
+            icon: const Icon(Icons.settings_applications_rounded)));
+      });
+    }
+    if (resource?.status != null) {
+      setState(() {
+        pages.add(_Page(
+            title: 'Status',
+            page: const StatusPage(),
+            icon: const Icon(Icons.access_time_rounded)));
+      });
+    }
+  }
 
   int _currentPage = 0;
   @override
@@ -52,14 +71,17 @@ class _ResourceShowState extends ConsumerState<ResourceShow> {
                 ],
               ),
             ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentPage,
-        onTap: (index) => setState(() => _currentPage = index),
-        items: pages
-            .map((page) => BottomNavigationBarItem(
-                label: page.title, icon: page.icon ?? const Icon(Icons.list)))
-            .toList(),
-      ),
+      bottomNavigationBar: pages.length > 1
+          ? BottomNavigationBar(
+              currentIndex: _currentPage,
+              onTap: (index) => setState(() => _currentPage = index),
+              items: pages
+                  .map((page) => BottomNavigationBarItem(
+                      label: page.title,
+                      icon: page.icon ?? const Icon(Icons.list)))
+                  .toList(),
+            )
+          : null,
     );
   }
 }

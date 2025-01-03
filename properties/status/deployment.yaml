@@ -1,0 +1,16 @@
+availableReplicas:
+collisionCount:
+conditions:
+  kind: deploymentCondition
+  properties:
+  - lastTransitionTime
+  - lastUpdateTime
+  - message
+  - reason
+  - status
+  - type
+observedGeneration:
+readyReplicas:
+replicas:
+unavailableReplicas:
+updatedReplicas:

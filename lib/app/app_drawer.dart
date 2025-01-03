@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kuberneteslib/kuberneteslib.dart';
+import 'package:kuberneteslib/kuberneteslib.dart' as k8s;
 
 import 'config.dart';
 import 'config/add_config.dart';
@@ -66,7 +66,7 @@ class AppDrawer extends ConsumerWidget {
                       ref.watch(currentConfigIndexProvider.notifier).state =
                           index;
 
-                      Config? config =
+                      k8s.Config? config =
                           (configIndex >= 0) ? configs[configIndex] : null;
                       ref.watch(currentConfigProvider.notifier).state = config;
 

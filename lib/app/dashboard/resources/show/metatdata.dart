@@ -13,40 +13,37 @@ class MetadataPage extends ConsumerWidget {
     final resource = ref.watch(currentResourceProvider);
     final metadata = resource?.metadata;
     final size = MediaQuery.sizeOf(context);
+    if (metadata == null) {
+      return const SizedBox.shrink();
+    }
 
-    return metadata != null
-        ? StaggeredGrid.count(
-            crossAxisCount: size.width ~/ 300,
-            children: [
-              _MetadataField(
-                  name: 'Annotations', value: metadata.annotations?.toString()),
-              _MetadataField(
-                  name: 'Creation Timestamp',
-                  value: metadata.creationTimestamp),
-              _MetadataField(
-                  name: 'Deletion Grace Period Seconds',
-                  value: metadata.deletionGracePeriodSeconds),
-              _MetadataField(
-                  name: 'Deletion Timestamp',
-                  value: metadata.deletionTimestamp),
-              _MetadataField(name: 'Finalizers', value: metadata.finalizers),
-              _MetadataField(
-                  name: 'Generate Name', value: metadata.generateName),
-              _MetadataField(name: 'Generation', value: metadata.generation),
-              _MetadataField(name: 'Labels', value: metadata.labels),
-              _MetadataField(
-                  name: 'Managed Fields', value: metadata.managedFields),
-              _MetadataField(name: 'Name', value: metadata.name),
-              _MetadataField(name: 'Namespace', value: metadata.namespace),
-              _MetadataField(
-                  name: 'Owner References', value: metadata.ownerReferences),
-              _MetadataField(
-                  name: 'Resource Version', value: metadata.resourceVersion),
-              _MetadataField(name: 'Self Link', value: metadata.selfLink),
-              _MetadataField(name: 'Uid', value: metadata.uid),
-            ],
-          )
-        : const Center(child: CircularProgressIndicator());
+    return StaggeredGrid.count(
+      crossAxisCount: size.width ~/ 300,
+      children: [
+        _MetadataField(
+            name: 'Annotations', value: metadata.annotations?.toString()),
+        _MetadataField(
+            name: 'Creation Timestamp', value: metadata.creationTimestamp),
+        _MetadataField(
+            name: 'Deletion Grace Period Seconds',
+            value: metadata.deletionGracePeriodSeconds),
+        _MetadataField(
+            name: 'Deletion Timestamp', value: metadata.deletionTimestamp),
+        _MetadataField(name: 'Finalizers', value: metadata.finalizers),
+        _MetadataField(name: 'Generate Name', value: metadata.generateName),
+        _MetadataField(name: 'Generation', value: metadata.generation),
+        _MetadataField(name: 'Labels', value: metadata.labels),
+        _MetadataField(name: 'Managed Fields', value: metadata.managedFields),
+        _MetadataField(name: 'Name', value: metadata.name),
+        _MetadataField(name: 'Namespace', value: metadata.namespace),
+        _MetadataField(
+            name: 'Owner References', value: metadata.ownerReferences),
+        _MetadataField(
+            name: 'Resource Version', value: metadata.resourceVersion),
+        _MetadataField(name: 'Self Link', value: metadata.selfLink),
+        _MetadataField(name: 'Uid', value: metadata.uid),
+      ],
+    );
   }
 }
 

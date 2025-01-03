@@ -1,0 +1,15 @@
+apiVersion:
+items:
+  kind: componentStatus
+  properties:
+    - apiVersion
+    - kind
+    - metadata
+kind:
+metadata:
+  kind: listMeta
+  properties:
+    continueState:
+    remainingItemCount:
+    resourceVersion:
+    selfLink:

@@ -472,12 +472,10 @@ packages:
   kuberneteslib:
     dependency: "direct main"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: cdec38233125c581b703fb40625b63d4f815661d
-      url: "https://github.com/m3talsmith/kuberneteslib.git"
-    source: git
-    version: "0.6.0"
+      path: "../kuberneteslib"
+      relative: true
+    source: path
+    version: "0.7.10"
   leak_tracker:
     dependency: transitive
     description:

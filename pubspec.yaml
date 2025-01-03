@@ -49,7 +49,8 @@ dependencies:
   humanizer: ^3.0.0
   # kuberneteslib: ^0.6.0
   kuberneteslib:
-    git: https://github.com/m3talsmith/kuberneteslib.git
+    # git: https://github.com/m3talsmith/kuberneteslib.git
+    path: ../kuberneteslib
   shimmer: ^3.0.0
   platform: ^3.1.6
   localstorage: ^5.0.0
